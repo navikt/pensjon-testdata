@@ -1,0 +1,68 @@
+{
+  "name": "pen-testdata-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.7.2",
+    "@material-ui/icons": "^4.5.1",
+    "babel-polyfill": "^6.26.0",
+    "classnames": "^2.2.6",
+    "lodash": "^4.1.1",
+    "lodash.throttle": "^4.1.1",
+    "material-ui": "^0.20.2",
+    "moment": "^2.24.0",
+    "nav-frontend-alertstriper": "^3.0.7",
+    "nav-frontend-alertstriper-style": "^2.0.6",
+    "nav-frontend-core": "^4.0.11",
+    "nav-frontend-ikoner-assets": "^1.0.3",
+    "nav-frontend-js-utils": "^1.0.6",
+    "nav-frontend-knapper": "^1.0.15",
+    "nav-frontend-knapper-style": "^0.3.14",
+    "nav-frontend-paneler-style": "^0.3.17",
+    "nav-frontend-skjema": "^1.0.25",
+    "nav-frontend-skjema-style": "^1.0.10",
+    "nav-frontend-typografi": "^2.0.16",
+    "nav-frontend-typografi-style": "^1.0.17",
+    "prop-types": "^15.7.2",
+    "react": "^16.11.0",
+    "react-dom": "^16.4.2",
+    "react-scripts": "^3.0.0"
+  },
+  "scripts": {
+    "start:js": "react-scripts start",
+    "build:js": "react-scripts build",
+    "start:css": "less-watch-compiler --config less.json",
+    "build:css": "less-watch-compiler --run-once --config less.json",
+    "start": "npm-run-all -p start:*",
+    "build": "npm run build:css && npm run build:js",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "less": "^3.5.2",
+    "less-plugin-npm-import": "^2.1.0",
+    "less-watch-compiler": "^1.11.3",
+    "npm-run-all": "^4.0.2"
+  },
+  "devServer": {
+    "compress": true,
+    "disableHostCheck": true,
+    "host": "0.0.0.0"
+  },
+  "proxy": "http://localhost:8080",
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
