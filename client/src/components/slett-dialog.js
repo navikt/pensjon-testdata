@@ -21,10 +21,6 @@ export default function SlettDialog() {
     const nullstill = (event) => {
         console.log("Reset");
         let body ={
-            "server": localStorage.getItem('pensjon-testdata-db-server'),
-            "database": localStorage.getItem('pensjon-testdata-db-database'),
-            "username": localStorage.getItem('pensjon-testdata-db-brukernavn'),
-            "password": localStorage.getItem('pensjon-testdata-db-passord')
         };
         fetch('/api/testdata/clear', {
             method: 'POST',
@@ -49,8 +45,7 @@ export default function SlettDialog() {
                 <DialogTitle id="alert-dialog-title">{"Fjerne testdata"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Du vil slette <b>alt</b> innhold fra:<br/>
-                        {localStorage.getItem('pensjon-testdata-db-server') + '/' + localStorage.getItem('pensjon-testdata-db-database')}
+                        Du vil slette <b>alt</b> innhold fra databasen<br/>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

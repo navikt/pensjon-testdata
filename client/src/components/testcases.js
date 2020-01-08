@@ -47,10 +47,6 @@ class Testcases extends Component {
         let body = {
             handlebars: this.state.fieldValues,
             testCaseId: this.state.selected,
-            server: localStorage.getItem('pensjon-testdata-db-server'),
-            database: localStorage.getItem('pensjon-testdata-db-database'),
-            username: localStorage.getItem('pensjon-testdata-db-brukernavn'),
-            password: localStorage.getItem('pensjon-testdata-db-passord'),
             opprettPerson: this.state.opprettPerson
 
         }

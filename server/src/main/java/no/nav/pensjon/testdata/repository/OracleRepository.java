@@ -3,23 +3,16 @@ package no.nav.pensjon.testdata.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.controller.NonWhitelistedDatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.quartz.QuartzProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,56 +24,49 @@ public class OracleRepository {
     @Autowired
     FileRepository fileRepository;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-    public void executeQuery(String query, JdbcTemplate jdbcTemplate) {
+    public void executeQuery(String query) {
         logger.info(query);
         jdbcTemplate.execute(query);
     }
 
-    public void clearDatabase(String server, String database, String username, String password) throws IOException, NonWhitelistedDatabaseException, SQLException {
-        ObjectMapper mapper = new ObjectMapper();
-        ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
-        List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
-        });
-
-        if (databaseWhiteList.contains(server)) {
+    @Transactional
+    public void clearDatabase() throws IOException, NonWhitelistedDatabaseException, SQLException {
+        alterSession();
+        if (canDatabaseBeCleared()) {
             logger.info("Removing all data from database");
-            JdbcTemplate jdbcTemplate = createJdbcTemplate(server,database,username,password);
-            DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(jdbcTemplate.getDataSource());
-            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
             List<String> sql = fileRepository.readSqlStatements("/unload");
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                    sql.forEach(query -> executeQuery(query, jdbcTemplate));
-                }
-            });
-            jdbcTemplate.getDataSource().getConnection().close();
+            sql.forEach(query -> jdbcTemplate.execute(query));
+
         } else {
             throw new NonWhitelistedDatabaseException();
         }
     }
 
-    public JdbcTemplate createJdbcTemplate(String server, String database, String username, String password) {
-        DataSource dataSource = createDatasource(server,database,username,password);
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        alterSession(jdbcTemplate);
-        return jdbcTemplate;
-    }
-
-    private DataSource createDatasource(String server, String database, String username, String password) {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("oracle.jdbc.OracleDriver");
-        dataSourceBuilder.url("jdbc:oracle:thin:@" + server + ":1521/" + database);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(password);
-        return dataSourceBuilder.build();
-    }
-
-
-    private void alterSession(JdbcTemplate jdbcTemplate) {
+    public void alterSession() {
         jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+    }
+
+    public boolean canDatabaseBeCleared() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
+        List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
+        });
+        String server = SecretUtil.readSecret("db/jdbc_url");
+        return isWhitelistedDatabase(server, databaseWhiteList);
+    }
+
+    private boolean isWhitelistedDatabase(String server, List<String> databaseWhiteList) {
+        boolean canClearDb = databaseWhiteList.stream().anyMatch(element -> server.contains(element));
+                if (canClearDb) {
+                    logger.info("Found that db: " + server + " can be cleared, as it is in db whitelist");
+                } else {
+                    logger.info("Found that db: " + server + " can NOT be cleared, as it is in db whitelist");
+                }
+        return canClearDb;
     }
 }

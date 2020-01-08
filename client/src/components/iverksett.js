@@ -15,11 +15,7 @@ class Iverksett extends Component {
     hent = (event) => {
         this.setState({isProcessing: true})
         let body = {
-            vedtakId: this.state.vedtakid,
-            server: localStorage.getItem('pensjon-testdata-db-server'),
-            database: localStorage.getItem('pensjon-testdata-db-database'),
-            username: localStorage.getItem('pensjon-testdata-db-brukernavn'),
-            password: localStorage.getItem('pensjon-testdata-db-passord')
+            vedtakId: this.state.vedtakid
         }
 
         console.log(body);
@@ -39,11 +35,7 @@ class Iverksett extends Component {
     attester = (event) => {
         this.setState({isProcessing: true})
         let body = {
-            vedtakId: this.state.vedtakid,
-            server: localStorage.getItem('pensjon-testdata-db-server'),
-            database: localStorage.getItem('pensjon-testdata-db-database'),
-            username: localStorage.getItem('pensjon-testdata-db-brukernavn'),
-            password: localStorage.getItem('pensjon-testdata-db-passord')
+            vedtakId: this.state.vedtakid
         }
         fetch('/api/attester', {
             method: 'POST',
@@ -61,11 +53,7 @@ class Iverksett extends Component {
         this.setState({isProcessing: true})
         let body = {
             sakId: this.state.sakid,
-            nyEnhet: this.state.nyEnhet,
-            server: localStorage.getItem('pensjon-testdata-db-server'),
-            database: localStorage.getItem('pensjon-testdata-db-database'),
-            username: localStorage.getItem('pensjon-testdata-db-brukernavn'),
-            password: localStorage.getItem('pensjon-testdata-db-passord')
+            nyEnhet: this.state.nyEnhet
         }
 
         console.log(body);

@@ -30,19 +30,19 @@ public class MockController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/iverksett")
     public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request ) throws IOException, SQLException {
-        mockService.iverksett(request.getVedtakId(), request.getServer(), request.getDatabase(), request.getUsername(), request.getPassword());
+        mockService.iverksett(request.getVedtakId());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/attester")
     public ResponseEntity attester(@RequestBody IverksettVedtakRequest request ) throws IOException, SQLException {
-        mockService.attester(request.getVedtakId(), request.getServer(), request.getDatabase(), request.getUsername(), request.getPassword());
+        mockService.attester(request.getVedtakId());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/flytte-sak")
     public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request ) throws IOException, SQLException {
-        mockService.flyttEnhet(request.getSakId(), request.getNyEnhet(), request.getServer(), request.getDatabase(), request.getUsername(), request.getPassword());
+        mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

@@ -9,10 +9,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 class Settings extends Component {
     state = {
         isProcessing: false,
-        server: '',
-        database: '',
-        brukernavn: '',
-        passord: '',
         developer: false
     };
 
@@ -28,10 +24,6 @@ class Settings extends Component {
     }));
 
     componentDidMount() {
-        this.setState({server: localStorage.getItem('pensjon-testdata-db-server')});
-        this.setState({database: localStorage.getItem('pensjon-testdata-db-database')});
-        this.setState({brukernavn: localStorage.getItem('pensjon-testdata-db-brukernavn')});
-        this.setState({passord: localStorage.getItem('pensjon-testdata-db-passord')});
         this.setState({developer: JSON.parse(localStorage.getItem('pensjon-testdata-developer'))})
     }
 
@@ -39,10 +31,6 @@ class Settings extends Component {
     lagre = (event) => {
         console.log("Lagre");
         this.setState({isProcessing: true})
-        localStorage.setItem('pensjon-testdata-db-server', this.state.server);
-        localStorage.setItem('pensjon-testdata-db-database', this.state.database);
-        localStorage.setItem('pensjon-testdata-db-brukernavn', this.state.brukernavn);
-        localStorage.setItem('pensjon-testdata-db-passord', this.state.passord);
         localStorage.setItem('pensjon-testdata-developer', this.state.developer);
         this.setState({isProcessing: false})
         this.props.action();
@@ -65,28 +53,6 @@ class Settings extends Component {
     render() {
         return (
             <div className={this.useStyles.root}  style={{textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
-
-                    <TextField label="Databaseserver" name="server" key="server"
-                               value={this.state.server}
-                               variant="outlined"
-                               onChange={this.onChange}/><br/><br/>
-                    <TextField label="Database"
-                               name="database"
-                               key="database"
-                               value={this.state.database}
-                               variant="outlined"
-                               onChange={this.onChange}/><br/><br/>
-                    <TextField label="Brukernavn"
-                               name="brukernavn"
-                               key="brukernavn"
-                               value={this.state.brukernavn}
-                               variant="outlined"
-                               onChange={this.onChange}/><br/><br/>
-                    <TextField  label="Passord" name="passord" key="passord"
-                               type="password" value={this.state.passord}
-                               variant="outlined"
-                               onChange={this.onChange}/><br/><br/>
-
                 <FormControlLabel
                     control={
                         <Switch

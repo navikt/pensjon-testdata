@@ -45,7 +45,7 @@ const App = () => {
     };
 
     const evaluateMenu = function () {
-        fetch( '/api/testdata/clear/' + localStorage.getItem('pensjon-testdata-db-server'), {
+        fetch( '/api/testdata/canclear/', {
             method: 'GET'
         }).then(response => {
             console.log(response.clone().text())

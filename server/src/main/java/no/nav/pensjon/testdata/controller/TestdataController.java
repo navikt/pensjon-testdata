@@ -2,6 +2,7 @@ package no.nav.pensjon.testdata.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -39,10 +40,6 @@ public class TestdataController {
             testdataService.createTestcase(
                     request.getTestCaseId(),
                     request.getHandlebars(),
-                    request.getServer(),
-                    request.getDatabase(),
-                    request.getUsername(),
-                    request.getPassword(),
                     request.getOpprettPerson());
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
@@ -85,15 +82,16 @@ public class TestdataController {
 
     }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/testdata/clear/{server}")
-    public ResponseEntity<Boolean> canDbBeCleared(@PathVariable String server) throws IOException {
+    @GetMapping("/testdata/canclear/")
+    public ResponseEntity<Boolean> canDbBeCleared() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
         List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
         });
 
-        if (databaseWhiteList.contains(server)) {
+        String server = SecretUtil.readSecret("db/jdbc_url");
+
+        if (oracleRepository.canDatabaseBeCleared()) {
             return ResponseEntity.ok(Boolean.TRUE);
         } else {
             return ResponseEntity.ok(Boolean.FALSE);
@@ -101,10 +99,11 @@ public class TestdataController {
     }
 
 
+
     @RequestMapping(method = RequestMethod.POST, path = "/testdata/clear")
     public ResponseEntity delete(@RequestBody ClearTestdataRequest request) {
         try {
-            oracleRepository.clearDatabase(request.getServer(), request.getDatabase(), request.getUsername(), request.getPassword());
+            oracleRepository.clearDatabase();
         } catch (Exception e) {
             logger.info("Clearing of database failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -6,18 +6,28 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: navikt/pensjon-testdata-server:dev
-ingresses:
-  - "https://pensjon-testdata-server.nais.adeo.no/"
+  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:dev
+  ingresses:
+    - https://pensjon-testdata-server.nais.preprod.local
   liveness:
-    path: isAlive
+    path: api/isAlive
     initialDelay: 60
     periodSeconds: 10
     failureThreshold: 20
   readiness:
-    path: isReady
+    path: api/isReady
     initialDelay: 60
     periodSeconds: 10
     failureThreshold: 20
   prometheus:
     enabled: true
+  env:
+    - name: "secret.basedir"
+      value: "/"
+  vault:
+    enabled: true
+    paths:
+      - kvPath: "oracle/data/dev/creds/pen_logmnr"
+        mountPath: "/secrets/oracle"
+      - kvPath: "oracle/data/dev/config/pen_logmnr"
+        mountPath: "/secrets/db"
