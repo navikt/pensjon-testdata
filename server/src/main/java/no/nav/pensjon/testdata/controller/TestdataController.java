@@ -1,8 +1,5 @@
 package no.nav.pensjon.testdata.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
 import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
 import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
@@ -13,7 +10,6 @@ import no.nav.pensjon.testdata.service.TestdataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,9 +64,8 @@ public class TestdataController {
 
     @GetMapping("/testdata/handlebars/{testcase}")
     public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable String testcase) {
-        Set<String> result = null;
         try {
-            result = fileRepository.getTestcaseHandlebars(testcase);
+            Set<String> result = fileRepository.getTestcaseHandlebars(testcase);
             return ResponseEntity.ok(result
                     .stream()
                     .map(Handlebar::new)
@@ -87,13 +82,6 @@ public class TestdataController {
 
     @GetMapping("/testdata/canclear/")
     public ResponseEntity<Boolean> canDbBeCleared() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
-        List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
-        });
-
-        String server = SecretUtil.readSecret("db/jdbc_url");
-
         if (oracleRepository.canDatabaseBeCleared()) {
             return ResponseEntity.ok(Boolean.TRUE);
         } else {
