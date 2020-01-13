@@ -1,6 +1,8 @@
 package no.nav.pensjon.testdata.configuration;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -10,7 +12,7 @@ import java.nio.file.Paths;
 
 public class SecretUtil {
     public static String readSecret(String path) throws IOException {
-        String basedir = System.getProperty("secret.basedir");
+        String basedir = System.getenv("secret.basedir");
 
         Path basepath;
         if (!StringUtils.isEmpty(basedir)) {

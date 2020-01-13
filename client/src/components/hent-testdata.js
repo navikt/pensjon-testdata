@@ -44,7 +44,7 @@ class HentTestdata extends Component {
 
         console.log(request);
 
-        fetch('/api/moog/testdata', {
+        fetch('/moog/testdata', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

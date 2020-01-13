@@ -1,8 +1,8 @@
-package no.nav.pensjon.testdata.controller;
+package no.nav.pensjon.testdata.controller.support;
 
 import java.util.Map;
 
-class CreateTestdataRequest {
+public class CreateTestdataRequest {
 
     private String testCaseId;
     private Map<String,String> handlebars;

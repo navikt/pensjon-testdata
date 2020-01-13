@@ -13,7 +13,7 @@ class OpprettPerson extends Component {
     lagre = (event) => {
         console.log("Lagre");
         this.setState({isProcessing: true})
-        fetch('/api/moog/person/' + this.state.fnr, {
+        fetch('/moog/person/' + this.state.fnr, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

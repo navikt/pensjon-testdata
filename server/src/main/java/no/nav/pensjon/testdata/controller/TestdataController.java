@@ -3,6 +3,10 @@ package no.nav.pensjon.testdata.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.SecretUtil;
+import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
+import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
+import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
+import no.nav.pensjon.testdata.controller.support.Handlebar;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -12,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

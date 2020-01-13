@@ -4,7 +4,7 @@ package no.nav.pensjon.testdata.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.SecretUtil;
-import no.nav.pensjon.testdata.controller.NonWhitelistedDatabaseException;
+import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +49,7 @@ public class OracleRepository {
     public void alterSession() {
         jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        //jdbcTemplate.execute("alter session set NLS_NUMERIC_CHARACTERS = '.';");
     }
 
     public boolean canDatabaseBeCleared() throws IOException {

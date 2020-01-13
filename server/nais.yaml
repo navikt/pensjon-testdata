@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:dev
+  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:3
   ingresses:
     - https://pensjon-testdata-server.nais.preprod.local
   liveness:
@@ -24,10 +24,11 @@ spec:
   env:
     - name: "secret.basedir"
       value: "/"
+
   vault:
     enabled: true
     paths:
-      - kvPath: "oracle/data/dev/creds/pen_logmnr"
+      - kvPath: "oracle/data/dev/creds/pen_q2-user"
         mountPath: "/secrets/oracle"
-      - kvPath: "oracle/data/dev/config/pen_logmnr"
+      - kvPath: "oracle/data/dev/config/pen_q2"
         mountPath: "/secrets/db"

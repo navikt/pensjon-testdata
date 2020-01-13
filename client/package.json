@@ -39,6 +39,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "http-proxy-middleware": "^0.20.0",
     "less": "^3.5.2",
     "less-plugin-npm-import": "^2.1.0",
     "less-watch-compiler": "^1.11.3",
@@ -49,7 +50,6 @@
     "disableHostCheck": true,
     "host": "0.0.0.0"
   },
-  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": "react-app"
   },

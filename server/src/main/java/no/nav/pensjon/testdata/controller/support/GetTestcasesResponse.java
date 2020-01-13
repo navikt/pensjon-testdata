@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.controller;
+package no.nav.pensjon.testdata.controller.support;
 
 import java.util.ArrayList;
 import java.util.List;
