@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
@@ -11,35 +11,20 @@ import moment from "moment";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 
-class HentTestdata extends Component {
-    state = {
-        isProcessing: false,
-        fom: moment(new Date()).subtract('3', 'hours').format("YYYY-MM-DD HH:mm:ss"),
-        tom: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-        data: [],
-        caseworkers: []
-    };
+const HentTestdata = () => {
 
-    downloadResult = () => {
-        const element = document.createElement("a");
-        const file = new Blob([this.transformData()], {type: 'text/plain'});
-        element.href = URL.createObjectURL(file);
-        element.download = "testada.sql";
-        document.body.appendChild(element); // Required for this to work in FireFox
-        element.click();
-    }
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [fom, setFom] = useState(moment(new Date()).subtract('3', 'hours').format("YYYY-MM-DD HH:mm:ss"));
+    const [tom, setTom] = useState(moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
+    const [data, setData] = useState([]);
+    const [caseworkers, setCaseworkers] = useState([]);
 
-    updateCaseworkers = (data) => {
-        this.setState({caseworkers: data});
-    }
-
-    hent = (event) => {
-        this.setState({isProcessing: true})
-
+    const hentData = (event) => {
+        setIsProcessing(true);
         let request = JSON.stringify({
-            fom: this.state.fom,
-            tom: this.state.tom,
-            identer: this.state.caseworkers.map(caseworker => caseworker.name)
+            fom: fom,
+            tom: tom,
+            identer: caseworkers.map(caseworker => caseworker.name)
         });
 
         console.log(request);
@@ -55,70 +40,67 @@ class HentTestdata extends Component {
             return response.json()
         }).then(json => {
             console.log("Fetched testdata from server, recieved " + json.length + " elements");
-            this.setState({
-                data: json
-            });
+            setData(json);
         }).finally((data) => {
-            this.setState({isProcessing: false})
+            setIsProcessing(false);
         });
     };
 
-    onChange = (event) => {
-        let stateObject = function () {
-            let returnObj = {};
-            returnObj[this.target.name] = this.target.value;
-            return returnObj;
-        }.bind(event)();
+    const downloadResult = () => {
+        console.log('Trigger download result!');
+        const element = document.createElement("a");
+        const file = new Blob([transformData()], {type: 'text/plain'});
+        element.href = URL.createObjectURL(file);
+        element.download = "testada.sql";
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
+    }
 
-        this.setState(stateObject);
-    };
-
-    transformData() {
+    const transformData = () => {
         var result = '';
-        this.state.data.forEach(function (sql) {
+        data.forEach(function (sql) {
             result = result + '\r\n' + sql.replace(';', '');
         });
         return result.substring(2);
     }
 
-    render() {
-        return (
-            <div >
-                <div style={{textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
-                    <form style={{margin: '10px'}}>
-                        <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
-                                   label="Fom"
-                                   name="fom"
-                                   key="fom"
-                                   variant="outlined" //2019-11-29 08:40:00
-                                   defaultValue={this.state.fom}
-                                   onChange={this.onChange}/>
-                        <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
-                                   label="Tom"
-                                   name="tom"
-                                   key="tom"
-                                   variant="outlined"
-                                   defaultValue={this.state.tom}
-                                   onChange={this.onChange}/>
-                    </form>
-                    <CaseworkerChips data={this.updateCaseworkers}/>
+    return (
+        <div>
+            <div style={{textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
+                <form style={{margin: '10px'}}>
+                    <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
+                               label="Fom"
+                               name="fom"
+                               key="fom"
+                               variant="outlined" //2019-11-29 08:40:00
+                               defaultValue={fom}
+                               onChange={e => setFom(e.target.value)}/>
+                    <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
+                               label="Tom"
+                               name="tom"
+                               key="tom"
+                               variant="outlined"
+                               defaultValue={tom}
+                               onChange={e => setTom(e.target.value)}/>
+                </form>
+                <CaseworkerChips data={setCaseworkers}/>
 
-                    {this.state.isProcessing ? <CircularProgress /> :
-                        <Button variant="contained"  onClick={this.hent}>Hent</Button>}
+                {isProcessing ? <CircularProgress/> :
+                    <Button variant="contained" onClick={hentData}>Hent</Button>}
 
-                    <p></p>
-                </div>
+                <p></p>
+            </div>
 
-                <div style={{textAlign: 'center'}}>
-                {this.state.data.length > 0 ?
+            <div style={{textAlign: 'center'}}>
+                {data.length > 0 ?
                     <div> Last ned resultat
-                        <IconButton onClick={this.downloadResult}>
+                        <IconButton onClick={() => downloadResult()}>
                             <CloudDownloadIcon/>
                         </IconButton>
                     </div> : <p></p>}
 
-                {this.state.data.length > 0 ?
-                    <TextareaAutosize value={this.transformData()}
+                {data.length > 0 ?
+                    <TextareaAutosize value={transformData()}
                                       style={{
                                           widht: '800px',
                                           overflow: 'auto',
@@ -126,10 +108,10 @@ class HentTestdata extends Component {
                                           minWidth: '80%',
                                           minHeight: 450
                                       }}></TextareaAutosize> : <p></p>}
-                </div>
             </div>
-        );
-    }
+        </div>
+    );
+
 }
 
 function CaseworkerChips(props) {
@@ -178,6 +160,5 @@ function CaseworkerChips(props) {
         </div>
     );
 }
-
 
 export default HentTestdata
