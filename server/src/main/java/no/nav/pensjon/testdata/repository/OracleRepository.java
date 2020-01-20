@@ -40,7 +40,7 @@ public class OracleRepository {
 
             List<String> sql = fileRepository.readSqlStatements("/unload");
             sql.forEach(query -> jdbcTemplate.execute(query));
-
+            logger.info("All data from database cleared");
         } else {
             throw new NonWhitelistedDatabaseException();
         }

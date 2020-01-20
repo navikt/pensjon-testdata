@@ -9,7 +9,6 @@ import {Fareknapp} from "nav-frontend-knapper";
 
 export default function SlettDialog() {
     const [open, setOpen] = React.useState(false);
-
     const handleClickOpen = () => {
         setOpen(true);
     };
