@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Fareknapp} from "nav-frontend-knapper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
