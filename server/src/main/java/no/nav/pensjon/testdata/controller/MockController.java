@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -36,6 +37,12 @@ public class MockController {
     @RequestMapping(method = RequestMethod.POST, path = "/flytte-sak")
     public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request ) throws IOException, SQLException {
         mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+    @PostMapping(path = "/person/{fnr}")
+    @Transactional
+    public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
+        mockService.opprettPerson(fnr);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

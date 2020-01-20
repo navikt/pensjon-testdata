@@ -1,6 +1,8 @@
 package no.nav.pensjon.testdata.service;
 
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +27,8 @@ import java.util.Map;
 
 @Service
 public class MockService {
+
+    private Logger logger = LoggerFactory.getLogger(MockService.class);
 
     @Autowired
     OracleRepository oracleRepository;
@@ -115,5 +119,43 @@ public class MockService {
                 "    AND st.DATO_TOM IS NULL" +
                 "    AND SAK_ID = " + sakId;
         jdbcTemplate.execute(flyttEnhetSql);
+    }
+
+    public void opprettPerson(String fnr) {
+        //If FNR what so simple ;)
+        String year = 19 + fnr.substring(4,6);
+        String month = fnr.substring(2,4);
+        String day = fnr.substring(0,2);
+
+        String birthDay = year + "-" + month + "-" + day;
+
+        String sql = "insert into " +
+                "PEN.T_PERSON(" +
+                "FNR_FK," +
+                "DATO_FODSEL," +
+                "DATO_OPPRETTET," +
+                "DATO_DOD," +
+                "DATO_UTVANDRET," +
+                "OPPRETTET_AV," +
+                "DATO_ENDRET," +
+                "ENDRET_AV," +
+                "VERSJON," +
+                "BOSTEDSLAND) " +
+                "values " +
+                "("+
+                fnr + "" +
+                ",TO_DATE('"+birthDay+" 00:00:00', 'YYYY-MM-DD HH24:MI:SS')," +
+                "CURRENT_TIMESTAMP," +
+                "NULL," +
+                "NULL," +
+                "'MOOG'," +
+                "CURRENT_TIMESTAMP," +
+                "'MOOG'," +
+                "'0'," +
+                "NULL)";
+
+        logger.info(sql);
+
+        jdbcTemplate.execute(sql);
     }
 }
