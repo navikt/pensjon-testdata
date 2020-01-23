@@ -12,7 +12,6 @@ public class PersonIdExtractor {
         Optional<String> sql = statements.stream()
                 .filter(statement -> statement.contains("insert into \"PEN\".\"T_PERSON\"")).findFirst();
         if (sql.isPresent()) {
-            //"values ('68053237'"
             String query = sql.get();
             Matcher m = Pattern.compile("values\\s\\('(?<userId>\\d*?)'").matcher(query);
             while (m.find()) {

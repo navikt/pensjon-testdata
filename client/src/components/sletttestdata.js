@@ -6,6 +6,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
+import {SnackbarContext} from "./snackbar";
 
 const SlettTestdata = () => {
     return (
@@ -17,6 +18,8 @@ const SlettTestdata = () => {
 
 const SlettDialog = () => {
     const [open, setOpen] = React.useState(false);
+    const snackbarApi = React.useContext(SnackbarContext);
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -27,17 +30,24 @@ const SlettDialog = () => {
 
     const nullstill = (event) => {
         console.log("Reset");
-        let body = {};
         fetch('/api/testdata/clear', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({})
+        }).then(response => {
+            if (response.status === 200) {
+                snackbarApi.openSnackbar('Nullstillt database!', 'success');
+            } else {
+                snackbarApi.openSnackbar('Nullstilling av database feilet!', 'error')
+            }
         });
         setOpen(false);
     };
+
+
 
     return (
         <div>

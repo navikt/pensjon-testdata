@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: docker.adeo.no:5000/navikt/pensjon-testdata-client:latest
+  image: docker.adeo.no:5000/navikt/pensjon-testdata-client:14
   port: 80
   ingresses:
     - https://ptb.nais.preprod.local

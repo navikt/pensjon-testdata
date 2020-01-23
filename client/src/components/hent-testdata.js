@@ -9,6 +9,7 @@ import Box from "@material-ui/core/Box";
 import TextField from '@material-ui/core/TextField';
 import moment from "moment";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import {SnackbarContext} from "./snackbar";
 
 
 const HentTestdata = () => {
@@ -18,6 +19,8 @@ const HentTestdata = () => {
     const [tom, setTom] = useState(moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
     const [data, setData] = useState([]);
     const [caseworkers, setCaseworkers] = useState([]);
+
+    const snackbarApi = React.useContext(SnackbarContext);
 
     const hentData = (event) => {
         setIsProcessing(true);
@@ -37,6 +40,11 @@ const HentTestdata = () => {
             },
             body: request
         }).then(response => {
+            if (response.status === 200) {
+                snackbarApi.openSnackbar('Hentet testdata', 'success');
+            } else {
+                snackbarApi.openSnackbar('Henting av testdata feilet!', 'error');
+            }
             return response.json()
         }).then(json => {
             console.log("Fetched testdata from server, recieved " + json.length + " elements");
@@ -136,7 +144,7 @@ function CaseworkerChips(props) {
         <div>
             <Box component="div" display="inline">
                 <form style={{margin: '10px'}}>
-                    <TextField style={{textAlign: 'left'}} label="Saksbehandler" name="caseworker"
+                    <TextField style={{textAlign: 'left'}} label="Saksbehandler(valgfri)" name="caseworker"
                                key="caseworker"
                                value={caseworker}
                                onChange={e => setCaseworker(e.target.value)}

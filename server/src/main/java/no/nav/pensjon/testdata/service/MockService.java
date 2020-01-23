@@ -142,8 +142,8 @@ public class MockService {
                 "VERSJON," +
                 "BOSTEDSLAND) " +
                 "values " +
-                "("+
-                fnr + "" +
+                "('"+
+                fnr + "'" +
                 ",TO_DATE('"+birthDay+" 00:00:00', 'YYYY-MM-DD HH24:MI:SS')," +
                 "CURRENT_TIMESTAMP," +
                 "NULL," +
