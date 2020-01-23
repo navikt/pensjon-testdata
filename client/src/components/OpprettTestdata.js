@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
-import {SnackbarContext} from "./snackbar";
+import {SnackbarContext} from "./Snackbar";
 
-const OpprettTestcase = () => {
+const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [testcases, setTestcases] = useState([]);
     const [selected, setSelected] = useState('');
@@ -95,4 +95,4 @@ const OpprettTestcase = () => {
 
 }
 
-export default OpprettTestcase
+export default OpprettTestdata

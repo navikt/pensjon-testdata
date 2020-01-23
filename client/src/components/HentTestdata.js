@@ -9,7 +9,7 @@ import Box from "@material-ui/core/Box";
 import TextField from '@material-ui/core/TextField';
 import moment from "moment";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import {SnackbarContext} from "./snackbar";
+import {SnackbarContext} from "./Snackbar";
 
 
 const HentTestdata = () => {
