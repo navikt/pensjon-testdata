@@ -6,7 +6,6 @@ public class CreateTestdataRequest {
 
     private String testCaseId;
     private Map<String,String> handlebars;
-    private boolean opprettPerson;
 
     public String getTestCaseId() {
         return testCaseId;
@@ -24,11 +23,5 @@ public class CreateTestdataRequest {
         this.handlebars = handlebars;
     }
 
-    public boolean getOpprettPerson() {
-        return opprettPerson;
-    }
 
-    public void setOpprettPerson(boolean opprettPerson) {
-        this.opprettPerson = opprettPerson;
-    }
 }

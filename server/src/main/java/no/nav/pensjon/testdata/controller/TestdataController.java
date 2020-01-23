@@ -38,8 +38,7 @@ public class TestdataController {
         try {
             testdataService.createTestcase(
                     request.getTestCaseId(),
-                    request.getHandlebars(),
-                    request.getOpprettPerson());
+                    request.getHandlebars());
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

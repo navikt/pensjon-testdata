@@ -9,7 +9,7 @@ const OpprettTestcase = () => {
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
     const [fieldValues, setFieldValues] = useState({});
-    const [opprettPerson, setOpprettPerson] = useState(true);
+
 
     const snackbarApi = React.useContext(SnackbarContext);
 
@@ -38,26 +38,19 @@ const OpprettTestcase = () => {
         }
     };
 
-    const checkboxChange = (event) => {
-        setOpprettPerson(event.target.checked);
-    };
-
     const lagre = (event) => {
         setIsProcessing(true);
-        let body = {
-            handlebars: fieldValues,
-            testCaseId: selected,
-            opprettPerson: opprettPerson
 
-        }
-        console.log(body);
         fetch('/api/testdata', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({
+                handlebars: fieldValues,
+                testCaseId: selected
+            })
         }).then(response => {
             if (response.status === 200) {
                 snackbarApi.openSnackbar('Testcase opprettet!', 'success');
@@ -92,8 +85,6 @@ const OpprettTestcase = () => {
                            onChange={e => fieldChangeHandler(e)}/>
                 ))}
             </div>
-
-            <Checkbox label={'Opprett person'} checked={opprettPerson} onChange={e => checkboxChange(e)}/>
 
             {isProcessing ?
                 <Knapp className="btn" spinner> </Knapp> :
