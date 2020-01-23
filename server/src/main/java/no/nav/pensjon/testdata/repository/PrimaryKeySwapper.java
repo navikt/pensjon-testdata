@@ -25,7 +25,7 @@ public class PrimaryKeySwapper {
 
     private static Set<String> getPrimaryKeys(String sql) {
         Set<String> oldPrimaryKeys = new HashSet<>();
-        Matcher m = Pattern.compile("'\\d{8}'").matcher(sql);
+        Matcher m = Pattern.compile("'\\d{8,9}'").matcher(sql);
         while (m.find()) {
             String group = m.group().replace("'","");
             oldPrimaryKeys.add(group);

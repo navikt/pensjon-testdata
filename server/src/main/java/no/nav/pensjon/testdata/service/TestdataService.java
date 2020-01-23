@@ -45,6 +45,7 @@ public class TestdataService {
                 .map(statement -> HandlebarTransformer.execute(statement, handlebars))
                 .map(ChangeStampTransformer::execute)
                 .map(statement -> !opprettPerson && personIdInScenario != null ? statement.replace(personIdInScenario, finalPersonIdInDatabase.toString()) : statement)
+                .map(statement -> statement.substring(statement.length()-1, statement.length()).equals(";") ? statement.substring(0, statement.length() -1 ) : statement)
                 .filter(sql -> opprettPerson || !sql.contains("\"T_PERSON\""))
                 .forEach(statement -> oracleRepository.executeQuery(statement));
     }
