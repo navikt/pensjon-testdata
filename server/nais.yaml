@@ -6,17 +6,17 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:15
+  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:16
   ingresses:
     - https://pensjon-testdata-server.nais.preprod.local
   liveness:
     path: api/isAlive
-    initialDelay: 7
+    initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
   readiness:
     path: api/isReady
-    initialDelay: 7
+    initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
   prometheus:

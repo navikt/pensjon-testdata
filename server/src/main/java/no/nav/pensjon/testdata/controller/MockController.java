@@ -10,8 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 
 @RestController
@@ -42,7 +45,15 @@ public class MockController {
     @PostMapping(path = "/person/{fnr}")
     @Transactional
     public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
-        mockService.opprettPerson(fnr);
+        try {
+            mockService.opprettPerson(fnr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, sw.toString(), e);
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

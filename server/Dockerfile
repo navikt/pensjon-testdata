@@ -34,7 +34,7 @@ COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 # Copy secrets from localhost to image, not for NAIS
-COPY secrets secrets
+#COPY secrets secrets
 ENV secret.basedir /
 
 ENTRYPOINT ["java","-cp","app:app/lib/*","no.nav.pensjon.testdata.TestdataApplication"]

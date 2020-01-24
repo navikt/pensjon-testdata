@@ -20,7 +20,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
 const App = () => {
-    const [activeView, setActiveView] = useState('opprettPerson')
+    const [activeView, setActiveView] = useState('henteTestdata')
     const [enableClear, setEnableClear] = useState({enableClear: false});
     const [darkMode, setDarkMode] = useState(false);
     const [theme, setTheme] = useState({
@@ -35,7 +35,8 @@ const App = () => {
         evaluateMenu();
     }, []);
 
-    const toggleDarkTheme = () => {
+    const toggleDarkTheme = (event) => {
+        setDarkMode(event.target.checked)
         let newPaletteType = theme.palette.type === "light" ? "dark" : "light";
         setTheme({
             palette: {
@@ -63,43 +64,45 @@ const App = () => {
                     <img src={logo} className="App-logo" alt="logo"/>
                     <h2>Pensjon testdata</h2>
                 </div>
-                <BottomNavigation showLabels>
-                    <BottomNavigationAction label="Hente testdata" icon={<EqualizerIcon/>}
-                                            onClick={() => setActiveView('henteTestdata')}/>
-                    <BottomNavigationAction label="Opprett testdata" icon={<InputIcon/>}
-                                            onClick={() => setActiveView('lagreTestdata')}/>
-                    <BottomNavigationAction label="Testverktøy" icon={<BuildIcon/>}
-                                            onClick={() => setActiveView('testverktoy')}/>
-                    {enableClear ? <BottomNavigationAction label="Fjern testdata" icon={<DeleteForeverIcon/>}
-                                                           onClick={() => setActiveView('slettTestdata')}/> : ""}
-                </BottomNavigation>
-
-                <SnackbarContextProvider>
-                    {activeView === 'henteTestdata' ? <HentTestdata/> : <p></p>}
-                    {activeView === 'lagreTestdata' ? <OpprettTestdata/> : <p></p>}
-                    {activeView === 'slettTestdata' ? <SlettTestdata/> : <p></p>}
-                    {activeView === 'testverktoy' ? <TestVerktoy/> : <p></p>}
-                </SnackbarContextProvider>
-            </div>
-            <div style={{
-                position: "absolute",
-                bottom: 0,
-                right: 0
-            }}>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            name={"developer"}
-                            checked={darkMode}
-                            onChange={toggleDarkTheme}
-                            color="primary"
-                            value={"developer"}
+                <div>
+                    <BottomNavigation showLabels>
+                        <BottomNavigationAction label="Hente testdata" icon={<EqualizerIcon/>}
+                                                onClick={() => setActiveView('henteTestdata')}/>
+                        <BottomNavigationAction label="Opprett testdata" icon={<InputIcon/>}
+                                                onClick={() => setActiveView('lagreTestdata')}/>
+                        <BottomNavigationAction label="Testverktøy" icon={<BuildIcon/>}
+                                                onClick={() => setActiveView('testverktoy')}/>
+                        {enableClear ? <BottomNavigationAction label="Fjern testdata" icon={<DeleteForeverIcon/>}
+                                                               onClick={() => setActiveView('slettTestdata')}/> : ""}
+                    </BottomNavigation>
+                </div>
+                <div>
+                    <SnackbarContextProvider>
+                        {activeView === 'henteTestdata' ? <HentTestdata/> : <p></p>}
+                        {activeView === 'lagreTestdata' ? <OpprettTestdata/> : <p></p>}
+                        {activeView === 'slettTestdata' ? <SlettTestdata/> : <p></p>}
+                        {activeView === 'testverktoy' ? <TestVerktoy/> : <p></p>}
+                    </SnackbarContextProvider>
+                    <div style={{
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0
+                    }}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    name={"developer"}
+                                    checked={darkMode}
+                                    onChange={toggleDarkTheme}
+                                    color="primary"
+                                    value={"developer"}
+                                />
+                            }
+                            label="Dark mode"
                         />
-                    }
-                    label="Dark mode"
-                />
+                    </div>
+                </div>
             </div>
-
         </MuiThemeProvider>
     );
 }

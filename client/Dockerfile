@@ -4,14 +4,13 @@ FROM node:12.2.0-alpine as build
 # set working directory
 WORKDIR /app
 
-# add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
 #configure proxy for node
-RUN npm config set https-proxy "http://webproxy-utvikler.nav.no:8088"
-RUN npm config set proxy "http://webproxy-utvikler.nav.no:8088"
-RUN npm config set registry "http://registry.npmjs.org/"
-RUN npm config set strict-ssl false
+#RUN npm config set https-proxy "http://webproxy-utvikler.nav.no:8088"
+#RUN npm config set proxy "http://webproxy-utvikler.nav.no:8088"
+#RUN npm config set registry "http://registry.npmjs.org/"
+#RUN npm config set strict-ssl false
 
 # install and cache app dependencies
 COPY node_modules /app/node_modules
@@ -23,8 +22,8 @@ COPY public /app/public
 
 
 # Arguments
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+#ARG REACT_APP_API_BASE_URL
+#ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
 
 
 #RUN npm install
