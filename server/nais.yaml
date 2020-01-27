@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:16
+  image: docker.adeo.no:5000/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
     - https://pensjon-testdata-server.nais.preprod.local
   liveness:
