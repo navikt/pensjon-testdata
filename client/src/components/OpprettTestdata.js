@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./Snackbar";
+import {callURL} from "../util/rest";
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -9,7 +10,6 @@ const OpprettTestdata = () => {
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
     const [fieldValues, setFieldValues] = useState({});
-
 
     const snackbarApi = React.useContext(SnackbarContext);
 
@@ -24,7 +24,6 @@ const OpprettTestdata = () => {
 
     const onChange = (event) => {
         setSelected(event.target.value);
-
         if (event.target.value.length > 0) {
             fetch('/api/testdata/handlebars/' + event.target.value)
                 .then(res => res.json())
@@ -40,26 +39,23 @@ const OpprettTestdata = () => {
 
     const lagre = (event) => {
         setIsProcessing(true);
-
-        fetch('/api/testdata', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        callURL(
+            '/api/testdata',
+            'POST',
+            {
                 handlebars: fieldValues,
                 testCaseId: selected
-            })
-        }).then(response => {
-            if (response.status === 200) {
+            },
+            () => {
                 snackbarApi.openSnackbar('Testcase opprettet!', 'success');
-            } else {
-                snackbarApi.openSnackbar('Lagring av testcase feilet!', 'error')
+            },
+            () => {
+                snackbarApi.openSnackbar('Lagring av testcase feilet!', 'error');
             }
-        }).finally((data) => {
-            setIsProcessing(false);
-        });
+        ).finally(() => {
+                setIsProcessing(false);
+            }
+        );
     };
 
     const fieldChangeHandler = (event) => {
@@ -92,7 +88,5 @@ const OpprettTestdata = () => {
 
         </div>
     );
-
 }
-
 export default OpprettTestdata

@@ -8,6 +8,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
+import {callURL} from "../util/rest";
 
 const useStyles = makeStyles({
     card: {
@@ -22,7 +23,6 @@ const useStyles = makeStyles({
     },
 });
 
-
 const FlyttSak = () => {
     const classes = useStyles();
 
@@ -35,37 +35,35 @@ const FlyttSak = () => {
     const flyttEnhet = (event) => {
         setIsProcessing(true);
 
-        fetch('/api/flytte-sak', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        callURL(
+            '/api/flytte-sak',
+            'POST',
+            {
                 sakId: sakId,
                 nyEnhet: nyEnhetId
-            })
-        }).then(response => {
-            if (response.status === 200) {
+            },
+            () => {
                 snackbarApi.openSnackbar('Enhet flyttet', 'success');
-            } else {
+            },
+            () => {
                 snackbarApi.openSnackbar('Flytting av enhet feilet!', 'error');
             }
-            setIsProcessing(false);
-        });
+        ).finally(() => {
+                setIsProcessing(false);
+            }
+        );
     };
-
 
     return (
         <Card className={classes.card}>
-            <CardHeader title="Flytt eierenhet for sak" />
+            <CardHeader title="Flytt eierenhet for sak"/>
             <CardContent>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="SakId"
                            name="sakid"
                            key="sakid"
                            variant="outlined"
-                           onChange={e => setSakId(e.target.value)}/><br />
+                           onChange={e => setSakId(e.target.value)}/><br/>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Ny enhet"
                            name="nyEnhet"
@@ -83,9 +81,6 @@ const FlyttSak = () => {
             </CardActions>
         </Card>
     );
-
-
 }
-
 
 export default FlyttSak

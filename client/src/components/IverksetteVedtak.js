@@ -8,6 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import FlashOnIcon from "@material-ui/icons/FlashOn";
+import {callURL} from "../util/rest";
 
 const useStyles = makeStyles({
     card: {
@@ -32,26 +33,22 @@ const IverksetteVedtak = () => {
 
     const iverksetteVedtak = () => {
         setIsProcessing(true);
-        let body = {
-            vedtakId: vedtakId
-        }
-
-        fetch('/api/iverksett', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+        callURL(
+            '/api/iverksett',
+            'POST',
+            {
+                vedtakId: vedtakId
             },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if (response.status === 200) {
+            () => {
                 snackbarApi.openSnackbar('Vedtak iverksatt', 'success');
-            } else {
+            },
+            () => {
                 snackbarApi.openSnackbar('Iverksetting feilet!', 'error');
             }
-        }).finally((data) => {
-            setIsProcessing(false);
-        });
+        ).finally(() => {
+                setIsProcessing(false);
+            }
+        );
     };
 
     return (
@@ -77,6 +74,5 @@ const IverksetteVedtak = () => {
         </Card>
     );
 }
-
 
 export default IverksetteVedtak

@@ -8,6 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import FingerprintIcon from "@material-ui/icons/Fingerprint";
+import {callURL} from "../util/rest";
 
 const useStyles = makeStyles({
     card: {
@@ -32,25 +33,20 @@ const AttestereVedtak = () => {
 
     const attestereVedtak = () => {
         setIsProcessing(true);
-        let body = {
-            vedtakId: vedtakId
-        }
-        fetch('/api/attester', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if (response.status === 200) {
+        callURL(
+            '/api/attester',
+            'POST',
+            {vedtakId: vedtakId},
+            () => {
                 snackbarApi.openSnackbar('Vedtak attestert', 'success');
-            } else {
+            },
+            () => {
                 snackbarApi.openSnackbar('Attestering av vedtak feilet!', 'error');
             }
-        }).finally((data) => {
-            setIsProcessing(false);
-        });
+        ).finally(() => {
+                setIsProcessing(false);
+            }
+        );
     };
 
     return (

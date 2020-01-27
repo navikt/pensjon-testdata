@@ -7,6 +7,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import {SnackbarContext} from "./Snackbar";
+import {callURL} from "../util/rest";
 
 const SlettTestdata = () => {
     return (
@@ -29,25 +30,22 @@ const SlettDialog = () => {
     };
 
     const nullstill = (event) => {
-        console.log("Reset");
-        fetch('/api/testdata/clear', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})
-        }).then(response => {
-            if (response.status === 200) {
+
+        callURL(
+            '/api/testdata/clear',
+            'POST',
+            {},
+            () => {
                 snackbarApi.openSnackbar('Nullstillt database!', 'success');
-            } else {
-                snackbarApi.openSnackbar('Nullstilling av database feilet!', 'error')
+            },
+            () => {
+                snackbarApi.openSnackbar('Nullstilling av database feilet!', 'error');
             }
-        });
-        setOpen(false);
+        ).finally(() => {
+                setOpen(false);
+            }
+        );
     };
-
-
 
     return (
         <div>
