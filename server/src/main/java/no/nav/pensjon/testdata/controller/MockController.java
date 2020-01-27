@@ -26,34 +26,54 @@ public class MockController {
     MockService mockService;
 
     @RequestMapping(method = RequestMethod.POST, path = "/iverksett")
-    public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request ) throws IOException, SQLException {
-        mockService.iverksett(request.getVedtakId());
+    public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request) {
+        try {
+            mockService.iverksett(request.getVedtakId());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
+        }
+
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/attester")
-    public ResponseEntity attester(@RequestBody IverksettVedtakRequest request ) throws IOException, SQLException {
-        mockService.attester(request.getVedtakId());
+    public ResponseEntity attester(@RequestBody IverksettVedtakRequest request) {
+        try {
+            mockService.attester(request.getVedtakId());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/flytte-sak")
-    public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request ) throws IOException, SQLException {
-        mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
+    public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request) {
+        try {
+            mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
+        }
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
     @PostMapping(path = "/person/{fnr}")
     @Transactional
     public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
         try {
             mockService.opprettPerson(fnr);
         } catch (Exception e) {
-            e.printStackTrace();
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, sw.toString(), e);
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private String getStracktrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 }

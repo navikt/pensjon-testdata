@@ -10,10 +10,9 @@ import TextField from '@material-ui/core/TextField';
 import moment from "moment";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import {SnackbarContext} from "./Snackbar";
-
+import {callURL} from "../util/rest";
 
 const HentTestdata = () => {
-
     const [isProcessing, setIsProcessing] = useState(false);
     const [fom, setFom] = useState(moment(new Date()).subtract('3', 'hours').format("YYYY-MM-DD HH:mm:ss"));
     const [tom, setTom] = useState(moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
@@ -24,32 +23,26 @@ const HentTestdata = () => {
 
     const hentData = (event) => {
         setIsProcessing(true);
-        let request = JSON.stringify({
+        let request = {
             fom: fom,
             tom: tom,
             identer: caseworkers.map(caseworker => caseworker.name)
-        });
-
-        console.log(request);
-
-        fetch('/moog/testdata', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+        };
+        callURL(
+            '/moog/testdata',
+            'POST',
+            request,
+            () => {
+                snackbarApi.openSnackbar('Person opprettet!', 'success');
             },
-            body: request
-        }).then(response => {
-            if (response.status === 200) {
-                snackbarApi.openSnackbar('Hentet testdata', 'success');
-            } else {
-                snackbarApi.openSnackbar('Henting av testdata feilet!', 'error');
+            () => {
+                snackbarApi.openSnackbar('Lagring av person feilet!', 'error');
             }
-            return response.json()
-        }).then(json => {
-            console.log("Fetched testdata from server, recieved " + json.length + " elements");
-            setData(json);
-        }).finally((data) => {
+        ).then(json => {
+                console.log("Fetched testdata from server, recieved " + json.length + " elements");
+                setData(json);
+            }
+        ).finally(() => {
             setIsProcessing(false);
         });
     };

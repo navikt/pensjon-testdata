@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import Button from '@material-ui/core/Button';
@@ -9,6 +9,8 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {callURL} from "../util/rest";
+
 
 const useStyles = makeStyles({
     card: {
@@ -34,26 +36,21 @@ const OpprettPerson = () => {
 
     const lagrePerson = (event) => {
         setIsProcessing(true);
-        fetch('/api/person/' + fnr, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify('')
-        }).then(function (response) {
-            if (response.status === 200) {
-                snackbarApi.openSnackbar('Person opprettet!', 'success');
-            } else {
-                snackbarApi.openSnackbar('Lagring av person feilet!', 'error')
+        callURL(
+            '/api/person/' + fnr,
+            'POST',
+            '',
+            () => {snackbarApi.openSnackbar('Person opprettet!', 'success');},
+            () => {snackbarApi.openSnackbar('Lagring av person feilet!', 'error');}
+        ).then(() => {
+                setIsProcessing(false);
             }
-            setIsProcessing(false);
-        })
+        );
     };
 
     return (
         <Card className={classes.card}>
-            <CardHeader title="Opprett person" />
+            <CardHeader title="Opprett person"/>
             <CardContent>
                 <TextField label="Fnr"
                            name="fnr"

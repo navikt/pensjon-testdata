@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +47,8 @@ public class TestdataController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             logger.info("Could not create testcase", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -55,7 +59,8 @@ public class TestdataController {
         try {
             testcases = fileRepository.getAllTestcases();
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
 
         return ResponseEntity.ok(new GetTestcasesResponse(testcases));
@@ -74,7 +79,8 @@ public class TestdataController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             logger.info("Could not create testcase", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
 
     }
@@ -88,16 +94,21 @@ public class TestdataController {
         }
     }
 
-
-
     @RequestMapping(method = RequestMethod.POST, path = "/testdata/clear")
     public ResponseEntity delete(@RequestBody ClearTestdataRequest request) {
         try {
             oracleRepository.clearDatabase();
         } catch (Exception e) {
             logger.info("Clearing of database failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private String getStracktrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 }
