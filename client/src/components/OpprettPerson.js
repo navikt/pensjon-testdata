@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
-import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import Button from '@material-ui/core/Button';
 import {SnackbarContext} from "./Snackbar";
 import Card from "@material-ui/core/Card";
