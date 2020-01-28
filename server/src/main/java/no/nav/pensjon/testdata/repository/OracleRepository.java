@@ -49,6 +49,7 @@ public class OracleRepository {
     public void alterSession() {
         jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplate.execute("alter session set nls_numeric_characters=\", \"");
         //jdbcTemplate.execute("alter session set NLS_NUMERIC_CHARACTERS = '.';");
     }
 
