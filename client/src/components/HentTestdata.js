@@ -137,7 +137,7 @@ function CaseworkerChips(props) {
         <div>
             <Box component="div" display="inline">
                 <form style={{margin: '10px'}}>
-                    <TextField style={{textAlign: 'left'}} label="Saksbehandleridenter(valgfri)" name="caseworker"
+                    <TextField style={{textAlign: 'left'}} label="Saksbehandlerident(valgfri)" name="caseworker"
                                key="caseworker"
                                value={caseworker}
                                onChange={e => setCaseworker(e.target.value)}
