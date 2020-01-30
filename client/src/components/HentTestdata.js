@@ -60,7 +60,7 @@ const HentTestdata = () => {
     const transformData = () => {
         var result = '';
         data.forEach(function (sql) {
-            result = result + '\r\n' + sql.replace(';', '');
+            result = result + '\r\n' + sql;
         });
         return result.substring(2);
     }
@@ -137,7 +137,7 @@ function CaseworkerChips(props) {
         <div>
             <Box component="div" display="inline">
                 <form style={{margin: '10px'}}>
-                    <TextField style={{textAlign: 'left'}} label="Saksbehandler(valgfri)" name="caseworker"
+                    <TextField style={{textAlign: 'left'}} label="Saksbehandleridenter(valgfri)" name="caseworker"
                                key="caseworker"
                                value={caseworker}
                                onChange={e => setCaseworker(e.target.value)}
