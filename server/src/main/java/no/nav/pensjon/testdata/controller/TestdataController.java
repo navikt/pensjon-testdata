@@ -6,6 +6,7 @@ import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
 import no.nav.pensjon.testdata.controller.support.Handlebar;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.service.POPPDataExtractor;
 import no.nav.pensjon.testdata.service.TestdataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class TestdataController {
 
     @Autowired
     FileRepository fileRepository;
+
+    @Autowired
+    POPPDataExtractor poppDataExtractor;
 
     @RequestMapping(method = RequestMethod.POST, path = "/testdata")
     public ResponseEntity createTestdata(@RequestBody CreateTestdataRequest request) {
@@ -92,6 +96,12 @@ public class TestdataController {
         } else {
             return ResponseEntity.ok(Boolean.FALSE);
         }
+    }
+
+    @GetMapping("/popp/{fnr}")
+    public ResponseEntity<List<String>> fetchFromPopp(@PathVariable String fnr) throws IOException {
+        List<String> data = poppDataExtractor.extractDataFromPOPP(fnr);
+        return ResponseEntity.ok(data);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/testdata/clear")

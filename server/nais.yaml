@@ -29,6 +29,10 @@ spec:
     enabled: true
     paths:
       - kvPath: "oracle/data/dev/creds/pen_q2-user"
-        mountPath: "/secrets/oracle"
+        mountPath: "/secrets/oracle/pen"
       - kvPath: "oracle/data/dev/config/pen_q2"
-        mountPath: "/secrets/db"
+        mountPath: "/secrets/db/pen"
+      - kvPath: "oracle/data/dev/creds/popp_q2-user"
+        mountPath: "/secrets/oracle/popp"
+      - kvPath: "oracle/data/dev/config/popp_q2"
+        mountPath: "/secrets/db/popp"
