@@ -1,0 +1,8 @@
+{
+  "scenarioId": "1",
+  "name": "AP2016 løpende",
+  "penFile": "pen.sql",
+  "poppFile": "popp.sql",
+  "personIdPen": 22332047,
+  "personIdPopp": 22341564
+}

@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 public class PrimaryKeySwapper {
 
-    public static String swapPrimaryKeysInSql(String sql) {
+    public static String swapPrimaryKeysInSql(String sql, String ... excludeId) {
         List<String> oldPrimaryKeys = getPrimaryKeys(sql);
-        removeExcludedIds(oldPrimaryKeys);
+        removeExcludedIds(oldPrimaryKeys, excludeId);
         List<String> newPrimaryKeys =
                 oldPrimaryKeys
                         .stream()
@@ -24,8 +24,11 @@ public class PrimaryKeySwapper {
         return StringUtils.replaceEach(sql, oldPrimaryKeys.toArray(new String[0]), newPrimaryKeys.toArray(new String[0]));
     }
 
-    private static void removeExcludedIds(List<String> primaryKeys) {
+    private static void removeExcludedIds(List<String> primaryKeys, String ... excludeId) {
         String[] ignoreCandidates = {"100000007","65885471","150003452"};
+
+        Arrays.stream(excludeId)
+                .forEach(i -> primaryKeys.remove(i));
         Arrays.stream(ignoreCandidates)
                 .forEach( i -> primaryKeys.remove(i));
     }

@@ -34,8 +34,10 @@ public class POPPDataExtractor {
             List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
             result.stream()
                     .map(map -> (String) map.entrySet().iterator().next().getValue())
+                    .map(value -> value.replace("''","null"))
                     .forEach(allInserts::add);
         }
+        allInserts.stream().forEach(logger::info);
         logger.info("Completed extraction of data from POPP");
         return allInserts;
     }

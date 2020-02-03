@@ -8,6 +8,7 @@ import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseExceptio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,10 @@ public class OracleRepository {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    @Qualifier("poppJdbcTemplate")
+    JdbcTemplate jdbcTemplatePopp;
 
     public void executeQuery(String query) {
         logger.info(query);
@@ -50,6 +55,10 @@ public class OracleRepository {
         jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_numeric_characters=\", \"");
+
+        jdbcTemplatePopp.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplatePopp.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplatePopp.execute("alter session set nls_numeric_characters=\", \"");
         //jdbcTemplate.execute("alter session set NLS_NUMERIC_CHARACTERS = '.';");
     }
 
@@ -58,7 +67,7 @@ public class OracleRepository {
         ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
         List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
         });
-        String server = SecretUtil.readSecret("db/jdbc_url");
+        String server = SecretUtil.readSecret("db/pen/jdbc_url");
         return isWhitelistedDatabase(server, databaseWhiteList);
     }
 

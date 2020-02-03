@@ -1,0 +1,8 @@
+{
+  "scenarioId": "2",
+  "name": "Uføretrygd løpende",
+  "penFile": "pen.sql",
+  "poppFile": "popp.sql",
+  "personIdPen": 22333252,
+  "personIdPopp": 22333252
+}

@@ -100,6 +100,7 @@ public class TestdataController {
 
     @GetMapping("/popp/{fnr}")
     public ResponseEntity<List<String>> fetchFromPopp(@PathVariable String fnr) throws IOException {
+        oracleRepository.alterSession();
         List<String> data = poppDataExtractor.extractDataFromPOPP(fnr);
         return ResponseEntity.ok(data);
     }
