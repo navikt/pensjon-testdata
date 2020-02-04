@@ -1,7 +1,6 @@
 version: '3.7'
 services:
-
-  testdata-server:
+  pensjon-testdata-server:
     build:
       context: server
       dockerfile: Dockerfile
@@ -14,7 +13,7 @@ services:
       - backend
       - frontend
 
-  testdata-client:
+  pensjon-testdata-client:
     build:
       context: client
       dockerfile: Dockerfile
@@ -24,7 +23,7 @@ services:
       - "9090:80"
     restart: always
     depends_on:
-      - testdata-server
+      - pensjon-testdata-server
     networks:
       - frontend
 
