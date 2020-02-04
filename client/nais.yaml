@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: docker.adeo.no:5000/navikt/pensjon-testdata-client:IMAGE_VERSION
+  image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
   port: 80
   ingresses:
     - https://ptb.nais.preprod.local
@@ -24,3 +24,6 @@ spec:
     failureThreshold: 20
   prometheus:
     enabled: true
+  env:
+    - name: "SERVER_HOSTNAME"
+      value: "https://pensjon-testdata-server.nais.preprod.local"

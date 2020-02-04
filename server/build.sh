@@ -4,7 +4,7 @@ echo "Angi versjon: "
 read version
 
 
-imagename="docker.adeo.no:5000/navikt/pensjon-testdata-server:$version"
+imagename="repo.adeo.no:5443/navikt/pensjon-testdata-server:$version"
 
 echo $imagename
 
