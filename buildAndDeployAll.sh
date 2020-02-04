@@ -1,14 +1,16 @@
 #!/bin/bash
 
 cd ./server/
-serverVersion=`eval "(cat VERSION)" | awk '{print $1+1}'`
+cat VERSION | awk '{print $1+1}' > VERSION
+serverVersion=`cat VERSION`
 imagenameServer="repo.adeo.no:5443/navikt/pensjon-testdata-server:$serverVersion"
 echo "Bumped $imagenameServer version to: $serverVersion"
 docker build -t $imagenameServer .
 docker push $imagenameServer
 
 cd ../client/
-clientVersion=`eval "(cat VERSION)" | awk '{print $1+1}'`
+cat VERSION | awk '{print $1+1}' > VERSION
+clientVersion=`cat VERSION`
 imagenameClient="repo.adeo.no:5443/navikt/pensjon-testdata-client:$clientVersion"
 echo "Bumped $imagenameClient version to: $serverVersion"
 docker build -t $imagenameClient .
