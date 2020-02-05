@@ -16,13 +16,13 @@ Applikasjonen kjøres med `npm run start`
 
 Applikasjonen er tilgjengelig på http://localhost:3000/
 
-###### Docker (localhost) - docker-compose
+#### Docker (localhost) - docker-compose
 Kjør `docker-compose up --build`
 
 Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
 Applikasjonen er tilgjengelig på http://localhost:9090/
 
-###### Release
+#### Release
 Kjør `build-and-deploy-all.sh` som bygger, pusher til repo.adeo.no og legger ut nye versjoner av server 
 og client i default nais cluster (koblet mot Q2) 
 
