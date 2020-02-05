@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.repository;
+package no.nav.pensjon.testdata.repository.support;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PrimaryKeySwapper {
 
@@ -18,19 +19,15 @@ public class PrimaryKeySwapper {
                         .map(PrimaryKeySwapper::generateNewPrimaryKey)
                         .collect(Collectors.toList());
 
-
-
-
         return StringUtils.replaceEach(sql, oldPrimaryKeys.toArray(new String[0]), newPrimaryKeys.toArray(new String[0]));
     }
 
     private static void removeExcludedIds(List<String> primaryKeys, String ... excludeId) {
-        String[] ignoreCandidates = {"100000007","65885471","150003452"};
-
-        Arrays.stream(excludeId)
-                .forEach(i -> primaryKeys.remove(i));
-        Arrays.stream(ignoreCandidates)
-                .forEach( i -> primaryKeys.remove(i));
+        String[] penOrgEnhetIds = {"100000007","65885471","150003452"};
+        Stream.concat(
+                Arrays.stream(penOrgEnhetIds),
+                Arrays.stream(excludeId))
+                .forEach(key -> primaryKeys.remove(key));
     }
 
     private static List<String> getPrimaryKeys(String sql) {

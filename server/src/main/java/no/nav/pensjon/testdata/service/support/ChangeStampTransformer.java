@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.service;
+package no.nav.pensjon.testdata.service.support;
 
 public class ChangeStampTransformer {
     public static String execute(String sql) {

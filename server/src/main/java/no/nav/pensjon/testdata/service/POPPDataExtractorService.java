@@ -1,22 +1,26 @@
 package no.nav.pensjon.testdata.service;
 
 import no.nav.pensjon.testdata.repository.FileRepository;
+import no.nav.pensjon.testdata.repository.OracleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
-public class POPPDataExtractor {
+@Service
+public class POPPDataExtractorService {
 
-    Logger logger = LoggerFactory.getLogger(POPPDataExtractor.class);
+    Logger logger = LoggerFactory.getLogger(POPPDataExtractorService.class);
+
+    @Autowired
+    OracleRepository oracleRepository;
 
     @Autowired
     @Qualifier("poppJdbcTemplate")
@@ -27,7 +31,8 @@ public class POPPDataExtractor {
 
     public List<String> extractDataFromPOPP(String fnr) throws IOException {
         logger.info("Started to extract data from POPP");
-        List<String> sqlQueryList = fileRepository.readSqlStatements("/popp-extract-data");
+        oracleRepository.alterSession();
+        List<String> sqlQueryList = fileRepository.readSqlFile("/popp-extract-data");
         List<String> allInserts = new ArrayList<>();
         for (String initialSql : sqlQueryList) {
             String sql = initialSql.replace("{fnr}", fnr);

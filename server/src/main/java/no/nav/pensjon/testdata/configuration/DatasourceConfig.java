@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.configuration;
 
+import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.jdbc.DataSourceBuilder;

@@ -35,3 +35,5 @@ spec:
         mountPath: "/secrets/oracle/popp"
       - kvPath: "oracle/data/dev/config/popp_q2"
         mountPath: "/secrets/db/popp"
+      - kvPath: "serviceuser/data/dev/srvpensjon"
+        mountPath: "/secrets/srvpensjon"

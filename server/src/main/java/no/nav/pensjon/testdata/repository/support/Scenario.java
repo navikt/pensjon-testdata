@@ -1,17 +1,17 @@
-package no.nav.pensjon.testdata.service;
+package no.nav.pensjon.testdata.repository.support;
 
 import java.io.File;
 
 public class Scenario {
 
-    String scenarioId;
-    String name;
-    String penFile;
-    String poppFile;
-    String personIdPen;
-    String personIdPopp;
-
-    File poppFileSrc;
+    private String scenarioId;
+    private String name;
+    private String penFile;
+    private String poppFile;
+    private String personIdPen;
+    private String personIdPopp;
+    private File poppFileSrc;
+    private File penFileSrc;
 
     public File getPenFileSrc() {
         return penFileSrc;
@@ -20,8 +20,6 @@ public class Scenario {
     public void setPenFileSrc(File penFileSrc) {
         this.penFileSrc = penFileSrc;
     }
-
-    File penFileSrc;
 
     public String getScenarioId() {
         return scenarioId;

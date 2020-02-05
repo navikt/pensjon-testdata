@@ -38,12 +38,12 @@ public class OracleRepository {
     }
 
     @Transactional
-    public void clearDatabase() throws IOException, NonWhitelistedDatabaseException, SQLException {
+    public void clearDatabase() throws IOException, NonWhitelistedDatabaseException {
         alterSession();
         if (canDatabaseBeCleared()) {
             logger.info("Removing all data from database");
 
-            List<String> sql = fileRepository.readSqlStatements("/unload");
+            List<String> sql = fileRepository.readSqlFile("/unload");
             sql.forEach(query -> jdbcTemplate.execute(query));
             logger.info("All data from database cleared");
         } else {
@@ -59,7 +59,6 @@ public class OracleRepository {
         jdbcTemplatePopp.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplatePopp.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplatePopp.execute("alter session set nls_numeric_characters=\", \"");
-        //jdbcTemplate.execute("alter session set NLS_NUMERIC_CHARACTERS = '.';");
     }
 
     public boolean canDatabaseBeCleared() throws IOException {

@@ -1,7 +1,9 @@
 package no.nav.pensjon.testdata.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.pensjon.testdata.service.Scenario;
+import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
+import no.nav.pensjon.testdata.repository.support.Scenario;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +20,11 @@ import java.util.regex.Pattern;
 @Repository
 public class FileRepository {
 
-    public List<String> readSqlStatements(String scenario) throws  IOException {
-        ClassPathResource resource = new ClassPathResource(scenario + ".sql");
+    @Autowired
+    private ScenarioRepository scenarioRepository;
+
+    public List<String> readSqlFile(String sqlFile) throws  IOException {
+        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
         Path path = Paths.get(resource.getFile().getPath());
         if (Files.exists(path)) {
             String allSql = new String(Files.readAllBytes(path));
@@ -30,7 +35,7 @@ public class FileRepository {
         }
     }
 
-    public List<String> readSqlStatements(File scenario, String ... excludeId) throws  IOException {
+    public List<String> readSqlFile(File scenario, String ... excludeId) throws  IOException {
         if (Files.exists(scenario.toPath())) {
             String allSql = new String(Files.readAllBytes(scenario.toPath()));
             String allSqlWithNewPrimaryKeys = PrimaryKeySwapper.swapPrimaryKeysInSql(allSql, excludeId);
@@ -53,27 +58,17 @@ public class FileRepository {
         return allScenarios;
     }
 
-    public Set<String> getTestcaseHandlebars(String scenario) throws IOException {
-        ClassPathResource resource = new ClassPathResource("/scenario/");
-        ObjectMapper objectMapper = new ObjectMapper();
-        Path path = Paths.get(resource.getFile().getPath());
-        for (File file : resource.getFile().listFiles()) {
-            if (file.isDirectory()) {
-                Scenario config = objectMapper.readValue(Paths.get(file.toString(),"scenario.json").toFile(), Scenario.class);
-                if (config.getName().equals(scenario)) {
-                    Set<String> allHandlebars = new HashSet<>();
-                    for (File fileInScenario : file.listFiles()) {
-                        if (fileInScenario.getName().contains(".sql")) {
-                            String allSql = new String(Files.readAllBytes(fileInScenario.toPath()));
-                            Set<String> handlebars = getHandlebars(allSql);
-                            allHandlebars.addAll(handlebars);
-                        }
-                    }
-                    return allHandlebars;
-                }
-            }
-        }
-        throw new FileNotFoundException("Could not find SQL file: " + path);
+    public Set<String> getTestcaseHandlebars(String scenarioId) throws IOException {
+        Scenario scenario = scenarioRepository.getScenario(scenarioId);
+
+        Set<String> allHandlebars = new HashSet<>();
+        String penSQL = new String(Files.readAllBytes(scenario.getPenFileSrc().toPath()));
+        String poppSQL = new String(Files.readAllBytes(scenario.getPoppFileSrc().toPath()));
+
+        allHandlebars.addAll(getHandlebars(penSQL));
+        allHandlebars.addAll(getHandlebars(poppSQL));
+
+        return allHandlebars;
     }
 
     private static Set<String> getHandlebars(String sql) {

@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.service;
+package no.nav.pensjon.testdata.service.support;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-class HandlebarTransformer {
+public class HandlebarTransformer {
 
     public static String execute(String sql, Map<String,String> handlebars) {
         if (handlebars != null && handlebars.size() > 0) {
