@@ -10,6 +10,9 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class OpptjeningConsumerBean {
 
@@ -47,8 +50,24 @@ public class OpptjeningConsumerBean {
                             "Person ikke funnet i POPP ", e);
                 }
             }
-            throw new RuntimeException("Unexpected error while trying to save InntektListe to POPP, with message: " + e.getMessage(), e);
+            String functionalError = getFunctionalError(e.getResponseBodyAsString());
+
+            if (functionalError != null) {
+                throw new RuntimeException(functionalError, e);
+            } else {
+                throw new RuntimeException("Unexpected error while trying to save InntektListe to POPP", e);
+            }
+
+
         }
         return response.getStatusCodeValue() == 200;
+    }
+
+    private String getFunctionalError(String body) {
+        Matcher matcher = Pattern.compile("message=(?<msg>.+?),+.+?]").matcher(body);
+        while(matcher.find()) {
+            return matcher.group("msg");
+        }
+        return null;
     }
 }

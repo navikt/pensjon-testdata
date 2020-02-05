@@ -68,26 +68,34 @@ const OpprettInntekt = () => {
         }
 
         setIsProcessing(true);
-        callURL(
-            '/api/inntekt',
-            'POST',
-            {
+        execute();
+    };
+
+    const execute = async () => {
+        const response = await fetch('/api/inntekt', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 fnr: fnr,
                 fomAar: fomAar,
                 tomAar: tomAar,
                 belop: belop
-            },
-            () => {
-                snackbarApi.openSnackbar('Inntekter fom: ' + fomAar + ' tom: ' + tomAar + ' lagret', 'success');
-            },
-            () => {
-                snackbarApi.openSnackbar('Lagring av inntekt feilet', 'error');
-            }
-        ).finally(() => {
-                setIsProcessing(false);
-            }
-        );
-    };
+            })
+        });
+
+        const json = await response.json();
+
+        if (response.status === 200) {
+            snackbarApi.openSnackbar('Inntekter fom: ' + fomAar + ' tom: ' + tomAar + ' lagret', 'success');
+        } else {
+            snackbarApi.openSnackbar('Lagring av inntekt feilet: ' + json.message, 'error');
+            console.log(json.message);
+        }
+        setIsProcessing(false);
+    }
 
     return (
         <Card className={classes.card} variant="outlined">
