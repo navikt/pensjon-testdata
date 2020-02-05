@@ -1,57 +1,9 @@
 <settings>
-    <servers>
-        <server>
-            <id>m2internal</id>
-            <username>deployment</username>
-            <password>d3pl0y</password>
-        </server>
-        <server>
-            <id>m2snapshot</id>
-            <username>deployment</username>
-            <password>d3pl0y</password>
-        </server>
-    </servers>
-
     <mirrors>
         <mirror>
-            <id>Nexus NAV Repository Group</id>
-            <mirrorOf>external:*,!public-snapshots</mirrorOf>
-            <url>http://maven.adeo.no/nexus/content/groups/public</url>
+            <id>NAV internal Nexus</id>
+            <mirrorOf>central</mirrorOf>
+            <url>https://repo.adeo.no/repository/maven-public</url>
         </mirror>
     </mirrors>
-
-    <profiles>
-        <profile>
-            <id>default</id>
-            <repositories>
-                <repository>
-                    <id>public-snapshots</id>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                    <url>http://maven.adeo.no/nexus/content/groups/public-snapshots</url>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>public-snapshots</id>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                    <url>http://maven.adeo.no/nexus/content/groups/public-snapshots</url>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-    </profiles>
-    <activeProfiles>
-        <activeProfile>default</activeProfile>
-    </activeProfiles>
 </settings>
