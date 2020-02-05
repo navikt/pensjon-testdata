@@ -16,7 +16,7 @@ Applikasjonen kjøres med `npm run start`
 
 Applikasjonen er tilgjengelig på http://localhost:3000/
 
-#### Docker (localhost) - docker-compose
+#### Docker (localhost)
 Kjør `docker-compose up --build`
 
 Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
