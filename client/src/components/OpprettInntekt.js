@@ -30,7 +30,7 @@ const OpprettInntekt = () => {
     const [fnr, setFnr] = useState('');
     const [fomAar, setFomAar] = useState();
     const [tomAar, setTomAar] = useState();
-    const [belop, setBelop] = useState(0);
+    const [belop, setBelop] = useState(null);
 
 
     const [fnrValidationText, setFnrValidationText] = useState('');
@@ -62,8 +62,12 @@ const OpprettInntekt = () => {
             setTomAarValidationText("Må være årstall")
             return;
         }
+        if (fomAar > tomAar) {
+            setTomAarValidationText("Må være senere eller lik fom år.")
+            return;
+        }
         if (!/^\d+$/.test(belop)) {
-            setBelopValidationText("Kan bare inneholde tall")
+            setBelopValidationText("Må inneholde tall")
             return;
         }
 
