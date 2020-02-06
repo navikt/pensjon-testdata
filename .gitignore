@@ -54,3 +54,7 @@ secrets/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#jrebel
+rebel.xml
+
