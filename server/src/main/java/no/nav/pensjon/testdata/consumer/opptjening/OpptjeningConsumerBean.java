@@ -4,6 +4,7 @@ import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
@@ -23,7 +24,8 @@ public class OpptjeningConsumerBean {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private String endpoint = "https://wasapp-q2.adeo.no/popp-ws/api/inntekt";
+    @Value("${popp.inntekt.endpoint.url}")
+    private String endpoint;
 
     public Boolean lagreInntekt(String body) {
         HttpEntity restRequest;

@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 
 public class SecretUtil {
     public static String readSecret(String path) throws IOException {
-        String basedir = System.getenv("secret.basedir");
+        String basedir = System.getenv().getOrDefault("SECRET_BASEDIR", System.getProperty("secret.basedir"));
 
         Path basepath;
         if (!StringUtils.isEmpty(basedir)) {

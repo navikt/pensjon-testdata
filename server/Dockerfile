@@ -33,7 +33,7 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
-ENV secret.basedir /
+ENV SECRET_BASEDIR /
 
 ENTRYPOINT ["java","-cp","app:app/lib/*","no.nav.pensjon.testdata.TestdataApplication"]
 

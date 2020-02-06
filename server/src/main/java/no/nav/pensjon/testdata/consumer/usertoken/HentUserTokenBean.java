@@ -5,6 +5,7 @@ import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.consumer.usertoken.support.UserToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -17,7 +18,9 @@ import java.util.Base64;
 
 @Service
 public class HentUserTokenBean {
-    private String endpointUrl = "https://security-token-service.nais.preprod.local";
+
+    @Value("${sts.endpoint.url}")
+    private String endpointUrl;
     private String username;
     private String password;
 

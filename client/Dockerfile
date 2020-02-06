@@ -21,7 +21,8 @@ COPY --from=build /app/build /var/www
 COPY nginx.conf /etc/nginx/nginx.conf
 ADD dumb-init /
 COPY start.sh /start.sh
-#ENV SERVER_HOSTNAME $SERVER_HOSTNAME
+RUN dos2unix /start.sh
+
 EXPOSE 80
 
 CMD ["/dumb-init", "/start.sh"]
