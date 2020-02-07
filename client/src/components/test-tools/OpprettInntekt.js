@@ -34,12 +34,10 @@ const OpprettInntekt = () => {
     const [belop, setBelop] = useState(null);
     const [nedjusteringGrunnbelop, setNedjusteringGrunnbelop] = useState(true);
 
-
     const [fnrValidationText, setFnrValidationText] = useState('');
     const [fomAarValidationText, setFomAarValidationText] = useState('');
     const [tomAarValidationText, setTomAarValidationText] = useState('');
     const [belopValidationText, setBelopValidationText] = useState('');
-
 
     const snackbarApi = React.useContext(SnackbarContext);
 
@@ -54,30 +52,28 @@ const OpprettInntekt = () => {
         resetValidation();
         if (!/^\d{11}$/.test(fnr.trim())) {
             setFnrValidationText("Må inneholde fnr på 11 siffer")
-            return;
         }
         if (!/^\d{4}$/.test(fomAar)) {
             setFomAarValidationText("Må være årstall")
-            return;
         }
         if (!/^\d{4}$/.test(tomAar)) {
             setTomAarValidationText("Må være årstall")
-            return;
         }
         if (fomAar > tomAar) {
             setTomAarValidationText("Må være senere eller lik fom år.")
-            return;
         }
         if (!/^\d+$/.test(belop)) {
             setBelopValidationText("Må inneholde tall")
-            return;
         }
-
-        setIsProcessing(true);
-        execute();
+        if (isValidationError(fnrValidationText || isValidationError(fomAarValidationText) || isValidationError(tomAarValidationText) || isValidationError(belopValidationText))) {
+            //NOOP
+        } else {
+            execute();
+        }
     };
 
     const execute = async () => {
+        setIsProcessing(true);
         const response = await fetch('/api/inntekt', {
             method: 'POST',
             headers: {
@@ -104,6 +100,10 @@ const OpprettInntekt = () => {
         setIsProcessing(false);
     }
 
+    const isValidationError = (value) => {
+        return value.length !== 0
+    }
+
     return (
         <Card className={classes.card} variant="outlined">
             <CardHeader title="Lagre inntekter"/>
@@ -126,29 +126,37 @@ const OpprettInntekt = () => {
                            key="fnr"
                            variant="outlined"
                            helperText={fnrValidationText}
-                           onChange={e => setFnr(e.target.value)}/>
+                           onChange={e => setFnr(e.target.value)}
+                           error={isValidationError(fnrValidationText)}
+                />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Fom år"
                            name="fomAar"
                            key="fomAar"
                            variant="outlined"
                            helperText={fomAarValidationText}
-                           onChange={e => setFomAar(e.target.value)}/>
+                           onChange={e => setFomAar(e.target.value)}
+                           error={isValidationError(fomAarValidationText)}
+                />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Tom år"
                            name="tomAar"
                            key="tomAar"
                            variant="outlined"
                            helperText={tomAarValidationText}
-                           onChange={e => setTomAar(e.target.value)}/>
+                           onChange={e => setTomAar(e.target.value)}
+                           error={isValidationError(tomAarValidationText)}
+                />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Beløp"
                            name="belop"
                            key="belop"
                            variant="outlined"
                            helperText={belopValidationText}
-                           onChange={e => setBelop(e.target.value)}/><br/>
-
+                           onChange={e => setBelop(e.target.value)}
+                           error={isValidationError(belopValidationText)}
+                />
+                <br/>
                 {nedjusteringGrunnbelop === false ? "Beløp angis som fast årsbeløp for alle år." : "Beløp angis som årsbeløp i dagens kroneverdi, og vil nedjusteres basert på snitt grunnbeløp i inntektsåret."}
 
             </CardContent>
@@ -162,6 +170,5 @@ const OpprettInntekt = () => {
         </Card>
     );
 }
-
 
 export default OpprettInntekt

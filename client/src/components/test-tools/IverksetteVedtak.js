@@ -29,26 +29,37 @@ const IverksetteVedtak = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [vedtakId, setVedtakId] = useState('');
 
+    const [vedtakIdValidationText, setVedtakIdValidationText] = useState('');
+
     const snackbarApi = React.useContext(SnackbarContext);
 
+    const resetValidation = () => {
+        setVedtakIdValidationText("");
+    }
+
     const iverksetteVedtak = () => {
-        setIsProcessing(true);
-        callURL(
-            '/api/iverksett',
-            'POST',
-            {
-                vedtakId: vedtakId
-            },
-            () => {
-                snackbarApi.openSnackbar('Vedtak iverksatt', 'success');
-            },
-            () => {
-                snackbarApi.openSnackbar('Iverksetting feilet!', 'error');
-            }
-        ).finally(() => {
-                setIsProcessing(false);
-            }
-        );
+        resetValidation();
+        if (!/^\d+$/.test(vedtakId)) {
+            setVedtakIdValidationText("Må inneholde tall")
+        } else {
+            setIsProcessing(true);
+            callURL(
+                '/api/iverksett',
+                'POST',
+                {
+                    vedtakId: vedtakId
+                },
+                () => {
+                    snackbarApi.openSnackbar('Vedtak iverksatt', 'success');
+                },
+                () => {
+                    snackbarApi.openSnackbar('Iverksetting feilet!', 'error');
+                }
+            ).finally(() => {
+                    setIsProcessing(false);
+                }
+            );
+        }
     };
 
     return (
@@ -60,13 +71,17 @@ const IverksetteVedtak = () => {
                            name="vedtakid"
                            key="vedtakid"
                            variant="outlined"
-                           onChange={e => setVedtakId(e.target.value)}/>
+                           onChange={e => setVedtakId(e.target.value)}
+                           helperText={vedtakIdValidationText}
+                           error={vedtakIdValidationText.length !== 0}
+                />
+
             </CardContent>
             <CardActions>
                 <Button onClick={() => iverksetteVedtak()}
                         variant="contained"
                         disabled={isProcessing ? true : false}
-                        startIcon={<FlashOnIcon/>} >
+                        startIcon={<FlashOnIcon/>}>
                     Iverksett
                 </Button>
 
