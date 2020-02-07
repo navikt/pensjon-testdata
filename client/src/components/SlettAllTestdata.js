@@ -1,18 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useState} from 'react';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import {SnackbarContext} from "./Snackbar";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import {makeStyles} from '@material-ui/core/styles';
+import FingerprintIcon from "@material-ui/icons/Fingerprint";
+import {callURL} from "../util/rest";
 import {Fareknapp} from "nav-frontend-knapper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
-import {SnackbarContext} from "./Snackbar";
-import {callURL} from "../util/rest";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
     card: {
@@ -27,36 +29,20 @@ const useStyles = makeStyles({
     },
 });
 
-const SlettTestdata = () => {
+const SlettAllTestdata = () => {
     const classes = useStyles();
-    const [allowedClearDB, setallowedClearDB] = React.useState(false);
-    const allowedToClearDatabase = async function () {
-        const response = await fetch('/api/testdata/canclear/', {method: 'GET'});
-        const allowed = await response.json();
-        setallowedClearDB(JSON.parse(allowed));
-    };
-
-    useEffect(() => {
-        allowedToClearDatabase();
-    }, []);
-
     return (
-        <div>
-            {allowedClearDB ?
-                <Card className={classes.card} variant="outlined">
-                    <CardHeader title="Fjern all testdata fra database"/>
-                    <CardContent>
-                        Sletter alt innhold i database sett bort ifra kodeverk.
-                    </CardContent>
-                    <CardActions disableSpacing>
-                        <SlettDialog/>
-                    </CardActions>
-                </Card>
-                :
-                ""}
-        </div>
+        <Card className={classes.card} variant="outlined">
+            <CardHeader title="Attestere vedtak"/>
+            <CardContent>
+            Sletter allt innholder fra database bortsett fra kodeverk.
+            </CardContent>
+            <CardActions disableSpacing>
+                <SlettDialog/>
+            </CardActions>
+        </Card>
     );
-};
+}
 
 const SlettDialog = () => {
     const [open, setOpen] = React.useState(false);
@@ -116,5 +102,4 @@ const SlettDialog = () => {
     );
 }
 
-export default SlettTestdata
-
+export default SlettAllTestdata

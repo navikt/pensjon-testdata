@@ -6,6 +6,7 @@ import AttestereVedtak from "./AttestereVedtak";
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from '@material-ui/core/styles';
 import OpprettInntekt from "./OpprettInntekt";
+import SlettTestdata from "./SlettTestdata";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,6 +40,9 @@ const TestVerktoy = () => {
                 </Grid>
                 <Grid item >
                     <OpprettInntekt/>
+                </Grid>
+                <Grid item >
+                    <SlettTestdata/>
                 </Grid>
             </Grid>
         </div>
