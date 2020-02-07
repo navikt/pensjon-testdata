@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.controller;
 
+import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
 import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
 import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
@@ -35,6 +36,9 @@ public class TestdataController {
 
     @Autowired
     FileRepository fileRepository;
+
+    @Autowired
+    GrunnbelopConsumerBean grunnbelopConsumer;
 
     @RequestMapping(method = RequestMethod.POST, path = "/testdata")
     public ResponseEntity createTestdata(@RequestBody CreateTestdataRequest request) {

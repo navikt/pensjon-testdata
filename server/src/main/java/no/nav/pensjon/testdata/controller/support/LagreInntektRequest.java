@@ -1,10 +1,11 @@
 package no.nav.pensjon.testdata.controller.support;
 
 public class LagreInntektRequest {
-    String fnr;
-    Integer fomAar;
-    Integer tomAar;
-    Long belop;
+    private String fnr;
+    private Integer fomAar;
+    private Integer tomAar;
+    private Long belop;
+    boolean redusertMedGrunnbelop;
 
     public String getFnr() {
         return fnr;
@@ -38,5 +39,11 @@ public class LagreInntektRequest {
         this.belop = belop;
     }
 
+    public boolean isRedusertMedGrunnbelop() {
+        return redusertMedGrunnbelop;
+    }
 
+    public void setRedusertMedGrunnbelop(boolean redusertMedGrunnbelop) {
+        this.redusertMedGrunnbelop = redusertMedGrunnbelop;
+    }
 }

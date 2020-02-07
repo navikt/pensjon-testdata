@@ -8,7 +8,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
-import {callURL} from "../util/rest";
 
 const useStyles = makeStyles({
     card: {
@@ -133,6 +132,7 @@ const OpprettInntekt = () => {
                            variant="outlined"
                            helperText={belopValidationText}
                            onChange={e => setBelop(e.target.value)}/>
+
             </CardContent>
             <CardActions disableSpacing>
                 <Button onClick={() => lagreInntekt()}
