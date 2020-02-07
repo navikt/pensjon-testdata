@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {SnackbarContext} from "./Snackbar";
+import {SnackbarContext} from "../support/Snackbar";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import CircularProgress from "@material-ui/core/CircularProgress";
-import {callURL} from "../util/rest";
+import {callURL} from "../../util/rest";
 
 
 const useStyles = makeStyles({

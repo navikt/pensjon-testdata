@@ -13,7 +13,7 @@ import InputIcon from '@material-ui/icons/Input';
 import BuildIcon from '@material-ui/icons/Build';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import {SnackbarContextProvider} from "./components/Snackbar";
+import {SnackbarContextProvider} from "./components/support/Snackbar";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 

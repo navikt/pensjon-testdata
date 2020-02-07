@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {SnackbarContext} from "./Snackbar";
+import {SnackbarContext} from "../support/Snackbar";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";

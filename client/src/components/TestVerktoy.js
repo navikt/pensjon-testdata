@@ -1,12 +1,12 @@
 import React from 'react';
-import FlyttSak from "./FlyttSak";
-import OpprettPerson from "./OpprettPerson";
-import IverksetteVedtak from "./IverksetteVedtak";
-import AttestereVedtak from "./AttestereVedtak";
+import FlyttSak from "./test-tools/FlyttSak";
+import OpprettPerson from "./test-tools/OpprettPerson";
+import IverksetteVedtak from "./test-tools/IverksetteVedtak";
+import AttestereVedtak from "./test-tools/AttestereVedtak";
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from '@material-ui/core/styles';
-import OpprettInntekt from "./OpprettInntekt";
-import SlettTestdata from "./SlettTestdata";
+import OpprettInntekt from "./test-tools/OpprettInntekt";
+import SlettTestdata from "./test-tools/SlettTestdata";
 
 const useStyles = makeStyles(theme => ({
     root: {
