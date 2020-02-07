@@ -8,6 +8,8 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 const useStyles = makeStyles({
     card: {
@@ -30,6 +32,7 @@ const OpprettInntekt = () => {
     const [fomAar, setFomAar] = useState();
     const [tomAar, setTomAar] = useState();
     const [belop, setBelop] = useState(null);
+    const [nedjusteringGrunnbelop, setNedjusteringGrunnbelop] = useState(true);
 
 
     const [fnrValidationText, setFnrValidationText] = useState('');
@@ -85,7 +88,8 @@ const OpprettInntekt = () => {
                 fnr: fnr,
                 fomAar: fomAar,
                 tomAar: tomAar,
-                belop: belop
+                belop: belop,
+                redusertMedGrunnbelop: nedjusteringGrunnbelop
             })
         });
 
@@ -104,6 +108,18 @@ const OpprettInntekt = () => {
         <Card className={classes.card} variant="outlined">
             <CardHeader title="Lagre inntekter"/>
             <CardContent>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            name={"grunnbelop"}
+                            checked={nedjusteringGrunnbelop}
+                            onChange={(e) => setNedjusteringGrunnbelop(e.target.checked)}
+                            color="primary"
+                            value={"nedjusteringGrunnbelop"}
+                        />
+                    }
+                    label="Nedjuster med grunnbelop"
+                />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Fødselsnummer"
                            name="fnr"
@@ -131,7 +147,9 @@ const OpprettInntekt = () => {
                            key="belop"
                            variant="outlined"
                            helperText={belopValidationText}
-                           onChange={e => setBelop(e.target.value)}/>
+                           onChange={e => setBelop(e.target.value)}/><br/>
+
+                {nedjusteringGrunnbelop === false ? "Beløp angis som fast årsbeløp for alle år." : "Beløp angis som årsbeløp i dagens kroneverdi, og vil nedjusteres basert på snitt grunnbeløp i inntektsåret."}
 
             </CardContent>
             <CardActions disableSpacing>
@@ -139,7 +157,7 @@ const OpprettInntekt = () => {
                         variant="contained"
                         disabled={isProcessing ? true : false}
                         startIcon={<CreditCardIcon/>}>
-                    Lagre inntekt</Button>
+                    Lagre inntekter</Button>
             </CardActions>
         </Card>
     );

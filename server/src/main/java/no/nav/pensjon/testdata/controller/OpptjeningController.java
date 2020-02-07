@@ -9,6 +9,8 @@ import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
 import no.nav.pensjon.testdata.service.POPPDataExtractorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.Map;
 @RestController
 
 public class OpptjeningController {
+
+    Logger logger = LoggerFactory.getLogger(OpptjeningController.class);
 
     @Autowired
     private OpptjeningConsumerBean opptjeningConsumerBean;
@@ -48,7 +52,8 @@ public class OpptjeningController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/inntekt")
     public ResponseEntity lagreInntekt(@RequestBody LagreInntektRequest request) throws IOException {
-        for (int aar = request.getFomAar(); aar<= request.getTomAar(); aar++ ) {
+        logger.info("Lagrer inntekt: " + request.toString());
+        for (int aar = request.getFomAar(); aar <= request.getTomAar(); aar++) {
             Inntekt inntekt = fastsettInntekt(request, aar);
 
             LagreInntektPoppRequest poppRequest = new LagreInntektPoppRequest(inntekt);
@@ -59,12 +64,19 @@ public class OpptjeningController {
     }
 
     private Inntekt fastsettInntekt(@RequestBody LagreInntektRequest request, int aar) throws IOException {
-        if (request.isRedusertMedGrunnbelop()) {
+        if (!request.isRedusertMedGrunnbelop()) {
             return new Inntekt(request.getFnr(), aar, request.getBelop(), "INN_LON");
         } else {
-            Map<Integer,Long> grunnbelop = grunnbelopConsumerBean.hentVeietGrunnbelop();
+            Map<Integer, Long> grunnbelop = grunnbelopConsumerBean.hentVeietGrunnbelop();
 
-             int nyInntekt = Math.round((grunnbelop.get(aar) / GRUNNBELOP_2019) * request.getBelop());
+            float faktor = (float) grunnbelop.get(aar) / GRUNNBELOP_2019;
+            int nyInntekt = Math.round(faktor * request.getBelop());
+
+            logger.info("Fastsetter inntekt for aar: "
+                    + aar + " med grunnbelop: "
+                    + grunnbelop.get(aar) + " Ny inntekt er: "
+                    + nyInntekt
+                    + " Formel= avrund(" + grunnbelop.get(aar) + "/" + GRUNNBELOP_2019 + ") * " + request.getBelop() + ")");
 
             return new Inntekt(request.getFnr(), aar, Long.valueOf(nyInntekt), "INN_LON");
         }

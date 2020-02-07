@@ -46,4 +46,8 @@ public class LagreInntektRequest {
     public void setRedusertMedGrunnbelop(boolean redusertMedGrunnbelop) {
         this.redusertMedGrunnbelop = redusertMedGrunnbelop;
     }
+
+    public String toString() {
+        return "Fom: " + fomAar + " Tom: " + tomAar + " Belop: " + belop + " Nedjustering: " + redusertMedGrunnbelop;
+    }
 }
