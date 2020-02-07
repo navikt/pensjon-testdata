@@ -9,6 +9,7 @@ Kjør `create-secrets-for-dev.sh` og erstatt innhold i underliggende filstruktur
 ###### Server
 Applikasjonen kjøres med `mvn spring-boot:run`
 Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
+Prometheus API er tilgjengelig på: http://localhost:8080/api/prometheus
 
 ###### Client
 Kjør først `npm install`
