@@ -1,5 +1,8 @@
 package no.nav.pensjon.testdata.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
 import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
@@ -24,6 +27,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@Api(tags = {"Testdata"})
+@SwaggerDefinition(tags = {
+        @Tag(name = "", description = "Endepunkter som gjennomfører behandling av testdata")
+})
 public class TestdataController {
 
     private final Logger logger = LoggerFactory.getLogger(TestdataController.class);
@@ -87,15 +94,6 @@ public class TestdataController {
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
 
-    }
-
-    @GetMapping("/testdata/canclear/")
-    public ResponseEntity<Boolean> canDbBeCleared() throws IOException {
-        if (oracleRepository.canDatabaseBeCleared()) {
-            return ResponseEntity.ok(Boolean.TRUE);
-        } else {
-            return ResponseEntity.ok(Boolean.FALSE);
-        }
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/testdata/clear")

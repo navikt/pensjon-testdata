@@ -3,6 +3,10 @@ package no.nav.pensjon.testdata.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.client.Counter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
@@ -21,7 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-
+@Api(tags = {"Opptjening"})
+@SwaggerDefinition(tags = {
+        @Tag(name = "", description = "Endepunkter som gjennomfører behandling av opptjening")
+})
 public class OpptjeningController {
 
     Logger logger = LoggerFactory.getLogger(OpptjeningController.class);
