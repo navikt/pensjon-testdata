@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - sts_endpoint_url=https://security-token-service.nais.preprod.local
-      - popp_inntekt_endpoint_url=https://wasapp-q2.adeo.no/popp-ws/api/inntekt
+      - popp_endpoint_url=https://wasapp-q2.adeo.no/popp-ws/api/inntekt
     volumes:
       - "${PWD}/server/secrets:/secrets"
     ports:

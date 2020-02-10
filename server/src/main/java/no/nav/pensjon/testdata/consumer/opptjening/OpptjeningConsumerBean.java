@@ -24,8 +24,8 @@ public class OpptjeningConsumerBean {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${popp.inntekt.endpoint.url}")
-    private String endpoint;
+    @Value("${popp.endpoint.url}")
+    private String poppEndpoint;
 
     public Boolean lagreInntekt(String body) {
         HttpEntity restRequest;
@@ -39,7 +39,7 @@ public class OpptjeningConsumerBean {
         restRequest = new HttpEntity<>(body, httpHeaders);
         try {
             response = restTemplate.exchange(
-                    UriComponentsBuilder.fromHttpUrl(endpoint).toUriString(),
+                    UriComponentsBuilder.fromHttpUrl(poppEndpoint +"/inntekt").toUriString(),
                     HttpMethod.POST,
                     restRequest,
                     String.class);
@@ -65,6 +65,39 @@ public class OpptjeningConsumerBean {
         return response.getStatusCodeValue() == 200;
     }
 
+    public Boolean lagrePerson(String fnr) {
+        HttpEntity restRequest;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Authorization", "Bearer " + hentUserTokenBean.fetch().getAccessToken());
+        httpHeaders.add("Nav-Call-Id", "pensjon-testdata");
+        httpHeaders.add("Nav-Consumer-Id", "pensjon-testdata");
+
+        httpHeaders.add("fnr", fnr);
+        ResponseEntity<String> response;
+
+        restRequest = new HttpEntity<>("", httpHeaders);
+        try {
+            response = restTemplate.exchange(
+                    UriComponentsBuilder.fromHttpUrl(poppEndpoint + "/person").toUriString(),
+                    HttpMethod.POST,
+                    restRequest,
+                    String.class);
+        } catch (RestClientResponseException e) {
+            if (e.getRawStatusCode() == 401) {
+                throw new RuntimeException("User is not authorized to use this service!", e);
+            }
+            String functionalError = getFunctionalError(e.getResponseBodyAsString());
+
+            if (functionalError != null) {
+                throw new RuntimeException(functionalError, e);
+            } else {
+                throw new RuntimeException("Unexpected error while trying to save Person to POPP", e);
+            }
+        }
+        return response.getStatusCodeValue() == 200;
+    }
+
     private String getFunctionalError(String body) {
         Matcher matcher = Pattern.compile("message=(?<msg>.+?),+.+?]").matcher(body);
         while(matcher.find()) {
@@ -72,4 +105,5 @@ public class OpptjeningConsumerBean {
         }
         return null;
     }
+
 }
