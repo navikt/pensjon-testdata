@@ -32,6 +32,10 @@ public class OracleRepository {
     @Qualifier("poppJdbcTemplate")
     JdbcTemplate jdbcTemplatePopp;
 
+    @Autowired
+    @Qualifier("samJdbcTemplate")
+    JdbcTemplate jdbcTemplateSam;
+
     public void executeQuery(String query) {
         logger.info(query);
         jdbcTemplate.execute(query);
@@ -59,6 +63,10 @@ public class OracleRepository {
         jdbcTemplatePopp.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplatePopp.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplatePopp.execute("alter session set nls_numeric_characters=\", \"");
+
+        jdbcTemplateSam.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateSam.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateSam.execute("alter session set nls_numeric_characters=\", \"");
     }
 
     public boolean canDatabaseBeCleared() throws IOException {

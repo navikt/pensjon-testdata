@@ -1,15 +1,28 @@
 package no.nav.pensjon.testdata.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
+import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
+import no.nav.pensjon.testdata.repository.OracleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.annotation.PostConstruct;
+import java.sql.Types;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -19,10 +32,134 @@ import java.util.List;
 })
 public class PersonController {
 
-    @RequestMapping(method = RequestMethod.POST, path = "/person")
-    public ResponseEntity<HttpStatus> opprettPerson(@RequestHeader("Nav-Call-Id") String callId, @RequestHeader("Nav-Consumer-Id") String consumerId, @RequestBody OpprettPersonRequest body) {
+    Logger logger = LoggerFactory.getLogger(PersonController.class);
 
+    @Autowired
+    private OpptjeningConsumerBean opptjeningConsumerBean;
+
+    @Autowired
+    private JdbcTemplate penJdbcTemplate;
+
+    @Autowired
+    @Qualifier("samJdbcTemplate")
+    private JdbcTemplate samJdbcTemplate;
+
+    @Autowired
+    private OracleRepository oracleRepository;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    private Counter dollyLagrePersonCounter;
+    private Counter dollyLagrePersonFailedCounter;
+
+    @PostConstruct
+    private void initCounters() {
+        dollyLagrePersonCounter = Counter
+                .builder("pensjon.testdata.lagret.person.fra.dolly.total")
+                .description("Person lagret til PEN, POPP og SAM")
+                .register(meterRegistry);
+        dollyLagrePersonFailedCounter = Counter
+                .builder("pensjon.testdata.lagret.person.fra.dolly.total")
+                .description("Lagring av person til PEN, POPP og SAM feilet!")
+                .register(meterRegistry);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/person")
+    @Transactional
+    public ResponseEntity<HttpStatus> opprettPerson(
+            @RequestHeader("Nav-Call-Id") String callId,
+            @RequestHeader("Nav-Consumer-Id") String consumerId,
+            @RequestBody OpprettPersonRequest body) {
+
+        oracleRepository.alterSession();
+
+        try {
+            createPenPerson(body);
+            createSamPerson(body);
+            opptjeningConsumerBean.lagrePerson(callId, consumerId, body.getFnr());
+            dollyLagrePersonCounter.increment();
+        } catch (Exception e) {
+            dollyLagrePersonFailedCounter.increment();
+            throw e;
+        }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private void createSamPerson(OpprettPersonRequest request) {
+        String personPreparedStatement = "INSERT INTO T_PERSON " +
+                "(FNR_FK, " +
+                "DATO_OPPRETTET, " +
+                "OPPRETTET_AV, " +
+                "DATO_ENDRET, " +
+                "ENDRET_AV, " +
+                "VERSJON) " +
+                "VALUES (?,?,?,?,?,?)";
+        
+        samJdbcTemplate.execute(personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setString(1, request.getFnr());
+            preparedStatement.setDate(2, getSqlDate(LocalDate.now().toEpochDay()));
+            preparedStatement.setString(3, "PENSJON-TESTDATA");
+            preparedStatement.setDate(4, getSqlDate(LocalDate.now().toEpochDay()));
+            preparedStatement.setString(5, "PENSJON-TESTDATA");
+            preparedStatement.setInt(6, 0);
+            return preparedStatement.execute();
+        });
+    }
+
+    private void createPenPerson(OpprettPersonRequest request) {
+        String personPreparedStatement = "INSERT INTO T_PERSON " +
+                "(FNR_FK, " +
+                "DATO_FODSEL, " +
+                "DATO_DOD, " +
+                "DATO_UTVANDRET, " +
+                "BOSTEDSLAND, " +
+                "DATO_OPPRETTET, " +
+                "OPPRETTET_AV, " +
+                "DATO_ENDRET, " +
+                "ENDRET_AV, " +
+                "VERSJON) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?)";
+
+        java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
+        java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
+        java.sql.Date utvandretDato = request.getUtvandingsDato() != null ? getSqlDate(request.getUtvandingsDato().getTime()) : null;
+
+        penJdbcTemplate.execute(personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
+            ps.setString(1, request.getFnr());
+
+            ps.setDate(2, fodselsDato); //No null check, can fail if not present.
+
+            if (dodsDato != null) {
+                ps.setDate(3, dodsDato);
+            } else {
+                ps.setNull(3, Types.DATE);
+            }
+
+            if (utvandretDato != null) {
+                ps.setDate(4, utvandretDato);
+            } else {
+                ps.setNull(4, Types.DATE);
+            }
+
+            if (request.getBostedsland() != null) {
+                ps.setInt(5, 161); //TODO: Need to fetch the acctual bostedsland from T_K_LAND_3_TEGN
+            } else {
+                ps.setNull(5, Types.VARCHAR);
+            }
+
+            ps.setDate(6, getSqlDate(LocalDate.now().toEpochDay()));
+            ps.setString(7, "PENSJON-TESTDATA");
+            ps.setDate(8, getSqlDate(LocalDate.now().toEpochDay()));
+            ps.setString(9, "PENSJON-TESTDATA");
+            ps.setInt(10, 1);
+
+            return ps.execute();
+        });
+    }
+
+    private java.sql.Date getSqlDate(long l) {
+        return new java.sql.Date(l);
     }
 
     /*
@@ -53,63 +190,4 @@ public class PersonController {
         miljo.add("u8");
         return ResponseEntity.ok(miljo);
     }
-
-    private class OpprettPersonRequest {
-        @NotBlank(message = "Paakrevd fnr")
-        String fnr;
-        Date fodselsDato;
-        Date dodsDato;
-        Date utvandingsDato;
-        String bostedsland;
-        List<String> miljo;
-
-        public String getFnr() {
-            return fnr;
-        }
-
-        public void setFnr(String fnr) {
-            this.fnr = fnr;
-        }
-
-        public Date getFodselsDato() {
-            return fodselsDato;
-        }
-
-        public void setFodselsDato(Date fodselsDato) {
-            this.fodselsDato = fodselsDato;
-        }
-
-        public Date getDodsDato() {
-            return dodsDato;
-        }
-
-        public void setDodsDato(Date dodsDato) {
-            this.dodsDato = dodsDato;
-        }
-
-        public Date getUtvandingsDato() {
-            return utvandingsDato;
-        }
-
-        public void setUtvandingsDato(Date utvandingsDato) {
-            this.utvandingsDato = utvandingsDato;
-        }
-
-        public String getBostedsland() {
-            return bostedsland;
-        }
-
-        public void setBostedsland(String bostedsland) {
-            this.bostedsland = bostedsland;
-        }
-
-        public List<String> getMiljo() {
-            return miljo;
-        }
-
-        public void setMiljo(List<String> miljo) {
-            this.miljo = miljo;
-        }
-    }
-
 }

@@ -1,8 +1,8 @@
 package no.nav.pensjon.testdata.configuration;
 
-import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +40,22 @@ public class DatasourceConfig {
         String dbUrl = SecretUtil.readSecret("db/popp/jdbc_url");
         String username = SecretUtil.readSecret("oracle/popp/username");
         String password = SecretUtil.readSecret("oracle/popp/password");
+
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("oracle.jdbc.OracleDriver");
+        dataSourceBuilder.url(dbUrl);
+        dataSourceBuilder.username(username);
+        dataSourceBuilder.password(password);
+
+        return dataSourceBuilder.build();
+    }
+
+    @Bean(name = "sam-datasource")
+    public DataSource getSAMDatasource() throws IOException {
+        logger.info("Creating datasource for SAM");
+        String dbUrl = SecretUtil.readSecret("db/sam/jdbc_url");
+        String username = SecretUtil.readSecret("oracle/sam/username");
+        String password = SecretUtil.readSecret("oracle/sam/password");
 
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("oracle.jdbc.OracleDriver");

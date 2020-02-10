@@ -1,5 +1,7 @@
 package no.nav.pensjon.testdata.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
@@ -47,12 +49,25 @@ public class TestdataController {
     @Autowired
     GrunnbelopConsumerBean grunnbelopConsumer;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
     @RequestMapping(method = RequestMethod.POST, path = "/testdata")
     public ResponseEntity createTestdata(@RequestBody CreateTestdataRequest request) {
+
+        Counter opprettTestdataTotal = Counter
+                .builder("pensjon.testdata.opprett.scenario.total")
+                .tags("scenario", request.getTestCaseId())
+                .description("Opprettet testdata-scenario")
+                .register(meterRegistry);
+
         try {
             testdataService.createTestcase(
                     request.getTestCaseId(),
                     request.getHandlebars());
+
+            opprettTestdataTotal.increment();
+
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

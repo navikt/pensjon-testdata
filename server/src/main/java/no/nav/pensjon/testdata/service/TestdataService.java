@@ -33,7 +33,7 @@ public class TestdataService {
     @Autowired
     ScenarioRepository scenarioRepository;
     @Autowired
-    @Qualifier("primaryJdbcTemplate")
+    @Qualifier("penJdbcTemplate")
     JdbcTemplate jdbcTemplatePen;
     @Autowired
     @Qualifier("poppJdbcTemplate")

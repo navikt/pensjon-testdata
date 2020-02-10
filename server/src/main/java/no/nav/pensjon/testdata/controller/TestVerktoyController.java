@@ -1,5 +1,7 @@
 package no.nav.pensjon.testdata.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.PostConstruct;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -30,10 +33,36 @@ public class TestVerktoyController {
     @Autowired
     MockService mockService;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    private Counter iverksettVedtakCounter;
+    private Counter attestedVedtakCounter;
+    private Counter flyttSakCounter;
+
+    @PostConstruct
+    private void initCounters() {
+        iverksettVedtakCounter = Counter
+                .builder("pensjon.testdata.iverksett.vedtak.total")
+                .description("Vedtak iverksatt")
+                .register(meterRegistry);
+
+        attestedVedtakCounter = Counter
+                .builder("pensjon.testdata.attester.vedtak.total")
+                .description("Vedtak attestert")
+                .register(meterRegistry);
+
+        flyttSakCounter = Counter
+                .builder("pensjon.testdata.flytt.sak.total")
+                .description("Sak flyttet fra en eierenhet til en annen")
+                .register(meterRegistry);
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "/iverksett")
     public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request) {
         try {
             mockService.iverksett(request.getVedtakId());
+            iverksettVedtakCounter.increment();
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
@@ -46,6 +75,7 @@ public class TestVerktoyController {
     public ResponseEntity attester(@RequestBody IverksettVedtakRequest request) {
         try {
             mockService.attester(request.getVedtakId());
+            attestedVedtakCounter.increment();
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
@@ -57,6 +87,7 @@ public class TestVerktoyController {
     public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request) {
         try {
             mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
+            flyttSakCounter.increment();
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);

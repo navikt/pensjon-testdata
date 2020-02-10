@@ -3,6 +3,7 @@ package no.nav.pensjon.testdata.configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,15 +18,20 @@ public class JdbcTemplateConfig {
 
     @Primary
     @Bean
-    public JdbcTemplate primaryJdbcTemplate(DataSource ds) {
-        logger.info("Creating primary jdbcTemplate");
+    public JdbcTemplate penJdbcTemplate(DataSource ds) {
+        logger.info("Creating PEN jdbcTemplate");
         return new JdbcTemplate(ds);
     }
 
     @Bean(name = "poppJdbcTemplate")
-    public JdbcTemplate secondaryJdbcTemplate(@Qualifier("popp-datasource") DataSource ds) {
+    public JdbcTemplate poppJdbcTemplate(@Qualifier("popp-datasource") DataSource ds) {
         logger.info("Creating POPP jdbcTemplate");
         return new JdbcTemplate(ds);
     }
 
+    @Bean(name = "samJdbcTemplate")
+    public JdbcTemplate samJdbcTemplate(@Qualifier("sam-datasource") DataSource ds) {
+        logger.info("Creating SAM jdbcTemplate");
+        return new JdbcTemplate(ds);
+    }
 }

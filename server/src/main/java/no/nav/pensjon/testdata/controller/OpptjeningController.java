@@ -2,9 +2,9 @@ package no.nav.pensjon.testdata.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.prometheus.client.Counter;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Info;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +47,31 @@ public class OpptjeningController {
 
     private static Integer GRUNNBELOP_2019 = 99858;
 
-    private Counter hentPoppDataCounter = Counter.build().name("pensjon_testdata_hent_fra_popp").help("Data hentet fra popp").register();
+    private static Counter hentPoppDataCounter;
+
+    private static Counter lagreInntektDataCounter;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    @PostConstruct
+    private void initCounters() {
+        hentPoppDataCounter = Counter
+                .builder("pensjon.testdata.hent.fra.popp.total")
+                .description("Data hentet fra popp")
+                .register(meterRegistry);
+
+        lagreInntektDataCounter = Counter
+                .builder("pensjon.testdata.lagre.inntekt.popp.total")
+                .description("Inntekt lagret mot POPP")
+                .register(meterRegistry);
+    }
 
     @GetMapping("/popp/{fnr}")
     public ResponseEntity<List<String>> fetchFromPopp(@PathVariable String fnr) throws IOException {
         List<String> data = poppDataExtractorService.extractDataFromPOPP(fnr);
 
-        hentPoppDataCounter.inc();
+        hentPoppDataCounter.increment();
 
         return ResponseEntity.ok(data);
     }
@@ -60,6 +79,7 @@ public class OpptjeningController {
     @RequestMapping(method = RequestMethod.POST, path = "/inntekt")
     public ResponseEntity lagreInntekt(@RequestBody LagreInntektRequest request) throws IOException {
         logger.info("Lagrer inntekt: " + request.toString());
+
         for (int aar = request.getFomAar(); aar <= request.getTomAar(); aar++) {
             Inntekt inntekt = fastsettInntekt(request, aar);
 
@@ -67,6 +87,9 @@ public class OpptjeningController {
 
             lagreInntekt(poppRequest);
         }
+
+        lagreInntektDataCounter.increment();
+
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

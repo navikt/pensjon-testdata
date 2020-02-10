@@ -65,17 +65,15 @@ public class OpptjeningConsumerBean {
         return response.getStatusCodeValue() == 200;
     }
 
-    public Boolean lagrePerson(String fnr) {
+    public Boolean lagrePerson(String callId, String consumerId, String fnr) {
         HttpEntity restRequest;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.add("Authorization", "Bearer " + hentUserTokenBean.fetch().getAccessToken());
-        httpHeaders.add("Nav-Call-Id", "pensjon-testdata");
-        httpHeaders.add("Nav-Consumer-Id", "pensjon-testdata");
-
+        httpHeaders.add("Nav-Call-Id", callId);
+        httpHeaders.add("Nav-Consumer-Id", consumerId);
         httpHeaders.add("fnr", fnr);
         ResponseEntity<String> response;
-
         restRequest = new HttpEntity<>("", httpHeaders);
         try {
             response = restTemplate.exchange(
