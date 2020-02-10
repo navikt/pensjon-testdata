@@ -49,6 +49,7 @@ const OpprettInntekt = () => {
     }
 
     const lagreInntekt = () => {
+        console.log("Will start to process inntekt")
         resetValidation();
         if (!/^\d{11}$/.test(fnr.trim())) {
             setFnrValidationText("Må inneholde fnr på 11 siffer")
@@ -65,9 +66,11 @@ const OpprettInntekt = () => {
         if (!/^\d+$/.test(belop)) {
             setBelopValidationText("Må inneholde tall")
         }
-        if (isValidationError(fnrValidationText || isValidationError(fomAarValidationText) || isValidationError(tomAarValidationText) || isValidationError(belopValidationText))) {
+        if (!isValid(fnrValidationText) || !isValid(fomAarValidationText) || !isValid(tomAarValidationText) || !isValid(belopValidationText)) {
             //NOOP
+            console.log("Found validation error, will not parse against popp");
         } else {
+            console.log("Will execute against POPP!")
             execute();
         }
     };
@@ -100,7 +103,7 @@ const OpprettInntekt = () => {
         setIsProcessing(false);
     }
 
-    const isValidationError = (value) => {
+    const isValid = (value) => {
         return value.length !== 0
     }
 
@@ -127,7 +130,7 @@ const OpprettInntekt = () => {
                            variant="outlined"
                            helperText={fnrValidationText}
                            onChange={e => setFnr(e.target.value)}
-                           error={isValidationError(fnrValidationText)}
+                           error={isValid(fnrValidationText)}
                 />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Fom år"
@@ -136,7 +139,7 @@ const OpprettInntekt = () => {
                            variant="outlined"
                            helperText={fomAarValidationText}
                            onChange={e => setFomAar(e.target.value)}
-                           error={isValidationError(fomAarValidationText)}
+                           error={isValid(fomAarValidationText)}
                 />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Tom år"
@@ -145,7 +148,7 @@ const OpprettInntekt = () => {
                            variant="outlined"
                            helperText={tomAarValidationText}
                            onChange={e => setTomAar(e.target.value)}
-                           error={isValidationError(tomAarValidationText)}
+                           error={isValid(tomAarValidationText)}
                 />
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="Beløp"
@@ -154,7 +157,7 @@ const OpprettInntekt = () => {
                            variant="outlined"
                            helperText={belopValidationText}
                            onChange={e => setBelop(e.target.value)}
-                           error={isValidationError(belopValidationText)}
+                           error={isValid(belopValidationText)}
                 />
                 <br/>
                 {nedjusteringGrunnbelop === false ? "Beløp angis som fast årsbeløp for alle år." : "Beløp angis som årsbeløp i dagens kroneverdi, og vil nedjusteres basert på snitt grunnbeløp i inntektsåret."}
