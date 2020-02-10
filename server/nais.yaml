@@ -27,7 +27,7 @@ spec:
     - name: "sts_endpoint_url"
       value: "https://security-token-service.nais.preprod.local"
     - name: "popp_endpoint_url"
-      value: "https://wasapp-q2.adeo.no/popp-ws/api/inntekt"
+      value: "https://wasapp-q2.adeo.no/popp-ws/api"
   vault:
     enabled: true
     paths:
