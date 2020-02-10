@@ -60,7 +60,7 @@ public class PersonController {
                 .description("Person lagret til PEN, POPP og SAM")
                 .register(meterRegistry);
         dollyLagrePersonFailedCounter = Counter
-                .builder("pensjon.testdata.lagret.person.fra.dolly.total")
+                .builder("pensjon.testdata.lagret.person.fra.dolly.feilet.total")
                 .description("Lagring av person til PEN, POPP og SAM feilet!")
                 .register(meterRegistry);
     }
