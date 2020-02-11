@@ -35,6 +35,16 @@ public class FileRepository {
         }
     }
 
+    public String readSqlFileAsString(String sqlFile) throws  IOException {
+        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
+        Path path = Paths.get(resource.getFile().getPath());
+        if (Files.exists(path)) {
+            return new String(Files.readAllBytes(path)).replace("\n", " ").replace("\r", " ");
+        } else {
+            throw new FileNotFoundException("Could not find SQL file: " + path);
+        }
+    }
+
     public List<String> readSqlFile(File scenario, String ... excludeId) throws  IOException {
         if (Files.exists(scenario.toPath())) {
             String allSql = new String(Files.readAllBytes(scenario.toPath()));

@@ -10,9 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class POPPDataExtractorService {
@@ -32,7 +30,11 @@ public class POPPDataExtractorService {
     public List<String> extractDataFromPOPP(String fnr) throws IOException {
         logger.info("Started to extract data from POPP");
         oracleRepository.alterSession();
-        List<String> sqlQueryList = fileRepository.readSqlFile("/popp-extract-data");
+        String sqlSource = fileRepository.readSqlFileAsString("/popp-extract-data");
+
+        List<String> sqlQueryList = Arrays.asList(sqlSource.split("#"));
+
+
         List<String> allInserts = new ArrayList<>();
         for (String initialSql : sqlQueryList) {
             String sql = initialSql.replace("{fnr}", fnr);

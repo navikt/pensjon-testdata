@@ -1,0 +1,8 @@
+{
+  "scenarioId": "4",
+  "name": "AP2016 gradert tidlig uttak - løpende",
+  "penFile": "pen.sql",
+  "poppFile": "popp.sql",
+  "personIdPen": 22334417,
+  "personIdPopp": 22347372
+}
