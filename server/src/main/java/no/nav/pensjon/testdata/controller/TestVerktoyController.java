@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.consumer.norg.NorgConsumerBean;
 import no.nav.pensjon.testdata.controller.support.FlyttSakRequest;
 import no.nav.pensjon.testdata.controller.support.IverksettVedtakRequest;
 import no.nav.pensjon.testdata.service.MockService;
@@ -31,7 +32,10 @@ public class TestVerktoyController {
     private final Logger logger = LoggerFactory.getLogger(TestVerktoyController.class);
 
     @Autowired
-    MockService mockService;
+    private MockService mockService;
+
+    @Autowired
+    private NorgConsumerBean norgConsumerBean;
 
     @Autowired
     private MeterRegistry meterRegistry;
@@ -105,6 +109,11 @@ public class TestVerktoyController {
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/enheter")
+    public ResponseEntity<String> hentEnheter() {
+        return ResponseEntity.ok(norgConsumerBean.hentEnheter());
     }
 
     private String getStracktrace(Exception e) {

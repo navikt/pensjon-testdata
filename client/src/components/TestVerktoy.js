@@ -7,11 +7,12 @@ import Grid from "@material-ui/core/Grid";
 import {makeStyles} from '@material-ui/core/styles';
 import OpprettInntekt from "./test-tools/OpprettInntekt";
 import SlettTestdata from "./test-tools/SlettTestdata";
+import BestillBrev from "./test-tools/BestillBrev";
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-
+        justify: "center"
     },
     paper: {
         padding: theme.spacing(2),
@@ -25,7 +26,17 @@ const TestVerktoy = () => {
 
     return (
         <div className={classes.root}>
-            <Grid container spacing={3} justify="center">
+            <Grid container spacing={3} justify="center"   alignItems="center"
+                  direction="row">
+                <Grid item >
+                    <OpprettInntekt/>
+                </Grid>
+                <Grid item >
+                    <BestillBrev/>
+                </Grid>
+            </Grid>
+            <Grid container spacing={3} justify="center"   alignItems="center"
+                  direction="row">
                 <Grid item >
                     <OpprettPerson/>
                 </Grid>
@@ -37,9 +48,6 @@ const TestVerktoy = () => {
                 </Grid>
                 <Grid item >
                     <IverksetteVedtak/>
-                </Grid>
-                <Grid item >
-                    <OpprettInntekt/>
                 </Grid>
                 <Grid item >
                     <SlettTestdata/>

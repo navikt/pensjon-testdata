@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import Button from '@material-ui/core/Button';
@@ -9,6 +9,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import {makeStyles} from '@material-ui/core/styles';
 import {callURL} from "../../util/rest";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles({
     card: {
@@ -30,11 +31,30 @@ const FlyttSak = () => {
     const [sakId, setSakId] = useState('');
     const [nyEnhetId, setNyEnhetId] = useState('');
 
+    const [alleEnheter, setAlleEnheter] = useState([]);
+
     const snackbarApi = React.useContext(SnackbarContext);
+
+    useEffect(() => {
+        getEnheter();
+    }, []);
+
+    const getEnheter = async () => {
+        const response = await fetch('/api/enheter', {method: 'GET'});
+        const alleEnheter = await response.json();
+
+        const unikealleEnheter = alleEnheter
+            .filter((thing, index, self) =>
+            index === self.findIndex((t) => t.place === thing.place && t.enhetNr === thing.enhetNr))
+            .filter((element) => {
+                return element.enhetNr !== undefined;
+            });
+        setAlleEnheter(unikealleEnheter);
+    }
 
     const flyttEnhet = (event) => {
         setIsProcessing(true);
-
+        console.log(nyEnhetId);
         callURL(
             '/api/flytte-sak',
             'POST',
@@ -64,12 +84,20 @@ const FlyttSak = () => {
                            key="sakid"
                            variant="outlined"
                            onChange={e => setSakId(e.target.value)}/><br/>
-                <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
-                           label="Ny enhet"
-                           name="nyEnhet"
-                           key="nyEnhet"
-                           variant="outlined"
-                           onChange={e => setNyEnhetId(e.target.value)}/>
+                <Autocomplete
+                    id="nyEnhet"
+                    options={alleEnheter}
+                    getOptionLabel={option => option.enhetNr + " " + option.enhetNavn}
+                    style={{width: 223 }}
+                    onChange={(event, value) => setNyEnhetId(value !== null ? value.enhetNr:'')}
+                    renderInput={params => (
+                        <TextField {...params}
+                                   label="Ny enhet"
+                                   variant="outlined"
+                                   fullWidth
+                        />
+                    )}
+                />
             </CardContent>
             <CardActions>
                 <Button onClick={() => flyttEnhet()}
