@@ -10,17 +10,26 @@ import java.util.stream.Stream;
 
 public class PrimaryKeySwapper {
 
+    private static Map<String,String> primaryKeyRegistry = new HashMap<>();
+
     public static String swapPrimaryKeysInSql(String sql, String ... excludeId) {
         List<String> oldPrimaryKeys = getPrimaryKeys(sql);
         removeExcludedIds(oldPrimaryKeys, excludeId);
-        List<String> newPrimaryKeys =
-                oldPrimaryKeys
-                        .stream()
-                        .map(PrimaryKeySwapper::generateNewPrimaryKey)
-                        .collect(Collectors.toList());
+
+        for (String oldPrimaryKey : oldPrimaryKeys) {
+            if (!primaryKeyRegistry.containsKey(oldPrimaryKey)){
+                primaryKeyRegistry.put(oldPrimaryKey, generateNewPrimaryKey(oldPrimaryKey));
+            }
+        }
+        List<String> newPrimaryKeys = oldPrimaryKeys
+                .stream()
+                .map(oldPrimaryKey -> (primaryKeyRegistry.get(oldPrimaryKey)))
+                .collect(Collectors.toList());
 
         return StringUtils.replaceEach(sql, oldPrimaryKeys.toArray(new String[0]), newPrimaryKeys.toArray(new String[0]));
     }
+
+
 
     private static void removeExcludedIds(List<String> primaryKeys, String ... excludeId) {
         String[] penOrgEnhetIds = {"100000007","65885471","150003452"};

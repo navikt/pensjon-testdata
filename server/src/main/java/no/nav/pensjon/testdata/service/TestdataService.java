@@ -3,6 +3,7 @@ package no.nav.pensjon.testdata.service;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
+import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
 import no.nav.pensjon.testdata.repository.support.Scenario;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 
@@ -49,7 +50,7 @@ public class TestdataService {
     }
 
     private void process(Scenario scenario, Map<String, String> handlebars, JdbcTemplate jdbcTemplate, File file, String personIdInScenario) throws IOException {
-        List<String> statements = fileRepository.readSqlFile(file, scenario.getPersonIdPen(), scenario.getPersonIdPopp());
+        List<String> statements = fileRepository.readSqlFile(file);
 
         String fnr = handlebars.get("fnr");
         BigDecimal personIdInDatabase = null;
@@ -72,6 +73,7 @@ public class TestdataService {
                 .filter(statement -> statement.length() > 0)
                 .map(statement -> HandlebarTransformer.execute(statement, handlebars))
                 .map(ChangeStampTransformer::execute)
+                .map(statement -> PrimaryKeySwapper.swapPrimaryKeysInSql(statement, scenario.getPersonIdPen(), scenario.getPersonIdPopp()))
                 .map(statement -> !finalOpprettPerson && finalPersonIdInScenario != null ? statement.replace(finalPersonIdInScenario, finalPersonIdInDatabase.toString()) : statement)
                 .map(statement -> statement.substring(statement.length() - 1, statement.length()).equals(";") ? statement.substring(0, statement.length() - 1) : statement)
                 .filter(sql -> finalOpprettPerson || !sql.contains("\"T_PERSON\""))

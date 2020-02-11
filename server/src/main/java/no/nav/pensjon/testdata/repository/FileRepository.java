@@ -45,11 +45,10 @@ public class FileRepository {
         }
     }
 
-    public List<String> readSqlFile(File scenario, String ... excludeId) throws  IOException {
+    public List<String> readSqlFile(File scenario) throws  IOException {
         if (Files.exists(scenario.toPath())) {
             String allSql = new String(Files.readAllBytes(scenario.toPath()));
-            String allSqlWithNewPrimaryKeys = PrimaryKeySwapper.swapPrimaryKeysInSql(allSql, excludeId);
-            return Arrays.asList(allSqlWithNewPrimaryKeys.split(System.getProperty("line.separator")));
+            return Arrays.asList(allSql.split(System.getProperty("line.separator")));
         } else {
             throw new FileNotFoundException("Could not find SQL file: " + scenario.toPath());
         }
