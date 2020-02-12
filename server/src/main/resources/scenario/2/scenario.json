@@ -1,8 +1,22 @@
 {
   "scenarioId": "2",
   "name": "Uføretrygd løpende",
-  "penFile": "pen.sql",
-  "poppFile": "popp.sql",
-  "personIdPen": 22333252,
-  "personIdPopp": 22333252
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": {
+        "gammelPersonId": "22333252",
+        "key": "fnr"
+      }
+    },
+    {
+      "component": "POPP",
+      "sqlPaths":["popp.sql"],
+      "personer": {
+        "gammelPersonId": "22333252",
+        "key": "fnr"
+      }
+    }
+  ]
 }

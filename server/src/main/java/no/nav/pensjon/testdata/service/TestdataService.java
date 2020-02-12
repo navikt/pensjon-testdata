@@ -1,87 +1,53 @@
 package no.nav.pensjon.testdata.service;
 
-import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
+import no.nav.pensjon.testdata.repository.support.Component;
 import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
-import no.nav.pensjon.testdata.repository.support.Scenario;
+import no.nav.pensjon.testdata.repository.support.TestScenario;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
-
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 @Service
 public class TestdataService {
 
-    Logger logger = LoggerFactory.getLogger(TestdataService.class);
-
     @Autowired
     OracleRepository oracleRepository;
-    @Autowired
-    FileRepository fileRepository;
+
     @Autowired
     ScenarioRepository scenarioRepository;
-    @Autowired
-    @Qualifier("penJdbcTemplate")
-    JdbcTemplate jdbcTemplatePen;
-    @Autowired
-    @Qualifier("poppJdbcTemplate")
-    JdbcTemplate jdbcTemplatePopp;
 
     @Transactional
     public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException {
         oracleRepository.alterSession();
-        Scenario scenario = scenarioRepository.getScenario(testCaseId);
-
-        process(scenario, handlebars,jdbcTemplatePen,scenario.getPenFileSrc(), scenario.getPersonIdPen());
-        process(scenario, handlebars,jdbcTemplatePopp,scenario.getPoppFileSrc(), scenario.getPersonIdPopp());
+        TestScenario scenario = scenarioRepository.init(testCaseId, handlebars);
+        scenario.getComponents()
+                .stream()
+                .forEach(component -> processComponent(component, handlebars));
     }
 
-    private void process(Scenario scenario, Map<String, String> handlebars, JdbcTemplate jdbcTemplate, File file, String personIdInScenario) throws IOException {
-        List<String> statements = fileRepository.readSqlFile(file);
-
-        String fnr = handlebars.get("fnr");
-        BigDecimal personIdInDatabase = null;
-        boolean opprettPerson = false;
-        if (fnr != null) {
-            List<Map<String, Object>> person = jdbcTemplate.queryForList("SELECT PERSON_ID FROM T_PERSON WHERE FNR_FK = '" + fnr + "'");
-            opprettPerson = person.isEmpty();
-
-            if (!person.isEmpty()) {
-                personIdInDatabase = (BigDecimal) person.get(0).get("PERSON_ID");
-            }
-        }
-
-        BigDecimal finalPersonIdInDatabase = personIdInDatabase;
-        boolean finalOpprettPerson = opprettPerson;
-        String finalPersonIdInScenario = personIdInScenario;
-        statements
+    private void processComponent(Component component, Map<String, String> handlebars) {
+        component.getSql()
                 .stream()
-                .map(statement -> statement.trim())
-                .filter(statement -> statement.length() > 0)
-                .map(statement -> HandlebarTransformer.execute(statement, handlebars))
+                .map(sql -> HandlebarTransformer.execute(sql, handlebars))
                 .map(ChangeStampTransformer::execute)
-                .map(statement -> PrimaryKeySwapper.swapPrimaryKeysInSql(statement, scenario.getPersonIdPen(), scenario.getPersonIdPopp()))
-                .map(statement -> !finalOpprettPerson && finalPersonIdInScenario != null ? statement.replace(finalPersonIdInScenario, finalPersonIdInDatabase.toString()) : statement)
-                .map(statement -> statement.substring(statement.length() - 1, statement.length()).equals(";") ? statement.substring(0, statement.length() - 1) : statement)
-                .filter(sql -> finalOpprettPerson || !sql.contains("\"T_PERSON\""))
+                .map(PrimaryKeySwapper::swapPrimaryKeysInSql)
+                .map(this::removeTrailingSemicolon)
                 .filter(this::removeOsOppdragslinjeStatus)
-                .forEach(statement -> {
-                        logger.info(statement);
-                        jdbcTemplate.execute(statement);
-                });
+                .forEach(statement -> scenarioRepository.execute(component, statement));
+    }
+
+    public String removeTrailingSemicolon(String str) {
+        if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == ';') {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
     }
 
     /*
@@ -93,4 +59,5 @@ public class TestdataService {
     private boolean removeOsOppdragslinjeStatus(String sql) {
         return !sql.contains("T_OS_OPPDRLINJE_S");
     }
+
 }

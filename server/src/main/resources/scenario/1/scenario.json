@@ -1,8 +1,22 @@
 {
   "scenarioId": "1",
   "name": "AP2016 løpende",
-  "penFile": "pen.sql",
-  "poppFile": "popp.sql",
-  "personIdPen": 22332047,
-  "personIdPopp": 22341564
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": {
+        "gammelPersonId": "22332047",
+        "key": "fnr"
+      }
+    },
+    {
+      "component": "POPP",
+      "sqlPaths":["popp.sql"],
+      "personer": {
+        "gammelPersonId": "22341564",
+        "key": "fnr"
+      }
+    }
+  ]
 }
