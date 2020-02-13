@@ -37,26 +37,31 @@ const OpprettTestdata = () => {
         }
     };
 
-    const lagre = (event) => {
+    const lagre = async (event) => {
         setIsProcessing(true);
-        callURL(
-            '/api/testdata',
-            'POST',
-            {
+        const response = await fetch('/api/testdata', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 handlebars: fieldValues,
                 testCaseId: selected
-            },
-            () => {
-                snackbarApi.openSnackbar('Testcase opprettet!', 'success');
-            },
-            () => {
-                snackbarApi.openSnackbar('Lagring av testcase feilet!', 'error');
-            }
-        ).finally(() => {
-                setIsProcessing(false);
-            }
-        );
+            })
+        });
+
+        const json = await response.json();
+
+        if (response.status === 200) {
+            snackbarApi.openSnackbar('Testcase opprettet!', 'success');
+        } else {
+            snackbarApi.openSnackbar('Opprettelse av testcase feilet: ' + json.message, 'error');
+            console.log(json.message);
+        }
+        setIsProcessing(false);
     };
+
 
     const fieldChangeHandler = (event) => {
         let name = event.target.name;

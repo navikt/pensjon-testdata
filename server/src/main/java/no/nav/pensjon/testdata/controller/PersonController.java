@@ -3,6 +3,7 @@ package no.nav.pensjon.testdata.controller;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
@@ -67,6 +68,7 @@ public class PersonController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/person")
     @Transactional
+    @ApiOperation(value = "Oppretter personer innenfor pensjonsområdet (PEN, POPP og SAM)")
     public ResponseEntity<HttpStatus> opprettPerson(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
@@ -123,7 +125,7 @@ public class PersonController {
 
         java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
         java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
-        java.sql.Date utvandretDato = request.getUtvandingsDato() != null ? getSqlDate(request.getUtvandingsDato().getTime()) : null;
+        java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
 
         penJdbcTemplate.execute(personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
             ps.setString(1, request.getFnr());
@@ -165,29 +167,11 @@ public class PersonController {
     /*
      * Operasjonen dekker et ønske fra Dolly om  å vite hvilke miljøer Pensjon er tilgjengelig.
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/miljo")
+    @RequestMapping(method = RequestMethod.GET, path = "/hentMiljoer")
+    @ApiOperation(value = "Miljøer der opprettelse av personer via API er tilgjengelig")
     public ResponseEntity<List<String>> opprettPerson() {
         List<String> miljo = new ArrayList<>();
-        miljo.add("q0");
-        miljo.add("q1");
         miljo.add("q2");
-        miljo.add("q3");
-        miljo.add("q4");
-        miljo.add("q5");
-        miljo.add("q6");
-        miljo.add("q8");
-        miljo.add("t0");
-        miljo.add("t1");
-        miljo.add("t2");
-        miljo.add("t3");
-        miljo.add("t4");
-        miljo.add("t5");
-        miljo.add("t6");
-        miljo.add("t8");
-        miljo.add("u12");
-        miljo.add("u15");
-        miljo.add("u18");
-        miljo.add("u8");
         return ResponseEntity.ok(miljo);
     }
 }

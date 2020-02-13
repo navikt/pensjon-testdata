@@ -6,10 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
-import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
-import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
-import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
-import no.nav.pensjon.testdata.controller.support.Handlebar;
+import no.nav.pensjon.testdata.controller.support.*;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -71,10 +68,6 @@ public class TestdataController {
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            logger.info("Could not create testcase", e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -120,6 +113,19 @@ public class TestdataController {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, path = "/testdata/clear/{fnr}")
+    public ResponseEntity clearDataForPerson(@PathVariable String fnr) {
+        Thread t = new Thread(() -> {
+            try {
+                oracleRepository.clearDatabaseForPerson(fnr);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        t.start();
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

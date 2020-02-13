@@ -57,7 +57,7 @@ const SharedSnackbar = () => (
                     horizontal: 'left',
                 }}
                 open={snackbarIsOpen}
-                autoHideDuration={6000}
+                autoHideDuration={type === 'success' ? 6000 : null}
                 onClose={closeSnackbar}
                 >
                 <Alert onClose={closeSnackbar} variant="filled" severity={type}>

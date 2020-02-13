@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -40,6 +42,10 @@ public class ScenarioRepository {
         for (Component component : testScenario.getComponents()) {
             for (Person person : component.getPersoner()) {
                 person.init(handlebars, componentJdbcTemplate.get(component.getComponent()));
+                if (!person.isFinnesIDatabase()) {
+                    throw new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Person i tescenario finnes ikke i " + component.getComponent(), null);
+                }
             }
         }
         PrimaryKeySwapper.initializePrimaryKeyRegistry(testScenario.getAllePersoner());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseException;
+import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -55,6 +57,30 @@ public class OracleRepository {
         }
     }
 
+    @Transactional
+    public void clearDatabaseForPerson(String fnr) throws IOException {
+        alterSession();
+
+        //PEN
+        String sqlFilePen = fileRepository.readSqlFileAsString("/clear-pen-data-for-person");
+
+        logger.info(sqlFilePen);
+        jdbcTemplate.execute(HandlebarTransformer.execute(sqlFilePen, Collections.singletonMap("fnr", fnr)));
+
+
+        //POPP
+        String sqlFilePopp = fileRepository.readSqlFileAsString("/clear-popp-data-for-person");
+        List<String> allSql = Arrays.asList(sqlFilePopp.split("#"));
+        allSql
+                .stream()
+                .filter(sql -> sql.trim().length() > 0)
+                .forEach(sql -> {
+                    String updatedSql = HandlebarTransformer.execute(sql, Collections.singletonMap("fnr", fnr));
+                    logger.info(updatedSql);
+                    jdbcTemplatePopp.execute(updatedSql);
+                });
+    }
+
     public void alterSession() {
         jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
@@ -80,11 +106,11 @@ public class OracleRepository {
 
     private boolean isWhitelistedDatabase(String server, List<String> databaseWhiteList) {
         boolean canClearDb = databaseWhiteList.stream().anyMatch(element -> server.contains(element));
-                if (canClearDb) {
-                    logger.info("Found that db: " + server + " can be cleared, as it is in db whitelist");
-                } else {
-                    logger.info("Found that db: " + server + " can NOT be cleared, as it is in db whitelist");
-                }
+        if (canClearDb) {
+            logger.info("Found that db: " + server + " can be cleared, as it is in db whitelist");
+        } else {
+            logger.info("Found that db: " + server + " can NOT be cleared, as it is in db whitelist");
+        }
         return canClearDb;
     }
 }

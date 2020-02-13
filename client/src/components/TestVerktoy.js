@@ -8,6 +8,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import OpprettInntekt from "./test-tools/OpprettInntekt";
 import SlettTestdata from "./test-tools/SlettTestdata";
 import BestillBrev from "./test-tools/BestillBrev";
+import Omregning from "./test-tools/Omregning";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -33,6 +34,9 @@ const TestVerktoy = () => {
                 </Grid>
                 <Grid item >
                     <BestillBrev/>
+                </Grid>
+                <Grid item >
+                    <Omregning/>
                 </Grid>
             </Grid>
             <Grid container spacing={3} justify="center"   alignItems="center"
