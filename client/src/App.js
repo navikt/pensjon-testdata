@@ -11,11 +11,13 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import InputIcon from '@material-ui/icons/Input';
 import BuildIcon from '@material-ui/icons/Build';
+import CodeIcon from '@material-ui/icons/Code';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import {SnackbarContextProvider} from "./components/support/Snackbar";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import UtviklerVerktoy from "./components/UtviklerVerktoy";
 
 const App = () => {
     const [activeView, setActiveView] = useState('henteTestdata')
@@ -55,14 +57,17 @@ const App = () => {
                         <BottomNavigationAction label="Opprett testdata" icon={<InputIcon/>}
                                                 onClick={() => setActiveView('lagreTestdata')}/>
                         <BottomNavigationAction label="Testverktøy" icon={<BuildIcon/>}
-                                                onClick={() => setActiveView('testverktoy')}/>
+                                                onClick={() => setActiveView('testVerktoy')}/>
+                        <BottomNavigationAction label="Utviklerverktøy" icon={<CodeIcon />}
+                                                onClick={() => setActiveView('utviklerVerktoy')}/>
                     </BottomNavigation>
                 </div>
                 <div>
                     <SnackbarContextProvider>
                         {activeView === 'henteTestdata' ? <HentTestdata/> : <p></p>}
                         {activeView === 'lagreTestdata' ? <OpprettTestdata/> : <p></p>}
-                        {activeView === 'testverktoy' ? <TestVerktoy/> : <p></p>}
+                        {activeView === 'testVerktoy' ? <TestVerktoy/> : <p></p>}
+                        {activeView === 'utviklerVerktoy' ? <UtviklerVerktoy/> : <p></p>}
                     </SnackbarContextProvider>
                     <div style={{
                         position: "absolute",

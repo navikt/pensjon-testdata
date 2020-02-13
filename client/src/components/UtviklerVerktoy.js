@@ -1,8 +1,12 @@
 import React from 'react';
 import FlyttSak from "./test-tools/FlyttSak";
+import OpprettPerson from "./test-tools/OpprettPerson";
+import IverksetteVedtak from "./test-tools/IverksetteVedtak";
+import AttestereVedtak from "./test-tools/AttestereVedtak";
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from '@material-ui/core/styles';
 import OpprettInntekt from "./test-tools/OpprettInntekt";
+import SlettTestdata from "./test-tools/SlettTestdata";
 import BestillBrev from "./test-tools/BestillBrev";
 import Omregning from "./test-tools/Omregning";
 
@@ -18,29 +22,27 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const TestVerktoy = () => {
+const UtviklerVerktoy = () => {
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
-            <Grid container spacing={3} justify="center"   alignItems="flex-start" direction="row">
+            <Grid container spacing={3} justify="center"   alignItems="center"
+                  direction="row">
                 <Grid item >
-                    <OpprettInntekt/>
+                    <OpprettPerson/>
                 </Grid>
                 <Grid item >
-                    <BestillBrev/>
-                </Grid>
-            </Grid>
-            <Grid container spacing={3} justify="center"  direction="row" alignItems="flex-start">
-                <Grid item >
-                    <FlyttSak/>
+                    <AttestereVedtak/>
                 </Grid>
                 <Grid item >
-                    <Omregning/>
+                    <IverksetteVedtak/>
                 </Grid>
-
+                <Grid item >
+                    <SlettTestdata/>
+                </Grid>
             </Grid>
         </div>
     );
 }
-export default TestVerktoy
+export default UtviklerVerktoy
