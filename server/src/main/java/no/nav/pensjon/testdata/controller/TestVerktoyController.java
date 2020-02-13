@@ -51,6 +51,7 @@ public class TestVerktoyController {
     private Counter iverksettVedtakCounter;
     private Counter attestedVedtakCounter;
     private Counter flyttSakCounter;
+    private Counter omregningCounter;
 
     @PostConstruct
     private void initCounters() {
@@ -67,6 +68,11 @@ public class TestVerktoyController {
         flyttSakCounter = Counter
                 .builder("pensjon.testdata.flytt.sak.total")
                 .description("Sak flyttet fra en eierenhet til en annen")
+                .register(meterRegistry);
+
+        omregningCounter = Counter
+                .builder("pensjon.testdata.omregning.total")
+                .description("Antall saker som er automatisk omregnet")
                 .register(meterRegistry);
     }
 
@@ -126,6 +132,7 @@ public class TestVerktoyController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/omregning")
     public ResponseEntity<String> automatiskOmregning(@RequestBody AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
+        omregningCounter.increment();
         return ResponseEntity.ok(automatiskOmregning.automatiskOmregning(request));
     }
 

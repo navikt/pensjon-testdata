@@ -1,5 +1,7 @@
 package no.nav.pensjon.testdata.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +35,23 @@ public class BrevController {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    private static Counter opprettBrevCounter;
+
+    @PostConstruct
+    private void initCounters() {
+        opprettBrevCounter = Counter
+                .builder("pensjon.testdata.bestill.brev.total")
+                .description("Brevbestilling via testdataløsning")
+                .register(meterRegistry);
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "/brev")
     public ResponseEntity<HttpStatus> bestillBrev(@RequestBody BestillBrevRequest body) throws BestillAutomatiskBrevAdresseMangler {
         brevConsumer.bestillAutomatiskBrev(body);
+        opprettBrevCounter.increment();
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
