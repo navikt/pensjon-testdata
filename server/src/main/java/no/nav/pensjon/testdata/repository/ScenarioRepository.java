@@ -67,7 +67,6 @@ public class ScenarioRepository {
     }
 
     public void execute(Component component, String sql) {
-        logger.info(sql);
         componentJdbcTemplate.get(component.getComponent()).execute(sql);
     }
 

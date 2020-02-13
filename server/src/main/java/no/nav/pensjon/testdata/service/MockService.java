@@ -150,9 +150,6 @@ public class MockService {
                 "'MOOG'," +
                 "'0'," +
                 "NULL)";
-
-        logger.info(sql);
-
         jdbcTemplate.execute(sql);
     }
 }

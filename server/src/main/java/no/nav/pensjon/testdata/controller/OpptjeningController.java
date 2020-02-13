@@ -78,8 +78,6 @@ public class OpptjeningController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/inntekt")
     public ResponseEntity lagreInntekt(@RequestBody LagreInntektRequest request) throws IOException {
-        logger.info("Lagrer inntekt: " + request.toString());
-
         for (int aar = request.getFomAar(); aar <= request.getTomAar(); aar++) {
             Inntekt inntekt = fastsettInntekt(request, aar);
 
@@ -102,7 +100,7 @@ public class OpptjeningController {
             float faktor = (float) grunnbelop.get(aar) / GRUNNBELOP_2019;
             int nyInntekt = Math.round(faktor * request.getBelop());
 
-            logger.info("Fastsetter inntekt for aar: "
+            logger.debug("Fastsetter inntekt for aar: "
                     + aar + " med grunnbelop: "
                     + grunnbelop.get(aar) + " Ny inntekt er: "
                     + nyInntekt

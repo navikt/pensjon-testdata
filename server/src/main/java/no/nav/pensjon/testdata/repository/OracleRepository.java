@@ -38,11 +38,6 @@ public class OracleRepository {
     @Qualifier("samJdbcTemplate")
     JdbcTemplate jdbcTemplateSam;
 
-    public void executeQuery(String query) {
-        logger.info(query);
-        jdbcTemplate.execute(query);
-    }
-
     @Transactional
     public void clearDatabase() throws IOException, NonWhitelistedDatabaseException {
         alterSession();
@@ -63,8 +58,6 @@ public class OracleRepository {
 
         //PEN
         String sqlFilePen = fileRepository.readSqlFileAsString("/clear-pen-data-for-person");
-
-        logger.info(sqlFilePen);
         jdbcTemplate.execute(HandlebarTransformer.execute(sqlFilePen, Collections.singletonMap("fnr", fnr)));
 
 
