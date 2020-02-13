@@ -3,6 +3,14 @@
 
 #### Utviklingsmiljø
 
+###### Databaser
+Applikasjonen benytter databasetilkoblinger mot PEN,POPP og SAM. Dersom du ikke har alle disse tilgjengelig, så er det mulig å skru av integrasjonen mot disse i `application.properties`
+
+**Properties**
+* pen.db.enabled
+* popp.db.enabled
+* sam.db.enabled
+
 ###### Secrets localhost
 Kjør `create-secrets-for-dev.sh` og erstatt innhold i underliggende filstruktur med nødvendige brukernavn og passord
 
