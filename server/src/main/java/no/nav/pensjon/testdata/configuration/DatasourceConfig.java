@@ -19,6 +19,9 @@ public class DatasourceConfig {
 
     @Primary
     @Bean
+    @ConditionalOnProperty(
+            value="pen.db.enabled",
+            havingValue = "true")
     public DataSource getDatasource() throws IOException {
         logger.info("Creating datasource for PEN");
         String dbUrl = SecretUtil.readSecret("db/pen/jdbc_url");
@@ -35,6 +38,9 @@ public class DatasourceConfig {
     }
 
     @Bean(name = "popp-datasource")
+    @ConditionalOnProperty(
+            value="popp.db.enabled",
+            havingValue = "true")
     public DataSource getPOPPDatasource() throws IOException {
         logger.info("Creating datasource for POPP");
         String dbUrl = SecretUtil.readSecret("db/popp/jdbc_url");
@@ -51,6 +57,9 @@ public class DatasourceConfig {
     }
 
     @Bean(name = "sam-datasource")
+    @ConditionalOnProperty(
+            value="sam.db.enabled",
+            havingValue = "true")
     public DataSource getSAMDatasource() throws IOException {
         logger.info("Creating datasource for SAM");
         String dbUrl = SecretUtil.readSecret("db/sam/jdbc_url");

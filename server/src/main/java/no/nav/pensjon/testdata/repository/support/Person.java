@@ -1,7 +1,7 @@
 package no.nav.pensjon.testdata.repository.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.jdbc.core.JdbcTemplate;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,9 +42,9 @@ public class Person {
         this.finnesIDatabase = finnesIDatabase;
     }
 
-    public void init(Map<String, String> handlebars, JdbcTemplate jdbcTemplate) {
+    public void init(Map<String, String> handlebars, ComponentCode component, JdbcTemplateWrapper jdbcTemplateWrapper) {
         String newFnr = handlebars.get(this.key);
-        List<Map<String, Object>> person = jdbcTemplate.queryForList("SELECT PERSON_ID FROM T_PERSON WHERE FNR_FK = '" + newFnr + "'");
+        List<Map<String, Object>> person = jdbcTemplateWrapper.queryForList(component, "SELECT PERSON_ID FROM T_PERSON WHERE FNR_FK = '" + newFnr + "'");
 
         if (!person.isEmpty()) {
             this.finnesIDatabase = true;

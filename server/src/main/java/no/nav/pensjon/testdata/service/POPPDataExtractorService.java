@@ -1,16 +1,19 @@
 package no.nav.pensjon.testdata.service;
 
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class POPPDataExtractorService {
@@ -21,8 +24,7 @@ public class POPPDataExtractorService {
     OracleRepository oracleRepository;
 
     @Autowired
-    @Qualifier("poppJdbcTemplate")
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     @Autowired
     public FileRepository fileRepository;
@@ -34,17 +36,15 @@ public class POPPDataExtractorService {
 
         List<String> sqlQueryList = Arrays.asList(sqlSource.split("#"));
 
-
         List<String> allInserts = new ArrayList<>();
         for (String initialSql : sqlQueryList) {
             String sql = initialSql.replace("{fnr}", fnr);
-            List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
+            List<Map<String, Object>> result = jdbcTemplateWrapper.queryForList(ComponentCode.POPP, sql);
             result.stream()
                     .map(map -> (String) map.entrySet().iterator().next().getValue())
                     .map(value -> value.replace("''","null"))
                     .forEach(allInserts::add);
         }
-        allInserts.stream().forEach(logger::info);
         logger.info("Completed extraction of data from POPP");
         return allInserts;
     }

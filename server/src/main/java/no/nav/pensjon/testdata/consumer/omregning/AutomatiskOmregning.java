@@ -3,7 +3,9 @@ package no.nav.pensjon.testdata.consumer.omregning;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.controller.support.AutomatiskOmregningRequest;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.informasjon.SakTilOmregning;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.meldinger.AutomatiskOmregningAvYtelseRequest;
@@ -11,7 +13,6 @@ import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.meldinger.A
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -25,7 +26,7 @@ public class AutomatiskOmregning {
     private BehandleAutomatiskOmregningV1 behandleAutomatiskOmregningV1SoapService;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     public String automatiskOmregning(AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
 
@@ -62,6 +63,6 @@ public class AutomatiskOmregning {
     }
 
     private String getSakType(String sakId) {
-       return (String) jdbcTemplate.queryForList("SELECT K_SAK_T FROM T_SAK WHERE SAK_ID='"+sakId+"'").get(0).get("K_SAK_T");
+       return (String) jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT K_SAK_T FROM T_SAK WHERE SAK_ID='"+sakId+"'").get(0).get("K_SAK_T");
     }
 }

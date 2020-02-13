@@ -4,39 +4,31 @@ package no.nav.pensjon.testdata.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.SecretUtil;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseException;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class OracleRepository {
     private final Logger logger = LoggerFactory.getLogger(OracleRepository.class);
 
     @Autowired
-    FileRepository fileRepository;
+    private FileRepository fileRepository;
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    @Qualifier("poppJdbcTemplate")
-    JdbcTemplate jdbcTemplatePopp;
-
-    @Autowired
-    @Qualifier("samJdbcTemplate")
-    JdbcTemplate jdbcTemplateSam;
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     @Transactional
     public void clearDatabase() throws IOException, NonWhitelistedDatabaseException {
@@ -45,7 +37,7 @@ public class OracleRepository {
             logger.info("Removing all data from database");
 
             List<String> sql = fileRepository.readSqlFile("/unload");
-            sql.forEach(query -> jdbcTemplate.execute(query));
+            sql.forEach(query -> jdbcTemplateWrapper.execute(ComponentCode.PEN, query));
             logger.info("All data from database cleared");
         } else {
             throw new NonWhitelistedDatabaseException();
@@ -55,37 +47,47 @@ public class OracleRepository {
     @Transactional
     public void clearDatabaseForPerson(String fnr) throws IOException {
         alterSession();
+        String sqlFile = fileRepository.readSqlFileAsString("/clear-oracle-data-for-person");
 
         //PEN
-        String sqlFilePen = fileRepository.readSqlFileAsString("/clear-pen-data-for-person");
-        jdbcTemplate.execute(HandlebarTransformer.execute(sqlFilePen, Collections.singletonMap("fnr", fnr)));
-
+        logger.info("Fjerner data i PEN for person");
+        Map<String, String> penParameters  = new HashMap<String, String>() {{
+            put("component", "PEN");
+            put("fnr", fnr);
+        }};
+        jdbcTemplateWrapper.execute(ComponentCode.PEN, HandlebarTransformer.execute(sqlFile, penParameters));
 
         //POPP
-        String sqlFilePopp = fileRepository.readSqlFileAsString("/clear-popp-data-for-person");
-        List<String> allSql = Arrays.asList(sqlFilePopp.split("#"));
-        allSql
-                .stream()
-                .filter(sql -> sql.trim().length() > 0)
-                .forEach(sql -> {
-                    String updatedSql = HandlebarTransformer.execute(sql, Collections.singletonMap("fnr", fnr));
-                    logger.info(updatedSql);
-                    jdbcTemplatePopp.execute(updatedSql);
-                });
+        logger.info("Fjerner data i POPP for person");
+        Map<String, String> poppParameters  = new HashMap<String, String>() {{
+            put("component", "POPP");
+            put("fnr", fnr);
+        }};
+        jdbcTemplateWrapper.execute(ComponentCode.POPP,HandlebarTransformer.execute(sqlFile, poppParameters));
+
+        //SAM
+        logger.info("Fjerner data i SAM for person");
+        Map<String, String> samParameters  = new HashMap<String, String>() {{
+            put("component", "POPP");
+            put("fnr", fnr);
+        }};
+        jdbcTemplateWrapper.execute(ComponentCode.SAM,HandlebarTransformer.execute(sqlFile, samParameters));
+
+        logger.info("Fjerning av data ferdigstillt");
     }
 
     public void alterSession() {
-        jdbcTemplate.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplate.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplate.execute("alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.PEN,"alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.PEN, "alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.PEN, "alter session set nls_numeric_characters=\", \"");
 
-        jdbcTemplatePopp.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplatePopp.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplatePopp.execute("alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.POPP, "alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.POPP,"alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.POPP,"alter session set nls_numeric_characters=\", \"");
 
-        jdbcTemplateSam.execute("alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplateSam.execute("alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
-        jdbcTemplateSam.execute("alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
+        jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_numeric_characters=\", \"");
     }
 
     public boolean canDatabaseBeCleared() throws IOException {

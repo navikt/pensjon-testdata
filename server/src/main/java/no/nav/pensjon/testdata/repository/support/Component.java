@@ -13,17 +13,17 @@ import java.util.List;
 @JsonIgnoreProperties({"sql"})
 public class Component {
 
-    private String component;
+    private ComponentCode component;
     private List<String> sqlPaths;
     private List<String> sql = new ArrayList<>();
     private List<Person> personer;
 
-    public String getComponent() {
+    public ComponentCode getComponent() {
         return component;
     }
 
     public void setComponent(String component) {
-        this.component = component;
+        this.component = ComponentCode.valueOf(component);
     }
 
     public List<String> getSqlPaths() {

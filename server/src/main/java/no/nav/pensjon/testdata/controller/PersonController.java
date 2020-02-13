@@ -6,16 +6,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +39,7 @@ public class PersonController {
     private OpptjeningConsumerBean opptjeningConsumerBean;
 
     @Autowired
-    private JdbcTemplate penJdbcTemplate;
-
-    @Autowired
-    @Qualifier("samJdbcTemplate")
-    private JdbcTemplate samJdbcTemplate;
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     @Autowired
     private OracleRepository oracleRepository;
@@ -98,7 +94,7 @@ public class PersonController {
                 "VERSJON) " +
                 "VALUES (?,?,?,?,?,?)";
         
-        samJdbcTemplate.execute(personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+        jdbcTemplateWrapper.execute(ComponentCode.SAM, personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
             preparedStatement.setString(1, request.getFnr());
             preparedStatement.setDate(2, getSqlDate(LocalDate.now().toEpochDay()));
             preparedStatement.setString(3, "PENSJON-TESTDATA");
@@ -127,7 +123,7 @@ public class PersonController {
         java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
         java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
 
-        penJdbcTemplate.execute(personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
+        jdbcTemplateWrapper.execute(ComponentCode.PEN, personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
             ps.setString(1, request.getFnr());
 
             ps.setDate(2, fodselsDato); //No null check, can fail if not present.

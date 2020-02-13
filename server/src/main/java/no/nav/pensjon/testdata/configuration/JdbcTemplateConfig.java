@@ -17,19 +17,28 @@ public class JdbcTemplateConfig {
     Logger logger = LoggerFactory.getLogger(JdbcTemplateConfig.class);
 
     @Primary
-    @Bean
+    @Bean(name = "penJdbcTemplate")
+    @ConditionalOnProperty(
+            value="pen.db.enabled",
+            havingValue = "true")
     public JdbcTemplate penJdbcTemplate(DataSource ds) {
         logger.info("Creating PEN jdbcTemplate");
         return new JdbcTemplate(ds);
     }
 
     @Bean(name = "poppJdbcTemplate")
+    @ConditionalOnProperty(
+            value="popp.db.enabled",
+            havingValue = "true")
     public JdbcTemplate poppJdbcTemplate(@Qualifier("popp-datasource") DataSource ds) {
         logger.info("Creating POPP jdbcTemplate");
         return new JdbcTemplate(ds);
     }
 
     @Bean(name = "samJdbcTemplate")
+    @ConditionalOnProperty(
+            value="sam.db.enabled",
+            havingValue = "true")
     public JdbcTemplate samJdbcTemplate(@Qualifier("sam-datasource") DataSource ds) {
         logger.info("Creating SAM jdbcTemplate");
         return new JdbcTemplate(ds);

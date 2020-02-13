@@ -3,13 +3,14 @@ package no.nav.pensjon.testdata.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.brev.BrevConsumer;
 import no.nav.pensjon.testdata.controller.support.BestillBrevRequest;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.BestillAutomatiskBrevAdresseMangler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +30,7 @@ public class BrevController {
     private BrevConsumer brevConsumer;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     @RequestMapping(method = RequestMethod.POST, path = "/brev")
     public ResponseEntity<HttpStatus> bestillBrev(@RequestBody BestillBrevRequest body) throws BestillAutomatiskBrevAdresseMangler {
@@ -39,7 +40,7 @@ public class BrevController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/brev")
     public ResponseEntity<Brev[]> hentBrevkoder()  {
-        List<Map<String, Object>> result  = jdbcTemplate.queryForList("SELECT * FROM T_K_BATCHBREV");
+        List<Map<String, Object>> result  = jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT * FROM T_K_BATCHBREV");
 
         Brev[] alleBrev = result
                 .stream()

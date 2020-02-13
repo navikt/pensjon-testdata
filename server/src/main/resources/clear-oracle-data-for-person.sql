@@ -22,11 +22,11 @@ declare
                  ,      r_constraint_name
                  ,      table_name
                  ,      delete_rule
-            FROM   sum_all_constraints
+            FROM   all_constraints
             WHERE  constraint_type = 'R'
               AND    delete_rule = 'NO ACTION'
               AND    r_constraint_name IN ( SELECT  constraint_name
-                                            FROM    sum_all_constraints
+                                            FROM    all_constraints
                                             WHERE   constraint_type IN ('P', 'U')
                                               AND     table_name = parent_table
                                               AND     owner = table_owner )
@@ -35,7 +35,7 @@ declare
         CURSOR   columns_cursor
             IS
             SELECT   cc1.column_name AS child_col, cc2.column_name AS parent_col
-            FROM     sum_all_cons_columns cc1, sum_all_cons_columns cc2
+            FROM     all_cons_columns cc1, all_cons_columns cc2
             WHERE    cc1.constraint_name = child_cons
               AND      cc1.table_name = child_table
               AND      cc2.constraint_name = parent_cons
@@ -86,11 +86,11 @@ declare
 begin
     for r in ( select table_name, column_name
                from   sys.all_tab_columns
-               where  owner = 'PEN'
+               where  owner = '{component}'
                  and    UPPER(column_name) in ('FNR','FNR_FK')
         )
         loop
-            v_table_owner   := 'PEN';
+            v_table_owner   := '{component}';
             v_parent_table  := r.table_name;
 
             v_where_clause  := 'where ' || r.column_name || '= ' || '''{fnr}''';
