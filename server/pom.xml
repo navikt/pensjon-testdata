@@ -97,6 +97,12 @@
 			<classifier>jaxws</classifier>
             <version>2.7.0</version>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.tjenester</groupId>
+            <artifactId>pensjon-behandleAutomatiskOmregning-tjenestespesifikasjon</artifactId>
+            <classifier>jaxws</classifier>
+            <version>1.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,29 +1,35 @@
 package no.nav.pensjon.testdata.controller.support;
 
-import javax.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
 public class OpprettPersonRequest {
-    @NotBlank(message = "Paakrevd fnr")
+    @NotEmpty(message = "Paakrevd fnr")
     private String fnr;
+    @NotEmpty(message = "Paakrevd fodselsdato")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date fodselsDato;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dodsDato;
-    private Date utvandingsDato;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private Date utvandringsDato;
     private String bostedsland;
-    private List<String> miljo;
+
+    private List<String> miljoer;
 
     public OpprettPersonRequest() {
         super();
     }
 
-    public OpprettPersonRequest(String fnr, Date fodselsDato, Date dodsDato, Date utvandingsDato, String bostedsland, List<String> miljo) {
+    public OpprettPersonRequest(String fnr, Date fodselsDato, Date dodsDato, Date utvandringsDato, String bostedsland) {
         this.fnr = fnr;
         this.fodselsDato = fodselsDato;
         this.dodsDato = dodsDato;
-        this.utvandingsDato = utvandingsDato;
+        this.utvandringsDato = utvandringsDato;
         this.bostedsland = bostedsland;
-        this.miljo = miljo;
     }
 
     public String getFnr() {
@@ -50,12 +56,12 @@ public class OpprettPersonRequest {
         this.dodsDato = dodsDato;
     }
 
-    public Date getUtvandingsDato() {
-        return utvandingsDato;
+    public Date getUtvandringsDato() {
+        return utvandringsDato;
     }
 
-    public void setUtvandingsDato(Date utvandingsDato) {
-        this.utvandingsDato = utvandingsDato;
+    public void setUtvandringsDato(Date utvandringsDato) {
+        this.utvandringsDato = utvandringsDato;
     }
 
     public String getBostedsland() {
@@ -66,11 +72,11 @@ public class OpprettPersonRequest {
         this.bostedsland = bostedsland;
     }
 
-    public List<String> getMiljo() {
-        return miljo;
+    public List<String> getMiljoer() {
+        return miljoer;
     }
 
-    public void setMiljo(List<String> miljo) {
-        this.miljo = miljo;
+    public void setMiljoer(List<String> miljoer) {
+        this.miljoer = miljoer;
     }
 }

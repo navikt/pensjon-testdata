@@ -1,11 +1,14 @@
 package no.nav.pensjon.testdata.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.norg.NorgConsumerBean;
+import no.nav.pensjon.testdata.consumer.omregning.AutomatiskOmregning;
+import no.nav.pensjon.testdata.controller.support.AutomatiskOmregningRequest;
 import no.nav.pensjon.testdata.controller.support.FlyttSakRequest;
 import no.nav.pensjon.testdata.controller.support.IverksettVedtakRequest;
 import no.nav.pensjon.testdata.service.MockService;
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDate;
 
 @RestController
 @Api(tags = {"Testverktøy"})
@@ -39,6 +44,9 @@ public class TestVerktoyController {
 
     @Autowired
     private MeterRegistry meterRegistry;
+
+    @Autowired
+    private AutomatiskOmregning automatiskOmregning;
 
     private Counter iverksettVedtakCounter;
     private Counter attestedVedtakCounter;
@@ -114,6 +122,11 @@ public class TestVerktoyController {
     @RequestMapping(method = RequestMethod.GET, path = "/enheter")
     public ResponseEntity<String> hentEnheter() {
         return ResponseEntity.ok(norgConsumerBean.hentEnheter());
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/omregning")
+    public ResponseEntity<String> automatiskOmregning(@RequestBody AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
+        return ResponseEntity.ok(automatiskOmregning.automatiskOmregning(request));
     }
 
     private String getStracktrace(Exception e) {

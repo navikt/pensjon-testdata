@@ -21,5 +21,4 @@ public class SwaggerConfig {
                 .apis(Predicates.not(RequestHandlerSelectors.basePackage("no.nav.pensjon.testdata.controller.internal")))
                 .build();
     }
-
 }
