@@ -1,5 +1,10 @@
 # Pensjon testdata
 
+Løsningen består av følgende komponenter: 
+
+1. pensjon-testdata-client
+2. pensjon-testdata-server
+3. pensjon-testdata-dolly-facade (distribusjon av testdata fra dolly til pensjonsområdets testmiljøer)
 
 #### Utviklingsmiljø
 

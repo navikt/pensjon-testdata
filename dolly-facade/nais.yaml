@@ -1,32 +1,28 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: pensjon-testdata-client
+  name: pensjon-testdata-dolly-facade
   namespace: default
   labels:
     team: teampensjon
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
-  port: 80
+  image: repo.adeo.no:5443/navikt/pensjon-testdata-dolly-facade:IMAGE_VERSION
+  port: 8081
   ingresses:
-    - https://ptb.nais.preprod.local
-  replicas:
-    min: 1
-    max: 1
+    - https://pensjon-testdata-dolly-facade.nais.preprod.local
   liveness:
     path: isAlive
-    port: 80
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
   readiness:
     path: isReady
-    port: 80
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
+  replicas:
+    min: 1
+    max: 1
   prometheus:
     enabled: true
-  env:
-    - name: "SERVER_HOSTNAME"
-      value: "https://pensjon-testdata-server.nais.preprod.local"
+    path: prometheus
