@@ -1,13 +1,15 @@
 package no.nav.pensjon.testdata.controller.support.response;
 
-import java.time.LocalTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.Instant;
 
 public class Response {
 
     private HttpStatus httpStatus;
     private String message;
     private String path;
-    private LocalTime timestamp;
+    private Instant timestamp;
 
     public HttpStatus getHttpStatus() {
         return httpStatus;
@@ -33,11 +35,11 @@ public class Response {
         this.path = path;
     }
 
-    public LocalTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }

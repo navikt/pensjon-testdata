@@ -14,7 +14,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalTime;
+import java.time.Instant;
 
 @Service
 public class TestdataConsumerBean {
@@ -39,7 +39,7 @@ public class TestdataConsumerBean {
         Response response = new Response();
         HttpStatus httpStatus = new HttpStatus();
         response.setPath("/inntekt");
-        response.setTimestamp(LocalTime.now());
+        response.setTimestamp(Instant.now());
         response.setHttpStatus(httpStatus);
         restRequest = new HttpEntity<>(getRequestBody(request), httpHeaders);
         try {
@@ -90,7 +90,7 @@ public class TestdataConsumerBean {
         Response response = new Response();
         HttpStatus httpStatus = new HttpStatus();
         response.setPath("/person");
-        response.setTimestamp(LocalTime.now());
+        response.setTimestamp(Instant.now());
         response.setHttpStatus(httpStatus);
 
         restRequest = new HttpEntity<>(getRequestBody(request), httpHeaders);

@@ -49,7 +49,7 @@ public class EnvironmentResolver {
         }
         if (!utilgjengeligeTestmiljo.isEmpty()) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Ikke mulig å opprette testdata mot " + utilgjengeligeTestmiljo.toString(), null);
+                    HttpStatus.NOT_FOUND, "Ikke mulig å opprette testdata mot " + String.join(",", utilgjengeligeTestmiljo), null);
         }
     }
 
