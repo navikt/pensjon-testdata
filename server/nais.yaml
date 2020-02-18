@@ -14,6 +14,9 @@ spec:
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
+  replicas:
+    min: 0
+    max: 0
   readiness:
     path: api/isReady
     initialDelay: 10

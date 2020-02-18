@@ -10,6 +10,9 @@ spec:
   port: 80
   ingresses:
     - https://ptb.nais.preprod.local
+  replicas:
+    min: 0
+    max: 0
   liveness:
     path: isAlive
     port: 80

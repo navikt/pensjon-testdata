@@ -35,6 +35,7 @@ public class TestdataService {
     private void processComponent(Component component, Map<String, String> handlebars) {
         component.getSql()
                 .stream()
+                .map(String::trim)
                 .map(sql -> HandlebarTransformer.execute(sql, handlebars))
                 .map(ChangeStampTransformer::execute)
                 .map(PrimaryKeySwapper::swapPrimaryKeysInSql)

@@ -68,6 +68,7 @@ public class PersonController {
     public ResponseEntity<HttpStatus> opprettPerson(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody OpprettPersonRequest body) {
 
         oracleRepository.alterSession();
@@ -75,7 +76,7 @@ public class PersonController {
         try {
             createPenPerson(body);
             createSamPerson(body);
-            opptjeningConsumerBean.lagrePerson(callId, consumerId, body.getFnr());
+            opptjeningConsumerBean.lagrePerson(callId, consumerId, token, body.getFnr());
             dollyLagrePersonCounter.increment();
         } catch (Exception e) {
             dollyLagrePersonFailedCounter.increment();
@@ -85,75 +86,83 @@ public class PersonController {
     }
 
     private void createSamPerson(OpprettPersonRequest request) {
-        String personPreparedStatement = "INSERT INTO T_PERSON " +
-                "(FNR_FK, " +
-                "DATO_OPPRETTET, " +
-                "OPPRETTET_AV, " +
-                "DATO_ENDRET, " +
-                "ENDRET_AV, " +
-                "VERSJON) " +
-                "VALUES (?,?,?,?,?,?)";
-        
-        jdbcTemplateWrapper.execute(ComponentCode.SAM, personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
-            preparedStatement.setString(1, request.getFnr());
-            preparedStatement.setDate(2, getSqlDate(LocalDate.now().toEpochDay()));
-            preparedStatement.setString(3, "PENSJON-TESTDATA");
-            preparedStatement.setDate(4, getSqlDate(LocalDate.now().toEpochDay()));
-            preparedStatement.setString(5, "PENSJON-TESTDATA");
-            preparedStatement.setInt(6, 0);
-            return preparedStatement.execute();
-        });
+        if (!brukerFinnes(ComponentCode.SAM, request.getFnr())) {
+            String personPreparedStatement = "INSERT INTO T_PERSON " +
+                    "(FNR_FK, " +
+                    "DATO_OPPRETTET, " +
+                    "OPPRETTET_AV, " +
+                    "DATO_ENDRET, " +
+                    "ENDRET_AV, " +
+                    "VERSJON) " +
+                    "VALUES (?,?,?,?,?,?)";
+
+            jdbcTemplateWrapper.execute(ComponentCode.SAM, personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+                preparedStatement.setString(1, request.getFnr());
+                preparedStatement.setDate(2, getSqlDate(LocalDate.now().toEpochDay()));
+                preparedStatement.setString(3, "PENSJON-TESTDATA");
+                preparedStatement.setDate(4, getSqlDate(LocalDate.now().toEpochDay()));
+                preparedStatement.setString(5, "PENSJON-TESTDATA");
+                preparedStatement.setInt(6, 0);
+                return preparedStatement.execute();
+            });
+        }
     }
 
     private void createPenPerson(OpprettPersonRequest request) {
-        String personPreparedStatement = "INSERT INTO T_PERSON " +
-                "(FNR_FK, " +
-                "DATO_FODSEL, " +
-                "DATO_DOD, " +
-                "DATO_UTVANDRET, " +
-                "BOSTEDSLAND, " +
-                "DATO_OPPRETTET, " +
-                "OPPRETTET_AV, " +
-                "DATO_ENDRET, " +
-                "ENDRET_AV, " +
-                "VERSJON) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?)";
+        if (!brukerFinnes(ComponentCode.PEN, request.getFnr())) {
+            String personPreparedStatement = "INSERT INTO T_PERSON " +
+                    "(FNR_FK, " +
+                    "DATO_FODSEL, " +
+                    "DATO_DOD, " +
+                    "DATO_UTVANDRET, " +
+                    "BOSTEDSLAND, " +
+                    "DATO_OPPRETTET, " +
+                    "OPPRETTET_AV, " +
+                    "DATO_ENDRET, " +
+                    "ENDRET_AV, " +
+                    "VERSJON) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-        java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
-        java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
-        java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
+            java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
+            java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
+            java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
 
-        jdbcTemplateWrapper.execute(ComponentCode.PEN, personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
-            ps.setString(1, request.getFnr());
+            jdbcTemplateWrapper.execute(ComponentCode.PEN, personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
+                ps.setString(1, request.getFnr());
 
-            ps.setDate(2, fodselsDato); //No null check, can fail if not present.
+                ps.setDate(2, fodselsDato); //No null check, can fail if not present.
 
-            if (dodsDato != null) {
-                ps.setDate(3, dodsDato);
-            } else {
-                ps.setNull(3, Types.DATE);
-            }
+                if (dodsDato != null) {
+                    ps.setDate(3, dodsDato);
+                } else {
+                    ps.setNull(3, Types.DATE);
+                }
 
-            if (utvandretDato != null) {
-                ps.setDate(4, utvandretDato);
-            } else {
-                ps.setNull(4, Types.DATE);
-            }
+                if (utvandretDato != null) {
+                    ps.setDate(4, utvandretDato);
+                } else {
+                    ps.setNull(4, Types.DATE);
+                }
 
-            if (request.getBostedsland() != null) {
-                ps.setInt(5, 161); //TODO: Need to fetch the acctual bostedsland from T_K_LAND_3_TEGN
-            } else {
-                ps.setNull(5, Types.VARCHAR);
-            }
+                if (request.getBostedsland() != null) {
+                    ps.setInt(5, 161); //TODO: Need to fetch the acctual bostedsland from T_K_LAND_3_TEGN
+                } else {
+                    ps.setNull(5, Types.VARCHAR);
+                }
 
-            ps.setDate(6, getSqlDate(LocalDate.now().toEpochDay()));
-            ps.setString(7, "PENSJON-TESTDATA");
-            ps.setDate(8, getSqlDate(LocalDate.now().toEpochDay()));
-            ps.setString(9, "PENSJON-TESTDATA");
-            ps.setInt(10, 1);
+                ps.setDate(6, getSqlDate(LocalDate.now().toEpochDay()));
+                ps.setString(7, "PENSJON-TESTDATA");
+                ps.setDate(8, getSqlDate(LocalDate.now().toEpochDay()));
+                ps.setString(9, "PENSJON-TESTDATA");
+                ps.setInt(10, 1);
 
-            return ps.execute();
-        });
+                return ps.execute();
+            });
+        }
+    }
+
+    private boolean brukerFinnes(ComponentCode component, String fnr) {
+        return jdbcTemplateWrapper.queryForList(component, "SELECT * FROM T_PERSON where fnr_fk = '" + fnr + "'").size() > 0;
     }
 
     private java.sql.Date getSqlDate(long l) {
@@ -163,7 +172,7 @@ public class PersonController {
     /*
      * Operasjonen dekker et ønske fra Dolly om  å vite hvilke miljøer Pensjon er tilgjengelig.
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/hentMiljoer")
+    @RequestMapping(method = RequestMethod.GET, path = "/miljo")
     @ApiOperation(value = "Miljøer der opprettelse av personer via API er tilgjengelig")
     public ResponseEntity<List<String>> opprettPerson() {
         List<String> miljo = new ArrayList<>();

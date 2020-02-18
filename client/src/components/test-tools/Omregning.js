@@ -74,9 +74,24 @@ const Omregning = () => {
 
     }
 
-    const leftPadMonth = (month) => {
-        var pad = "00"
-        return month.substring(0, pad.length - month.length) + month
+
+    function leftPadMonth (str, len, ch) {
+        if (!ch) {
+            ch = '.';
+        }
+
+        str = String(str);
+        if (ch.length !== 1) {
+            throw 'Invalid Input'
+        }
+
+        len = len - str.length;
+        var strCh = '';
+        for (var i = 0; i < len; ++i) {
+            strCh += ch;
+        }
+
+        return (strCh + str);
     }
 
     const execute = async () => {
@@ -88,9 +103,9 @@ const Omregning = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                fnr: fnr,
-                sakId: sakId,
-                virkFom:    '01-' + leftPadMonth(virkFom.getMonth()) + '-' + virkFom.getFullYear()
+                fnr: fnr.trim(),
+                sakId: sakId.trim(),
+                virkFom:    '01-' + leftPadMonth(''+virkFom.getMonth(),2,'0') + '-' + virkFom.getFullYear()
             })
         });
         const json = await response.json();

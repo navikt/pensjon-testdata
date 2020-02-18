@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.regex.Matcher;
@@ -55,21 +56,21 @@ public class OpptjeningConsumerBean {
             String functionalError = getFunctionalError(e.getResponseBodyAsString());
 
             if (functionalError != null) {
-                throw new RuntimeException(functionalError, e);
+                throw new ResponseStatusException(
+                        HttpStatus.EXPECTATION_FAILED, functionalError, e);
             } else {
-                throw new RuntimeException("Unexpected error while trying to save InntektListe to POPP", e);
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error while trying to save InntektListe to POPP", e);
             }
-
-
         }
         return response.getStatusCodeValue() == 200;
     }
 
-    public Boolean lagrePerson(String callId, String consumerId, String fnr) {
+    public Boolean lagrePerson(String callId, String consumerId, String token, String fnr) {
         HttpEntity restRequest;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization", "Bearer " + hentUserTokenBean.fetch().getAccessToken());
+        httpHeaders.add("Authorization", "Bearer " + token != null ? token : hentUserTokenBean.fetch().getAccessToken());
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
         httpHeaders.add("fnr", fnr);
