@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./support/Snackbar";
-import {callURL} from "../util/rest";
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);

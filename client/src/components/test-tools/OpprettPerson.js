@@ -51,6 +51,7 @@ const OpprettPerson = () => {
         <Card className={classes.card}>
             <CardHeader title="Opprett person"/>
             <CardContent>
+                <p>Oppretter en person med angitt fødselsnummer i <b>PEN</b>, vil ikke opprettes i andre fagsystemer. Og man er avhengig av at TPS og andre systemer kan svare på det angitte fødselsnummeret.</p>
                 <TextField label="Fnr"
                            name="fnr"
                            key="fnr"

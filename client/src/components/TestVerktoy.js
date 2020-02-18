@@ -30,15 +30,12 @@ const TestVerktoy = () => {
                 <Grid item >
                     <BestillBrev/>
                 </Grid>
-            </Grid>
-            <Grid container spacing={3} justify="center"  direction="row" alignItems="flex-start">
-                <Grid item >
-                    <FlyttSak/>
-                </Grid>
                 <Grid item >
                     <Omregning/>
                 </Grid>
-
+                <Grid item >
+                    <FlyttSak/>
+                </Grid>
             </Grid>
         </div>
     );

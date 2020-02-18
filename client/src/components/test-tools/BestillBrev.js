@@ -125,6 +125,7 @@ const BestillBrev = () => {
         <Card className={classes.card}>
             <CardHeader title="Bestill brev"/>
             <CardContent>
+                <p>Benytter tjenestelaget til PEN for å bestille automatiske brev, som ordinært bestilles av batcher og automatiske prosesser.</p>
                 <Autocomplete
                     id="Brev"
                     options={brevkoder}

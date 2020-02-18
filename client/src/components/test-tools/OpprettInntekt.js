@@ -110,6 +110,7 @@ const OpprettInntekt = () => {
         <Card className={classes.card} variant="outlined">
             <CardHeader title="Lagre inntekter"/>
             <CardContent>
+                <p>Oppretter fiktive inntekter for brukere ved å benytte grensesnitt mot POPP</p>
                 <FormControlLabel
                     control={
                         <Switch

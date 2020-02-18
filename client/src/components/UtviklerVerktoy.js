@@ -1,14 +1,10 @@
 import React from 'react';
-import FlyttSak from "./test-tools/FlyttSak";
 import OpprettPerson from "./test-tools/OpprettPerson";
 import IverksetteVedtak from "./test-tools/IverksetteVedtak";
 import AttestereVedtak from "./test-tools/AttestereVedtak";
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from '@material-ui/core/styles';
-import OpprettInntekt from "./test-tools/OpprettInntekt";
 import SlettTestdata from "./test-tools/SlettTestdata";
-import BestillBrev from "./test-tools/BestillBrev";
-import Omregning from "./test-tools/Omregning";
 
 const useStyles = makeStyles(theme => ({
     root: {

@@ -78,6 +78,7 @@ const FlyttSak = () => {
         <Card className={classes.card}>
             <CardHeader title="Flytt eierenhet for sak"/>
             <CardContent>
+                <p>Flytter eiertilgang for en sak til en ny enhet. Åpne krav vil ikke bli flyttet over på den nye enheten.</p>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
                            label="SakId"
                            name="sakid"
