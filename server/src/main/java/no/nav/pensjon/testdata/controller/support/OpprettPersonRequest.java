@@ -18,8 +18,6 @@ public class OpprettPersonRequest {
     private Date utvandringsDato;
     private String bostedsland;
 
-    private List<String> miljoer;
-
     public OpprettPersonRequest() {
         super();
     }
@@ -70,13 +68,5 @@ public class OpprettPersonRequest {
 
     public void setBostedsland(String bostedsland) {
         this.bostedsland = bostedsland;
-    }
-
-    public List<String> getMiljoer() {
-        return miljoer;
-    }
-
-    public void setMiljoer(List<String> miljoer) {
-        this.miljoer = miljoer;
     }
 }

@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.controller.support.response;
+package no.nav.pensjon.testdata.controller.support;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

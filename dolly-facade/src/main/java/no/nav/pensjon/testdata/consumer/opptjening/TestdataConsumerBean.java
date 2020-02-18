@@ -1,13 +1,12 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRemoteRequest;
+import no.nav.pensjon.testdata.controller.support.OpprettPersonRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.response.HttpStatus;
-import no.nav.pensjon.testdata.controller.support.response.OpprettPersonRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.response.Response;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.time.LocalTime;
 
 @Service
