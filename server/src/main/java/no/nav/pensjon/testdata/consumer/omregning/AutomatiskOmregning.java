@@ -28,7 +28,7 @@ public class AutomatiskOmregning {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
 
-    public String automatiskOmregning(AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
+    public AutomatiskOmregningAvYtelseResponse automatiskOmregning(AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
 
         logger.info("Starter automatisk omregning");
 
@@ -36,7 +36,7 @@ public class AutomatiskOmregning {
         soapRequest.setStatus("IKKE_BEHANDLET");
         soapRequest.setFomDato(DatatypeFactory.newInstance().newXMLGregorianCalendar(request.getVirkFom().toString()));
         SakTilOmregning sakTilOmregning = new SakTilOmregning();
-        sakTilOmregning.setPid(request.getFnr());
+        sakTilOmregning.setPid(getFnr(request.getSakId()));
         sakTilOmregning.setSakId(request.getSakId());
         sakTilOmregning.setSakType(getSakType(request.getSakId()));
         soapRequest.getYtelseListe().add(sakTilOmregning);
@@ -51,18 +51,14 @@ public class AutomatiskOmregning {
         logger.info("Omregning feilmelding: " + response.getFeilmelding());
         logger.info(objectMapper.writeValueAsString(response));
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Omregning ferdig, status: " +  response.getStatus());
-        if (response.getFunksjonellFeilmelding() != null) {
-            sb.append(" Funksjonell feilmelding: " + response.getFunksjonellFeilmelding());
-        }
-        if (response.getFeilmelding() != null) {
-            sb.append(" Teknisk feilmelding: " + response.getFeilmelding());
-        }
-        return sb.toString();
+        return response;
     }
 
     private String getSakType(String sakId) {
        return (String) jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT K_SAK_T FROM T_SAK WHERE SAK_ID='"+sakId+"'").get(0).get("K_SAK_T");
+    }
+
+    private String getFnr(String sakId) {
+        return (String) jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT FNR_FK FROM T_PERSON WHERE EXISTS ( SELECT 1 FROM T_SAK WHERE SAK_ID='" + sakId + "') ").get(0).get("FNR_FK");
     }
 }

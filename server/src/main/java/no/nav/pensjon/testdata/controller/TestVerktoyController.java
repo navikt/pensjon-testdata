@@ -12,6 +12,7 @@ import no.nav.pensjon.testdata.controller.support.AutomatiskOmregningRequest;
 import no.nav.pensjon.testdata.controller.support.FlyttSakRequest;
 import no.nav.pensjon.testdata.controller.support.IverksettVedtakRequest;
 import no.nav.pensjon.testdata.service.MockService;
+import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.meldinger.AutomatiskOmregningAvYtelseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,26 @@ public class TestVerktoyController {
     @RequestMapping(method = RequestMethod.POST, path = "/omregning")
     public ResponseEntity<String> automatiskOmregning(@RequestBody AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
         omregningCounter.increment();
-        return ResponseEntity.ok(automatiskOmregning.automatiskOmregning(request));
+        AutomatiskOmregningAvYtelseResponse response = automatiskOmregning.automatiskOmregning(request);
+        StringBuilder sb = createOmregningTextResponse(response);
+
+        if (response.getFeilmelding() != null || response.getFunksjonellFeilmelding() != null) {
+            return new ResponseEntity<>(sb.toString(), HttpStatus.EXPECTATION_FAILED);
+        } else {
+            return ResponseEntity.ok(sb.toString());
+        }
+    }
+
+    private StringBuilder createOmregningTextResponse(AutomatiskOmregningAvYtelseResponse response) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Behandling ferdig, status: " +  response.getStatus());
+        if (response.getFunksjonellFeilmelding() != null) {
+            sb.append(" Funksjonell feilmelding: " + response.getFunksjonellFeilmelding());
+        }
+        if (response.getFeilmelding() != null) {
+            sb.append(" Teknisk feilmelding: " + response.getFeilmelding());
+        }
+        return sb;
     }
 
     private String getStracktrace(Exception e) {

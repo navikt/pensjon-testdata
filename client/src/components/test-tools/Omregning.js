@@ -30,50 +30,40 @@ const Omregning = () => {
     const classes = useStyles();
 
     const defaultVirkfom = () => {
-        var now = new Date();
-        if (now.getMonth() == 11) {
-            var current = new Date(now.getFullYear() + 1, 0, 1);
+        let now = new Date();
+        let current;
+        if (now.getMonth() === 11) {
+            current = new Date(now.getFullYear() + 1, 0, 1);
         } else {
-            var current = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            current = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         }
         return current;
     }
 
     const [isProcessing, setIsProcessing] = useState(false);
-    const [fnr, setFnr] = useState('');
-    const [fnrValidationText, setFnrValidationText] = useState('');
     const [sakId, setSakId] = useState('');
     const [sakIdValidationText, setSakIdValidationText] = useState('');
     const [virkFom, setVirkFom] = useState(defaultVirkfom());
 
-
     const snackbarApi = React.useContext(SnackbarContext);
 
     const resetValidation = () => {
-        setFnrValidationText('');
         setSakIdValidationText('');
-
     }
 
-    const bestillBrev = async () => {
+    const omregning = async () => {
         resetValidation();
 
-        if (!/^\d{11}$/.test(fnr.trim())) {
-            setFnrValidationText("Må inneholde fnr på 11 siffer")
-        }
         if (!/^\d*$/.test(sakId.trim())) {
             setSakIdValidationText("Må inneholde tall")
         }
 
-        if (isNotValid(fnrValidationText) || isNotValid(sakIdValidationText)) {
-            snackbarApi.openSnackbar('Feil i validering, brev ble ikke bestilt', 'error');
+        if (isNotValid(sakIdValidationText)) {
+            snackbarApi.openSnackbar('Feil i validering, omregning ble ikke gjennomført', 'error');
         } else {
             execute();
         }
-
-
     }
-
 
     function leftPadMonth (str, len, ch) {
         if (!ch) {
@@ -86,8 +76,8 @@ const Omregning = () => {
         }
 
         len = len - str.length;
-        var strCh = '';
-        for (var i = 0; i < len; ++i) {
+        let strCh = '';
+        for (let i = 0; i < len; ++i) {
             strCh += ch;
         }
 
@@ -103,18 +93,18 @@ const Omregning = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                fnr: fnr.trim(),
                 sakId: sakId.trim(),
                 virkFom:    '01-' + leftPadMonth(''+virkFom.getMonth(),2,'0') + '-' + virkFom.getFullYear()
             })
         });
-        const json = await response.json();
+        let body = await response.text();
+        console.log(response.status);
+        console.log(body)
 
         if (response.status === 200) {
-            snackbarApi.openSnackbar('Brev bestillt', 'success');
+            snackbarApi.openSnackbar(body, 'success');
         } else {
-            snackbarApi.openSnackbar('Bestilling av brev feilet' + json.message, 'error');
-            console.log(json.message);
+            snackbarApi.openSnackbar('Omregning ble ikke gjennomført' + body, 'error');
         }
 
         setIsProcessing(false);
@@ -129,15 +119,6 @@ const Omregning = () => {
             <CardHeader title="Automatisk omregning"/>
             <CardContent>
                 <p>Vil benytte tjenester i Pesys gjennomføre automatisk omregning av en ytelse, tilsvarende omregning med batchen <i>BPEN093 Omregning</i></p>
-                <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
-                           label="Bruker (fnr)"
-                           name="bruker"
-                           key="bruker"
-                           variant="outlined"
-                           helperText={fnrValidationText}
-                           onChange={e => setFnr(e.target.value)}
-                           error={isNotValid(fnrValidationText)}
-                /><br/>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
                            label="SakId"
                            name="sakId"
@@ -162,7 +143,7 @@ const Omregning = () => {
                 </MuiPickersUtilsProvider>
             </CardContent>
             <CardActions>
-                <Button onClick={() => bestillBrev()}
+                <Button onClick={() => omregning()}
                         variant="contained"
                         disabled={isProcessing ? true : false}
                         startIcon={<FastForwardIcon/>}>

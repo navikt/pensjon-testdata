@@ -6,18 +6,9 @@ import java.time.LocalDate;
 
 public class AutomatiskOmregningRequest {
 
-    private String fnr;
     private String sakId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate virkFom;
-
-    public String getFnr() {
-        return fnr;
-    }
-
-    public void setFnr(String fnr) {
-        this.fnr = fnr;
-    }
 
     public String getSakId() {
         return sakId;
