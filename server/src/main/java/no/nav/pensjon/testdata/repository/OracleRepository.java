@@ -80,14 +80,18 @@ public class OracleRepository {
         jdbcTemplateWrapper.execute(ComponentCode.PEN,"alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.PEN, "alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.PEN, "alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.PEN, "alter session set current_schema = PEN");
 
         jdbcTemplateWrapper.execute(ComponentCode.POPP, "alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.POPP,"alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.POPP,"alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.POPP, "alter session set current_schema = POPP");
 
         jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_date_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_timestamp_format=\"YYYY-MM-DD HH24:MI:SS\"");
         jdbcTemplateWrapper.execute(ComponentCode.SAM,"alter session set nls_numeric_characters=\", \"");
+        jdbcTemplateWrapper.execute(ComponentCode.SAM, "alter session set current_schema = SAM");
+
     }
 
     public boolean canDatabaseBeCleared() throws IOException {
