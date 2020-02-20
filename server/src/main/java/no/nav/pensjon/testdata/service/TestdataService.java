@@ -5,6 +5,7 @@ import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.Component;
 import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,12 @@ public class TestdataService {
     ScenarioRepository scenarioRepository;
 
     @Transactional
-    public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException {
+    public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
         oracleRepository.alterSession();
         TestScenario scenario = scenarioRepository.init(testCaseId, handlebars);
+
+        scenario.validate();
+
         scenario.getComponents()
                 .stream()
                 .forEach(component -> processComponent(component, handlebars));

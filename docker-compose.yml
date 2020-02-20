@@ -30,19 +30,7 @@ services:
     networks:
       - frontend
 
-  pensjon-testdata-dolly-facade:
-    build:
-      context: dolly-facade
-      dockerfile: Dockerfile
-    ports:
-      - "8081:81"
-    restart: always
-    depends_on:
-      - pensjon-testdata-server
-    networks:
-      - dolly-facade
 
 networks:
   backend:
   frontend:
-  dolly-facade:

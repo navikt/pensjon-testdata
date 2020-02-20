@@ -50,11 +50,13 @@ const OpprettTestdata = () => {
             })
         });
 
-        const json = await response.json();
-
         if (response.status === 200) {
             snackbarApi.openSnackbar('Testcase opprettet!', 'success');
+        } else if (response.status === 417) {
+            const text = await response.text();
+            snackbarApi.openSnackbar('Testcase ikke opprettet: ' + text, 'warning');
         } else {
+            const json = await response.json();
             snackbarApi.openSnackbar('Opprettelse av testcase feilet: ' + json.message, 'error');
             console.log(json.message);
         }

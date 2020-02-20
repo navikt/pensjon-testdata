@@ -1,13 +1,20 @@
 {
   "scenarioId": "4",
-  "name": "AP2016 gradert tidlig uttak - løpende",
+  "name": "AP2016 gradert tidlig uttak - løpende (08/1955)",
   "components" : [
     {
       "component": "PEN",
       "sqlPaths":["pen.sql"],
       "personer": {
         "gammelPersonId": "22334417",
-        "key": "fnr"
+        "key": "fnr",
+        "kontroller": [
+          {
+            "type": "fodselMaaned",
+            "maaned": 8,
+            "aar": 1955
+          }
+        ]
       }
     },
     {

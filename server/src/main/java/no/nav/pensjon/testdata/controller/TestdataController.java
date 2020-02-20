@@ -9,6 +9,7 @@ import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.controller.support.*;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,8 @@ public class TestdataController {
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (ScenarioValidationException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }

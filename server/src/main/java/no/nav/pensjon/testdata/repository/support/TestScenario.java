@@ -2,6 +2,7 @@ package no.nav.pensjon.testdata.repository.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,17 @@ public class TestScenario {
 
     public String getAllSql() {
         StringBuilder sb = new StringBuilder();
-        components.stream().forEach(component -> sb.append(component.getSqlAsString(this.scenarioId)));
+        components
+                .stream()
+                .forEach(component -> sb.append(component.getSqlAsString(this.scenarioId)));
         return sb.toString();
+    }
+
+    public void validate() throws ScenarioValidationException {
+        for (Component component : components) {
+            for (Person person : component.getPersoner()) {
+                person.validate();
+            }
+        }
     }
 }
