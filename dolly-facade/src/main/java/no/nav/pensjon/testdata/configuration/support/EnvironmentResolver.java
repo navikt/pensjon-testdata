@@ -43,7 +43,7 @@ public class EnvironmentResolver {
     public static void erAlleMiljoerTilgjengelig(List<String> miljoer) {
         if (miljoer != null) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Ingen miljøer er ikke angitt ", null);
+                    HttpStatus.NOT_FOUND, "Ingen miljøer angitt ", null);
         }
         List<String> utilgjengeligeTestmiljo = new ArrayList<>();
         for (String miljo : miljoer) {
