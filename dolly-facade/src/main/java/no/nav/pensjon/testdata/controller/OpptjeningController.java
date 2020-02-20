@@ -26,11 +26,11 @@ public class OpptjeningController {
     @Autowired
     private TestdataConsumerBean testdataConsumerBean;
 
-    @RequestMapping(method = RequestMethod.POST, path = "/inntekt")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/v1/inntekt")
     public ResponseEntity<DollyResponse> lagreInntekt(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
-            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestHeader(value = "Authorization") String token,
             @RequestBody LagreInntektRequest request)  {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());

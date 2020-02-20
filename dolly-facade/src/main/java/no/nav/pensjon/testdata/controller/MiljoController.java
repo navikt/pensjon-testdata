@@ -20,7 +20,7 @@ import java.util.List;
 })
 public class MiljoController {
 
-    @RequestMapping(method = RequestMethod.GET, path = "/miljo")
+    @RequestMapping(method = RequestMethod.GET, path = "/api/v1/miljo")
     @ApiOperation(value = "Miljøer der endepunkt for samhandling mellom Dolly og Pensjonsområdet er tilgjengelig")
     public ResponseEntity<List<String>> opprettPerson() {
         List<String> miljo = new ArrayList<>();

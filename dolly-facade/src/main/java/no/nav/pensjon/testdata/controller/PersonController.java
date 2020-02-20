@@ -27,12 +27,12 @@ public class PersonController {
     @Autowired
     private TestdataConsumerBean testdataConsumerBean;
 
-    @RequestMapping(method = RequestMethod.POST, path = "/person")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/v1/person")
     @ApiOperation(value = "Oppretter personer innenfor pensjonsområdet (PEN, POPP og SAM)")
     public ResponseEntity<DollyResponse> opprettPerson(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
-            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestHeader(value = "Authorization") String token,
             @RequestBody OpprettPersonRequest request) {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
