@@ -11,6 +11,8 @@ RUN ./mvnw -s settings.xml dependency:go-offline -B
 
 COPY src src
 
+RUN dos2unix ./mvnw
+
 RUN ./mvnw package -DskipTests -s settings.xml
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 

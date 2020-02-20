@@ -6,6 +6,8 @@ COPY .mvn .mvn
 COPY settings.xml settings.xml
 COPY pom.xml .
 
+RUN dos2unix ./mvnw
+
 RUN ./mvnw -s settings.xml dependency:go-offline -B
 
 
