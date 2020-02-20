@@ -11,6 +11,7 @@ import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import sun.java2d.pipe.SpanShapeRenderer;
 
 import javax.annotation.PostConstruct;
+import java.sql.Date;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -128,7 +130,10 @@ public class PersonController {
                     "VERSJON) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-            java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
+            //java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
+            //TODO: Bruk fødselsdato fra dolly, når feilretting er på plass.
+            java.sql.Date fodselsDato =  parseFnr(request.getFnr());
+
             java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
             java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
 
@@ -164,6 +169,14 @@ public class PersonController {
                 return ps.execute();
             });
         }
+    }
+
+    private Date parseFnr(String fnr) {
+        LocalDate fodselsdato = LocalDate.of(
+                Integer.valueOf("19"  + fnr.substring(4,6)),
+                Integer.valueOf(fnr.substring(2,4).replaceFirst("^0+", "")),
+                Integer.valueOf(fnr.substring(0,2).replaceFirst("^0+", "")));
+        return new Date(fodselsdato.toEpochDay());
     }
 
     private boolean brukerFinnes(ComponentCode component, String fnr) {
