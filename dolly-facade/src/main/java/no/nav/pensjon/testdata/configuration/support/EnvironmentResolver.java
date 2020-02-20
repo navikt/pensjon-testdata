@@ -41,6 +41,10 @@ public class EnvironmentResolver {
     }
 
     public static void erAlleMiljoerTilgjengelig(List<String> miljoer) {
+        if (miljoer != null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Ingen miljøer er ikke angitt ", null);
+        }
         List<String> utilgjengeligeTestmiljo = new ArrayList<>();
         for (String miljo : miljoer) {
             if (!erMiljoTilgjengelig(miljo)) {
@@ -51,6 +55,7 @@ public class EnvironmentResolver {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Ikke mulig å opprette testdata mot " + String.join(",", utilgjengeligeTestmiljo), null);
         }
+
     }
 
     private static boolean erMiljoTilgjengelig(String miljo) {
