@@ -19,9 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import javax.annotation.PostConstruct;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,8 @@ public class PersonController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody OpprettPersonRequest body) {
 
-        logger.info("Oppretter person:  fnr:" + body.getFnr().substring(0,4) + "*******" + " fodselsdato: " + body.getFodselsDato());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        logger.info("Oppretter person:  fnr:" + body.getFnr().substring(0,4) + "*******" + " fodselsdato: " + df.format(body.getFodselsDato()));
 
         oracleRepository.alterSession();
 
