@@ -71,6 +71,8 @@ public class PersonController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody OpprettPersonRequest body) {
 
+        logger.info("Oppretter person:  fnr:" + body.getFnr().substring(0,4) + "*******" + " fodselsdato: " + body.getFodselsDato());
+
         oracleRepository.alterSession();
 
         try {

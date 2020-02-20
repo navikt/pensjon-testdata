@@ -41,7 +41,7 @@ public class EnvironmentResolver {
     }
 
     public static void erAlleMiljoerTilgjengelig(List<String> miljoer) {
-        if (miljoer != null) {
+        if (miljoer == null || miljoer.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Ingen miljøer angitt ", null);
         }
