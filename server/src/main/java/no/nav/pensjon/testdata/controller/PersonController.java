@@ -27,6 +27,7 @@ import java.sql.Date;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,9 +106,9 @@ public class PersonController {
 
             jdbcTemplateWrapper.execute(ComponentCode.SAM, personPreparedStatement, (PreparedStatementCallback<Boolean>) preparedStatement -> {
                 preparedStatement.setString(1, request.getFnr());
-                preparedStatement.setDate(2, getSqlDate(LocalDate.now().toEpochDay()));
+                preparedStatement.setDate(2, getSqlDate(LocalDate.now()));
                 preparedStatement.setString(3, "PENSJON-TESTDATA");
-                preparedStatement.setDate(4, getSqlDate(LocalDate.now().toEpochDay()));
+                preparedStatement.setDate(4, getSqlDate(LocalDate.now()));
                 preparedStatement.setString(5, "PENSJON-TESTDATA");
                 preparedStatement.setInt(6, 0);
                 return preparedStatement.execute();
@@ -134,8 +135,8 @@ public class PersonController {
             //TODO: Bruk fødselsdato fra dolly, når feilretting er på plass.
             java.sql.Date fodselsDato =  parseFnr(request.getFnr());
 
-            java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato().getTime()) : null;
-            java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato().getTime()) : null;
+            java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato()) : null;
+            java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato()) : null;
 
             jdbcTemplateWrapper.execute(ComponentCode.PEN, personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
                 ps.setString(1, request.getFnr());
@@ -160,9 +161,9 @@ public class PersonController {
                     ps.setNull(5, Types.VARCHAR);
                 }
 
-                ps.setDate(6, getSqlDate(LocalDate.now().toEpochDay()));
+                ps.setDate(6, getSqlDate(LocalDate.now()));
                 ps.setString(7, "PENSJON-TESTDATA");
-                ps.setDate(8, getSqlDate(LocalDate.now().toEpochDay()));
+                ps.setDate(8, getSqlDate(LocalDate.now()));
                 ps.setString(9, "PENSJON-TESTDATA");
                 ps.setInt(10, 1);
 
@@ -170,21 +171,24 @@ public class PersonController {
             });
         }
     }
+    private Date getSqlDate(java.util.Date date) {
+        return Date.valueOf(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    private Date getSqlDate(LocalDate date) {
+        return Date.valueOf(date);
+    }
 
     private Date parseFnr(String fnr) {
         LocalDate fodselsdato = LocalDate.of(
                 Integer.valueOf("19"  + fnr.substring(4,6)),
                 Integer.valueOf(fnr.substring(2,4).replaceFirst("^0+", "")),
                 Integer.valueOf(fnr.substring(0,2).replaceFirst("^0+", "")));
-        return new Date(fodselsdato.toEpochDay());
+        return Date.valueOf(fodselsdato);
     }
 
     private boolean brukerFinnes(ComponentCode component, String fnr) {
         return jdbcTemplateWrapper.queryForList(component, "SELECT * FROM T_PERSON where fnr_fk = '" + fnr + "'").size() > 0;
-    }
-
-    private java.sql.Date getSqlDate(long l) {
-        return new java.sql.Date(l);
     }
 
     /*

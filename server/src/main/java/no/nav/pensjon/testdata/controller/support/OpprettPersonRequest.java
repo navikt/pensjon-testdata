@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
-import java.util.List;
 
 public class OpprettPersonRequest {
     @NotEmpty(message = "Paakrevd fnr")
