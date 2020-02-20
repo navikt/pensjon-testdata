@@ -68,7 +68,7 @@ public class OracleRepository {
         //SAM
         logger.info("Fjerner data i SAM for person");
         Map<String, String> samParameters  = new HashMap<String, String>() {{
-            put("component", "POPP");
+            put("component", "SAM");
             put("fnr", fnr);
         }};
         jdbcTemplateWrapper.execute(ComponentCode.SAM,HandlebarTransformer.execute(sqlFile, samParameters));
@@ -104,7 +104,7 @@ public class OracleRepository {
     }
 
     private boolean isWhitelistedDatabase(String server, List<String> databaseWhiteList) {
-        boolean canClearDb = databaseWhiteList.stream().anyMatch(element -> server.contains(element));
+        boolean canClearDb = databaseWhiteList.stream().anyMatch(server::contains);
         if (canClearDb) {
             logger.info("Found that db: " + server + " can be cleared, as it is in db whitelist");
         } else {

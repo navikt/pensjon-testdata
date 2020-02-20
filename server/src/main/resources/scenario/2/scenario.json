@@ -9,14 +9,6 @@
         "gammelPersonId": "22333252",
         "key": "fnr"
       }
-    },
-    {
-      "component": "POPP",
-      "sqlPaths":["popp.sql"],
-      "personer": {
-        "gammelPersonId": "22333252",
-        "key": "fnr"
-      }
     }
   ]
 }
