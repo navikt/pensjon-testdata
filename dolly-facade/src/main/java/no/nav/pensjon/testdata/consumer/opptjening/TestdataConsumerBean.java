@@ -29,7 +29,7 @@ public class TestdataConsumerBean {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         if (token != null) {
-            httpHeaders.add("Authorization", "Bearer " + token);
+            httpHeaders.add("Authorization",  token);
         }
 
         httpHeaders.add("Nav-Call-Id", callId);
@@ -80,7 +80,7 @@ public class TestdataConsumerBean {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         if (token != null) {
-            httpHeaders.add("Authorization", "Bearer " +  token);
+            httpHeaders.add("Authorization", token);
         }
 
         httpHeaders.add("Nav-Call-Id", callId);

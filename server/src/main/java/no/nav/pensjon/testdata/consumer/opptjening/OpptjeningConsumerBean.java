@@ -70,7 +70,7 @@ public class OpptjeningConsumerBean {
         HttpEntity restRequest;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization", "Bearer " + token != null ? token : hentUserTokenBean.fetch().getAccessToken());
+        httpHeaders.add("Authorization",  token != null ? token : "Bearer " + hentUserTokenBean.fetch().getAccessToken());
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
         httpHeaders.add("fnr", fnr);
