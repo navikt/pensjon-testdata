@@ -7,10 +7,12 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
+import no.nav.pensjon.testdata.controller.support.InntektPOPP;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
 import no.nav.pensjon.testdata.service.POPPDataExtractorService;
 import org.slf4j.Logger;
@@ -113,6 +115,17 @@ public class OpptjeningController {
     private void lagreInntekt(LagreInntektPoppRequest poppRequest) throws JsonProcessingException {
         String body = objectMapper.writeValueAsString(poppRequest);
         opptjeningConsumerBean.lagreInntekt(body);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/inntekt")
+    public ResponseEntity<List<InntektPOPP>> hentInntekt(
+            @RequestHeader("Nav-Call-Id") String callId,
+            @RequestHeader("Nav-Consumer-Id") String consumerId,
+            @RequestHeader(value = "Authorization") String token,
+            @RequestParam String fnr,
+            @RequestParam String miljo) throws IOException {
+                return ResponseEntity.ok(opptjeningConsumerBean.hentInntekt(fnr));
+
     }
 
 }
