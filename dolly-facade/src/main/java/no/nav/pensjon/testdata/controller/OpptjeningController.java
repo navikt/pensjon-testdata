@@ -7,11 +7,15 @@ import no.nav.pensjon.testdata.consumer.opptjening.TestdataConsumerBean;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
 import no.nav.pensjon.testdata.controller.support.response.DollyResponse;
+import no.nav.pensjon.testdata.controller.support.response.Inntekt;
 import no.nav.pensjon.testdata.controller.support.response.Response;
 import no.nav.pensjon.testdata.controller.support.response.ResponseEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 import static no.nav.pensjon.testdata.configuration.support.EnvironmentResolver.erAlleMiljoerTilgjengelig;
 import static no.nav.pensjon.testdata.configuration.support.EnvironmentResolver.getAvaiableEnvironments;
@@ -31,7 +35,7 @@ public class OpptjeningController {
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody LagreInntektRequest request)  {
+            @RequestBody LagreInntektRequest request) {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
 
@@ -55,6 +59,26 @@ public class OpptjeningController {
                 });
         return ResponseEntity.ok(dollyResponse);
     }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/api/v1/inntekt")
+    public ResponseEntity<List<Inntekt>> hentInntekt(
+            @RequestHeader("Nav-Call-Id") String callId,
+            @RequestHeader("Nav-Consumer-Id") String consumerId,
+            @RequestHeader(value = "Authorization") String token,
+            @RequestParam String fnr,
+            @RequestParam String miljo) {
+
+        erAlleMiljoerTilgjengelig(Collections.singletonList(miljo));
+        List<Inntekt> inntekter = testdataConsumerBean.hentInntekt(
+                fnr,
+                miljo,
+                token,
+                getAvaiableEnvironments().get(miljo).getUrl(),
+                callId,
+                consumerId);
+        return ResponseEntity.ok(inntekter);
+    }
+
 
     private LagreInntektRemoteRequest createRemoteRequest(@RequestBody LagreInntektRequest request) {
         LagreInntektRemoteRequest remoteRequest = new LagreInntektRemoteRequest();

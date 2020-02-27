@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.response.HttpStatus;
+import no.nav.pensjon.testdata.controller.support.response.Inntekt;
 import no.nav.pensjon.testdata.controller.support.response.Response;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TestdataConsumerBean {
@@ -126,6 +130,28 @@ public class TestdataConsumerBean {
         }
     }
 
+    public List<Inntekt> hentInntekt(String fnr, String miljo, String token, String endpoint, String callId, String consumerId) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        if (token != null) {
+            httpHeaders.add("Authorization",  token);
+        }
+
+        httpHeaders.add("Nav-Call-Id", callId);
+        httpHeaders.add("Nav-Consumer-Id", consumerId);
+
+        ResponseEntity<Inntekt[]> restResponse = restTemplate.exchange(
+                UriComponentsBuilder.fromHttpUrl(endpoint +"/inntekt")
+                        .queryParam("fnr", fnr).queryParam("miljo", miljo)
+                        .toUriString(),
+                HttpMethod.GET,
+                new HttpEntity<>(httpHeaders),
+                Inntekt[].class);
+
+        return Arrays.asList(Optional.ofNullable(restResponse).map(ResponseEntity::getBody).orElse(new Inntekt[0]));
+    }
+
     static class CustomError {
         @JsonProperty
         private String message;
@@ -142,5 +168,4 @@ public class TestdataConsumerBean {
             this.message = message;
         }
     }
-
 }
