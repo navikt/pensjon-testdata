@@ -1,6 +1,5 @@
 package no.nav.pensjon.testdata.configuration.support;
 
-import no.nav.pensjon.testdata.repository.support.Component;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -47,7 +46,16 @@ public class JdbcTemplateWrapper {
         }
     }
 
-    public List<Map<String, Object>> queryForList(Component component, String sql, PreparedStatementCallback callback)  {
+    public <T> List<T>  queryForListOfObjects(ComponentCode component, String sql,  Class<T> elementType) {
+        if (jdbcTemplateMap.get(component) != null) {
+            return jdbcTemplateMap.get(component).queryForList(sql, elementType);
+        } else {
+            throw new RuntimeException("Not possible when " + component + " is not available");
+        }
+    }
+
+
+    public List<Map<String, Object>> queryForList(ComponentCode component, String sql, PreparedStatementCallback callback)  {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).queryForList(sql, callback);
         } else {
