@@ -1,23 +1,25 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
-import no.nav.pensjon.testdata.controller.support.InntektPOPP;
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 
 @Service
 public class OpptjeningConsumerBean {
@@ -26,9 +28,6 @@ public class OpptjeningConsumerBean {
 
     @Autowired
     HentUserTokenBean hentUserTokenBean;
-
-    @Autowired
-    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -71,17 +70,6 @@ public class OpptjeningConsumerBean {
             }
         }
         return response.getStatusCodeValue() == 200;
-    }
-
-    public List<InntektPOPP> hentInntekt(String fnr){
-        String inntektPreparedStatement = "select 'Q2' as miljo, p.fnr_fk, i.inntekt_ar, i.belop " +
-                "from popp.t_person p " +
-                "inner join popp.t_inntekt i on i.person_id = p.person_id " +
-                "where i.k_inntekt_status = 'G' " +
-                "and i.k_inntekt_t = 'SUM_PI' " +
-                "and p.fnr_fk = '" + fnr + "'";
-
-        return jdbcTemplateWrapper.queryForListOfObjects(ComponentCode.POPP, inntektPreparedStatement, InntektPOPP.class);
     }
 
     public Boolean lagrePerson(String callId, String consumerId, String token, String fnr) {
