@@ -3,7 +3,7 @@ package no.nav.pensjon.testdata.controller.support;
 public class InntektPOPP {
     private String miljo;
     private String fnr;
-    private int InntektAar;
+    private int inntektAar;
     private long belop;
 
     public String getMiljo() {
@@ -23,11 +23,11 @@ public class InntektPOPP {
     }
 
     public int getInntektAar() {
-        return InntektAar;
+        return inntektAar;
     }
 
     public void setInntektAar(int inntektAar) {
-        InntektAar = inntektAar;
+        this.inntektAar = inntektAar;
     }
 
     public long getBelop() {
