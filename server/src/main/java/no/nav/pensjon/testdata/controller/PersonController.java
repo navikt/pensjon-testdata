@@ -131,10 +131,7 @@ public class PersonController {
                     "VERSJON) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-            //java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato().getTime());
-            //TODO: Bruk fødselsdato fra dolly, når feilretting er på plass.
-            java.sql.Date fodselsDato =  parseFnr(request.getFnr());
-
+            java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato());
             java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato()) : null;
             java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato()) : null;
 
@@ -177,14 +174,6 @@ public class PersonController {
 
     private Date getSqlDate(LocalDate date) {
         return Date.valueOf(date);
-    }
-
-    private Date parseFnr(String fnr) {
-        LocalDate fodselsdato = LocalDate.of(
-                Integer.valueOf("19"  + fnr.substring(4,6)),
-                Integer.valueOf(fnr.substring(2,4).replaceFirst("^0+", "")),
-                Integer.valueOf(fnr.substring(0,2).replaceFirst("^0+", "")));
-        return Date.valueOf(fodselsdato);
     }
 
     private boolean brukerFinnes(ComponentCode component, String fnr) {
