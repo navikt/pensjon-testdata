@@ -11,7 +11,6 @@ import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import javax.annotation.PostConstruct;
 import java.sql.Date;
@@ -28,8 +26,6 @@ import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @Api(tags = {"Person"})
@@ -180,14 +176,4 @@ public class PersonController {
         return jdbcTemplateWrapper.queryForList(component, "SELECT * FROM T_PERSON where fnr_fk = '" + fnr + "'").size() > 0;
     }
 
-    /*
-     * Operasjonen dekker et ønske fra Dolly om  å vite hvilke miljøer Pensjon er tilgjengelig.
-     */
-    @RequestMapping(method = RequestMethod.GET, path = "/miljo")
-    @ApiOperation(value = "Miljøer der opprettelse av personer via API er tilgjengelig")
-    public ResponseEntity<List<String>> opprettPerson() {
-        List<String> miljo = new ArrayList<>();
-        miljo.add("q2");
-        return ResponseEntity.ok(miljo);
-    }
 }
