@@ -1,19 +1,25 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
-import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 
 @Service
 public class OpptjeningConsumerBean {
