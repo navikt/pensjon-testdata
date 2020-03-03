@@ -1,29 +1,44 @@
 package no.nav.pensjon.testdata.controller;
 
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
-import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
-import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
-import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
-import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
-import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
-import no.nav.pensjon.testdata.service.POPPDataExtractorService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
+import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
+import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
+import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
+import no.nav.pensjon.testdata.controller.support.InntektPOPP;
+import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import no.nav.pensjon.testdata.service.POPPDataExtractorService;
 
 @RestController
 @Api(tags = {"Opptjening"})
@@ -42,6 +57,9 @@ public class OpptjeningController {
 
     @Autowired
     private GrunnbelopConsumerBean grunnbelopConsumerBean;
+
+    @Autowired
+    private JdbcTemplateWrapper jdbcTemplateWrapper;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -113,6 +131,33 @@ public class OpptjeningController {
     private void lagreInntekt(LagreInntektPoppRequest poppRequest) throws JsonProcessingException {
         String body = objectMapper.writeValueAsString(poppRequest);
         opptjeningConsumerBean.lagreInntekt(body);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/inntekt")
+    public ResponseEntity<List<InntektPOPP>> hentInntekt(
+            @RequestHeader("Nav-Call-Id") String callId,
+            @RequestHeader("Nav-Consumer-Id") String consumerId,
+            @RequestHeader(value = "Authorization") String token,
+            @RequestParam String fnr,
+            @RequestParam(defaultValue = "q2") String miljo)  {
+
+        String sql = "select 'Q2' as miljo, p.fnr_fk, i.inntekt_ar, i.belop " +
+                "from popp.t_person p " +
+                "inner join popp.t_inntekt i on i.person_id = p.person_id " +
+                "where i.k_inntekt_status = 'G' " +
+                "and i.k_inntekt_t = 'SUM_PI' " +
+                "and p.fnr_fk = '" + fnr + "'";
+
+        List<InntektPOPP> inntekter = jdbcTemplateWrapper.queryForList(ComponentCode.POPP, sql, (rs, rowNum) -> {
+            InntektPOPP inntektPOPP = new InntektPOPP();
+            inntektPOPP.setMiljo(rs.getString("miljo"));
+            inntektPOPP.setFnr(rs.getString("fnr_fk"));
+            inntektPOPP.setInntektAar(rs.getInt("inntekt_ar"));
+            inntektPOPP.setBelop(rs.getLong("belop"));
+            return inntektPOPP;
+        });
+        inntekter.sort(Comparator.comparing(InntektPOPP::getInntektAar).reversed());
+        return ResponseEntity.ok(inntekter);
     }
 
 }
