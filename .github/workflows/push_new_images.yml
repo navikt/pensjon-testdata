@@ -1,0 +1,22 @@
+name: server Docker Image CI
+
+env:
+  VERSION: $(date +%s)
+
+on:
+  push:
+    branches: [ cd-branch ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: server
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build pensjon-testdata-server image
+      run: | 
+        cd server 
+        docker build . --file Dockerfile --tag IMAGE_NAME:VERSION
+        docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+        docker push IMAGE_NAME:VERSION
