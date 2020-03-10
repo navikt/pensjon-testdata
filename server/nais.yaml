@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-server:135
+  image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
     - https://pensjon-testdata-server.nais.preprod.local
   liveness:
