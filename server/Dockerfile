@@ -5,7 +5,7 @@ COPY pom.xml .
 
 COPY src src
 
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -B
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM maven:3-jdk-13
