@@ -29,14 +29,14 @@ const HentTestdata = () => {
             identer: caseworkers.map(caseworker => caseworker.name)
         };
         callURL(
-            '/moog/testdata',
+            '/api/testdata/log',
             'POST',
             request,
             () => {
-                snackbarApi.openSnackbar('Person opprettet!', 'success');
+                snackbarApi.openSnackbar('Testdata-logg hentet', 'success');
             },
             () => {
-                snackbarApi.openSnackbar('Lagring av person feilet!', 'error');
+                snackbarApi.openSnackbar('Henting av testdata-logg feilet!', 'error');
             }
         ).then(json => {
                 console.log("Fetched testdata from server, recieved " + json.length + " elements");

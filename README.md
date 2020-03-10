@@ -43,3 +43,5 @@ Applikasjonen er tilgjengelig på http://localhost:9090/
 Kjør `build-and-deploy-all.sh` som bygger, pusher til repo.adeo.no og legger ut nye versjoner av server 
 og client i default nais cluster (koblet mot Q2) 
 
+
+#
