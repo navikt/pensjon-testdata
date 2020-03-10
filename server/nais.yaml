@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampensjon
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
+  image: repo.adeo.no:5443/navikt/pensjon-testdata-server:135
   ingresses:
     - https://pensjon-testdata-server.nais.preprod.local
   liveness:
@@ -49,3 +49,5 @@ spec:
         mountPath: "/secrets/db/sam"
       - kvPath: "serviceuser/data/dev/srvpensjon"
         mountPath: "/secrets/srvpensjon"
+      - kvPath: "kv/preprod/fss/pensjon-testdata-server/default"
+        mountPath: "/secrets/app"
