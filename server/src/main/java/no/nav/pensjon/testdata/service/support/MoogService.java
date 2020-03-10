@@ -46,7 +46,7 @@ public class MoogService {
         try (Connection c = connection;
              Statement s = c.createStatement()) {
             try {
-                s.executeUpdate("begin dbms_output.enable(); end;");
+                s.executeUpdate("begin dbms_output.enable(1000000); end;");
                 s.execute(sql);
 
                 try (CallableStatement call = c.prepareCall(
@@ -72,6 +72,7 @@ public class MoogService {
                 }
             }
             finally {
+                s.execute("begin DBMS_LOGMNR.END_LOGMNR; end;");
                 s.executeUpdate("begin dbms_output.disable(); end;");
             }
         }

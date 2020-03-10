@@ -31,5 +31,4 @@ BEGIN
         END LOOP;
         CLOSE CUR;
     END;
-    DBMS_LOGMNR.END_LOGMNR;
 END;
