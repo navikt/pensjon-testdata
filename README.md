@@ -44,4 +44,11 @@ Kjør `build-and-deploy-all.sh` som bygger, pusher til repo.adeo.no og legger ut
 og client i default nais cluster (koblet mot Q2) 
 
 
-#
+#### Uthenting av testdata/database logger
+Uthenting av testdata-sql er muliggjort ved at det er etablert en sepparat database som speiler (Oracle GoldenGate) all aktivitet som gjennomføres i Pesys i Q2.
+Spesielt for  denne databasen er at den også gir mulighet til å benytte verktøyet Oracle Logminer, fra dette verktøyet kan vi hente ut REDO logger for å gjenskape de tilstandsendringene som er gjennomført fra pesys. 
+
+Se: `fetch-testdata-log.sql` for hvordan uthentingen gjennomføres. 
+
+Server: d26dbvl010.test.local
+Tilgang til denne serveren gjøres med RA-ident med gruppetilhørighet: **RA_LINUX_PENSJON_T**
