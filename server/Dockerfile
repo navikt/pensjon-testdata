@@ -1,22 +1,14 @@
-FROM openjdk:8-jdk-alpine as build
+FROM maven:3-jdk-13 as build
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY settings.xml settings.xml
 COPY pom.xml .
-
-RUN dos2unix ./mvnw
-
-RUN ./mvnw -s settings.xml dependency:go-offline -B
-
 
 COPY src src
 
-RUN ./mvnw package -DskipTests -s settings.xml
+RUN mvn package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-FROM openjdk:8-jre-alpine
+FROM maven:3-jdk-13
 ARG DEPENDENCY=/app/target/dependency
 
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
