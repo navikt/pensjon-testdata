@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -130,6 +131,15 @@ public class TestdataController {
         });
         t.start();
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/testdata/log")
+    public ResponseEntity<List> fetchTestdata(@RequestBody FetchTestdataRequest request)
+            throws IOException, SQLException {
+        logger.info("Processing request from: " + request.getFom() + " to: " + request.getTom() + " with: " + request.getIdenter().toString());
+        List<String> resultat = testdataService.fetchTestdataLog(request.getFom(), request.getTom(), request.getIdenter());
+        logger.info("Processing complete");
+        return ResponseEntity.ok(resultat);
     }
 
     private String getStracktrace(Exception e) {
