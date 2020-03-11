@@ -2,13 +2,13 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pensjon-testdata-server
-  namespace: default
+  namespace: q2
   labels:
     team: teampensjon
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
-    - https://pensjon-testdata-server.nais.preprod.local
+    - https://pensjon-testdata-server-q2.nais.preprod.local
   liveness:
     path: api/isAlive
     initialDelay: 10
