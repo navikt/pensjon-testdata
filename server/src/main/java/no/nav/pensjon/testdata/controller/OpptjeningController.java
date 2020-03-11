@@ -126,7 +126,7 @@ public class OpptjeningController {
     public ResponseEntity<List<InntektPOPP>> hentInntekt(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
-            @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam String fnr,
             @RequestParam(defaultValue = "q2") String miljo)  {
 
