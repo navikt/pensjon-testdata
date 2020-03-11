@@ -83,10 +83,6 @@ public class TestdataConsumerBean {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        if (token != null) {
-            httpHeaders.add("Authorization", token);
-        }
-
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
         ResponseEntity<String> restResponse;
