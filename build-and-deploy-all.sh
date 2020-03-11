@@ -22,8 +22,6 @@ cd ..
 kubectl config use-context dev-fss
 sed "s/IMAGE_VERSION/$version/g" server/nais-q2.yaml | kubectl apply -f-
 sed "s/IMAGE_VERSION/$version/g" client/nais-q2.yaml | kubectl apply -f-
-sed "s/IMAGE_VERSION/$version/g" server/nais-t4.yaml | kubectl apply -f-
-sed "s/IMAGE_VERSION/$version/g" client/nais-t4.yaml | kubectl apply -f-
 
 sed "s/IMAGE_VERSION/$version/g" dolly-facade/nais.yaml | kubectl apply -f-
 
