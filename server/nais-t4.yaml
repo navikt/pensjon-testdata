@@ -4,7 +4,7 @@ metadata:
   name: pensjon-testdata-server
   namespace: t4
   labels:
-    team: teampensjon
+    team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:

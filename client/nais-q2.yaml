@@ -4,7 +4,7 @@ metadata:
   name: pensjon-testdata-client
   namespace: q2
   labels:
-    team: teampensjon
+    team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
   port: 80
