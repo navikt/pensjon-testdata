@@ -74,4 +74,23 @@ public class DatasourceConfig {
 
         return dataSourceBuilder.build();
     }
+
+    @Bean(name = "moog-datasource")
+    @ConditionalOnProperty(
+            value="moog.db.enabled",
+            havingValue = "true")
+    public DataSource getMoogDatasource() throws IOException {
+        logger.info("Creating datasource for Moog");
+        String dbUrl = SecretUtil.readSecret("app/moog_jdbc_url");
+        String username = SecretUtil.readSecret("app/moog_username");
+        String password = SecretUtil.readSecret("app/moog_password");
+
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("oracle.jdbc.OracleDriver");
+        dataSourceBuilder.url(dbUrl);
+        dataSourceBuilder.username(username);
+        dataSourceBuilder.password(password);
+
+        return dataSourceBuilder.build();
+    }
 }

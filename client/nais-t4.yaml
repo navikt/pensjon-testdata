@@ -2,14 +2,14 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pensjon-testdata-client
-  namespace: default
+  namespace: t4
   labels:
     team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
   port: 80
   ingresses:
-    - https://ptb.nais.preprod.local
+    - https://ptb-t4.nais.preprod.local
   replicas:
     min: 1
     max: 1
@@ -29,4 +29,4 @@ spec:
     enabled: true
   env:
     - name: "SERVER_HOSTNAME"
-      value: "https://pensjon-testdata-server.nais.preprod.local"
+      value: "https://pensjon-testdata-server-t4.nais.preprod.local"

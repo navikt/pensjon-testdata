@@ -1,0 +1,34 @@
+declare
+    navn varchar2(500);
+BEGIN
+    select name into navn from v$archived_log order by first_time desc fetch first 1 rows only;
+    DBMS_LOGMNR.ADD_LOGFILE(navn);
+    DBMS_LOGMNR.START_LOGMNR(STARTTIME=>'{fom}',ENDTIME=>'{tom}',OPTIONS=>DBMS_LOGMNR.DICT_FROM_ONLINE_CATALOG + DBMS_LOGMNR.COMMITTED_DATA_ONLY + DBMS_LOGMNR.CONTINUOUS_MINE + DBMS_LOGMNR.NO_ROWID_IN_STMT);
+    DECLARE
+        I NUMBER:=1;
+        V_CSF NUMBER;
+        V_SQL_REDO VARCHAR2(4000):='';
+        V_SQL_REDO1 VARCHAR2(4000):='';
+        V_SQL_REDO2 VARCHAR2(4000):='';
+        CURSOR CUR IS SELECT CSF,SQL_REDO FROM V$LOGMNR_CONTENTS WHERE SRC_CON_NAME='PEN_LOGMNR' AND USERNAME in ('PEN','PDBADMIN') AND SEG_OWNER='PEN' AND OPERATION IN ('DELETE','INSERT','UPDATE') ORDER BY SCN,RS_ID,SSN,CSF DESC;
+    BEGIN
+        OPEN CUR;
+        LOOP
+            FETCH CUR INTO V_CSF,V_SQL_REDO;
+            EXIT WHEN CUR%NOTFOUND;
+            IF V_CSF=0 THEN
+                IF I=1 THEN DBMS_OUTPUT.PUT_LINE(V_SQL_REDO);
+                ELSIF I=2 THEN DBMS_OUTPUT.PUT_LINE(V_SQL_REDO1||V_SQL_REDO);
+                ELSIF I=3 THEN DBMS_OUTPUT.PUT_LINE(V_SQL_REDO1||V_SQL_REDO2||V_SQL_REDO);
+                END IF;
+                I:=1;
+            ELSE
+                IF I=1 THEN V_SQL_REDO1:=V_SQL_REDO;
+                ELSIF I=2 THEN V_SQL_REDO2:=V_SQL_REDO;
+                END IF;
+                I:=I+1;
+            END IF;
+        END LOOP;
+        CLOSE CUR;
+    END;
+END;

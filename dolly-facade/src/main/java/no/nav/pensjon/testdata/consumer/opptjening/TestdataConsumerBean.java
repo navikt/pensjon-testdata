@@ -32,10 +32,6 @@ public class TestdataConsumerBean {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        if (token != null) {
-            httpHeaders.add("Authorization",  token);
-        }
-
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
         ResponseEntity<String> restResponse;
@@ -83,10 +79,6 @@ public class TestdataConsumerBean {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        if (token != null) {
-            httpHeaders.add("Authorization", token);
-        }
-
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
         ResponseEntity<String> restResponse;
@@ -133,10 +125,6 @@ public class TestdataConsumerBean {
     public List<Inntekt> hentInntekt(String fnr, String miljo, String token, String endpoint, String callId, String consumerId) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        if (token != null) {
-            httpHeaders.add("Authorization",  token);
-        }
 
         httpHeaders.add("Nav-Call-Id", callId);
         httpHeaders.add("Nav-Consumer-Id", consumerId);
