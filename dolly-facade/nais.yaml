@@ -4,7 +4,7 @@ metadata:
   name: pensjon-testdata-dolly-facade
   namespace: default
   labels:
-    team: teampensjon
+    team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-dolly-facade:IMAGE_VERSION
   port: 8081
