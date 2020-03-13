@@ -28,3 +28,8 @@ echo "<password>" > server/secrets/oracle/sam/password
 mkdir server/secrets/srvpensjon
 echo "<username>" > server/secrets/srvpensjon/username
 echo "<password>" > server/secrets/srvpensjon/password
+
+mkdir server/secrets/app
+echo "<username>" > server/secrets/app/moog_jdbc_url
+echo "<username>" > server/secrets/app/moog_username
+echo "<password>" > server/secrets/app/moog_password

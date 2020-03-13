@@ -8,21 +8,27 @@ import no.nav.pensjon.testdata.repository.support.TestScenario;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
+import no.nav.pensjon.testdata.service.support.MoogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class TestdataService {
 
     @Autowired
-    OracleRepository oracleRepository;
+    private OracleRepository oracleRepository;
 
     @Autowired
-    ScenarioRepository scenarioRepository;
+    private ScenarioRepository scenarioRepository;
+
+    @Autowired
+    private MoogService moogService;
 
     @Transactional
     public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
@@ -64,5 +70,15 @@ public class TestdataService {
     private boolean removeOsOppdragslinjeStatus(String sql) {
         return !sql.contains("T_OS_OPPDRLINJE_S");
     }
+
+
+
+    /*
+     * Henter testdata log fra Q2 støttedatabase (d26dbvl010.test.local)
+     */
+    public List<String> fetchTestdataLog(String fom, String tom, List<String> identer) throws SQLException, IOException {
+        return moogService.execute(fom,tom,identer);
+    }
+
 
 }

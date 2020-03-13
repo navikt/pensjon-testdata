@@ -2,13 +2,13 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pensjon-testdata-server
-  namespace: default
+  namespace: q2
   labels:
     team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
-    - https://pensjon-testdata-server.nais.preprod.local
+    - https://pensjon-testdata-server-q2.nais.preprod.local
   liveness:
     path: api/isAlive
     initialDelay: 10
@@ -55,3 +55,5 @@ spec:
         mountPath: "/secrets/db/sam"
       - kvPath: "serviceuser/data/dev/srvpensjon"
         mountPath: "/secrets/srvpensjon"
+      - kvPath: "kv/preprod/fss/pensjon-testdata-server/default"
+        mountPath: "/secrets/app"

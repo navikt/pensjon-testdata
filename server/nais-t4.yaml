@@ -2,13 +2,13 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pensjon-testdata-server
-  namespace: default
+  namespace: t4
   labels:
-    team: pensjontestdata
+    team: teampensjon
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
-    - https://pensjon-testdata-server.nais.preprod.local
+    - https://pensjon-testdata-server-t4.nais.preprod.local
   liveness:
     path: api/isAlive
     initialDelay: 10
@@ -29,29 +29,25 @@ spec:
     - name: "SECRET_BASEDIR"
       value: "/"
     - name: "sts_endpoint_url"
-      value: "https://security-token-service.nais.preprod.local"
+      value: "https://security-token-service-t4.nais.preprod.local"
     - name: "popp_endpoint_url"
       value: "https://wasapp-t4.adeo.no/popp-ws/api"
   vault:
     enabled: true
     paths:
-      - kvPath: "oracle/data/dev/creds/pen_t4-pen_testdata"
-        mountPath: "/secrets/oracle/pen"
       - kvPath: "oracle/data/dev/creds/pen_t4-user"
         mountPath: "/secrets/oracle/pen"
       - kvPath: "oracle/data/dev/config/pen_t4"
         mountPath: "/secrets/db/pen"
-      - kvPath: "oracle/data/dev/creds/popp_t4-popp_testdata"
-        mountPath: "/secrets/oracle/popp"
       - kvPath: "oracle/data/dev/creds/popp_t4-user"
         mountPath: "/secrets/oracle/popp"
       - kvPath: "oracle/data/dev/config/popp_t4"
         mountPath: "/secrets/db/popp"
       - kvPath: "oracle/data/dev/creds/sam_t4-user"
         mountPath: "/secrets/oracle/sam"
-      - kvPath: "oracle/data/dev/creds/sam_t4-sam_testdata"
-        mountPath: "/secrets/oracle/sam"
       - kvPath: "oracle/data/dev/config/sam_t4"
         mountPath: "/secrets/db/sam"
-      - kvPath: "serviceuser/data/dev/srvpensjon"
+      - kvPath: "serviceuser/data/test/srvpensjon"
         mountPath: "/secrets/srvpensjon"
+      - kvPath: "kv/preprod/fss/pensjon-testdata-server/default"
+        mountPath: "/secrets/app"
