@@ -4,7 +4,7 @@ metadata:
   name: pensjon-testdata-server
   namespace: default
   labels:
-    team: teampensjon
+    team: pensjontestdata
 spec:
   image: repo.adeo.no:5443/navikt/pensjon-testdata-server:IMAGE_VERSION
   ingresses:
@@ -35,15 +35,21 @@ spec:
   vault:
     enabled: true
     paths:
+      - kvPath: "oracle/data/dev/creds/pen_q2-pen_testdata"
+        mountPath: "/secrets/oracle/pen"
       - kvPath: "oracle/data/dev/creds/pen_q2-user"
         mountPath: "/secrets/oracle/pen"
       - kvPath: "oracle/data/dev/config/pen_q2"
         mountPath: "/secrets/db/pen"
+      - kvPath: "oracle/data/dev/creds/popp_q2-popp_testdata"
+        mountPath: "/secrets/oracle/popp"
       - kvPath: "oracle/data/dev/creds/popp_q2-user"
         mountPath: "/secrets/oracle/popp"
       - kvPath: "oracle/data/dev/config/popp_q2"
         mountPath: "/secrets/db/popp"
       - kvPath: "oracle/data/dev/creds/sam_q2-user"
+        mountPath: "/secrets/oracle/sam"
+      - kvPath: "oracle/data/dev/creds/sam_q2-sam_testdata"
         mountPath: "/secrets/oracle/sam"
       - kvPath: "oracle/data/dev/config/sam_q2"
         mountPath: "/secrets/db/sam"
