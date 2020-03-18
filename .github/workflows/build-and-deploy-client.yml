@@ -30,13 +30,13 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**client/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: cd client
-      - run: npm install
-      - run: npm run build
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd client
+          npm install
+          npm run build
           docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
