@@ -27,7 +27,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd dolly-facade
-          chmod +x mvnw
           ./mvnw package -DskipTests
           mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
           docker build --tag ${IMAGE} .
