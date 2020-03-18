@@ -1,0 +1,68 @@
+name: Build and deploy client on push to master
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-and-deploy-client.yml'
+      - 'client/**'
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-client:${{ github.sha }}
+
+jobs:
+  tag_build_and_deploy:
+    name: 'Build, deploy and tag'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - name: 'Pull repo'
+        uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Build and publish Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd client
+          npm install
+          npm run build
+          docker build --tag ${IMAGE} .
+          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push ${IMAGE}
+  deploy_q2:
+    name: Deploy client to NAIS - Q2 namespace
+    needs: tag_build_and_deploy
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: client/nais-q2.yaml
+
+  deploy_t4:
+    name: Deploy client to NAIS - T4 namespace
+    needs: deploy_q2
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: client/nais-t4.yaml
