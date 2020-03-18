@@ -2,8 +2,9 @@ name: Build and deploy client on push to master
 
 on:
   push:
- #   paths:
- #     - 'client/**'
+    paths:
+      - '.github/workflows/build-and-deploy-client.yml'
+      - 'client/**'
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-client:${{ github.sha }}
@@ -43,7 +44,7 @@ jobs:
   deploy_q2:
     name: Deploy client to NAIS - Q2 namespace
     needs: tag_build_and_deploy
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -56,7 +57,7 @@ jobs:
   deploy_t4:
     name: Deploy client to NAIS - T4 namespace
     needs: deploy_q2
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
