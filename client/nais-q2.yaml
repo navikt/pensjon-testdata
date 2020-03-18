@@ -6,7 +6,7 @@ metadata:
   labels:
     team: pensjontestdata
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
+  image: {{ image }}
   port: 80
   ingresses:
     - https://ptb-q2.nais.preprod.local
