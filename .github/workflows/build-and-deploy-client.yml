@@ -51,7 +51,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
-          RESOURCE: cleint/nais-q2.yaml
+          RESOURCE: client/nais-q2.yaml
 
   deploy_t4:
     name: Deploy client to NAIS - T4 namespace
