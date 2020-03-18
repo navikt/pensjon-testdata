@@ -4,9 +4,9 @@ metadata:
   name: pensjon-testdata-client
   namespace: t4
   labels:
-    team: teampensjon
+    team: pensjontestdata
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-client:IMAGE_VERSION
+  image: {{ image }}
   port: 80
   ingresses:
     - https://ptb-t4.nais.preprod.local
