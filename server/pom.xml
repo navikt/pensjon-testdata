@@ -8,6 +8,7 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/>
     </parent>
+
     <groupId>no.nav.pensjon</groupId>
     <artifactId>testdata</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -15,7 +16,11 @@
     <description>Load-unload-testdata-pensjon</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <tjenestespesifikansjoner.version>1.2020.03.10-15.42-d63c3fb8f3b8</tjenestespesifikansjoner.version>
     </properties>
 
     <dependencies>
@@ -24,18 +29,20 @@
             <artifactId>spring-boot-starter</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>rt</artifactId>
+            <version>2.3.2-1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
@@ -43,12 +50,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <!--exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jdbc</artifactId>
-                </exclusion>
-            </exclusions-->
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -73,11 +74,10 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>12.1.0.2</version>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.3.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -91,19 +91,39 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>no.nav.tjenester</groupId>
-			<artifactId>pensjon-vedtaksbrev-tjenestespesifikasjon</artifactId>
-			<classifier>jaxws</classifier>
-            <version>2.7.0</version>
-		</dependency>
+        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>pensjon-vedtaksbrev-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikansjoner.version}</version>
+        </dependency>
         <dependency>
             <groupId>no.nav.tjenester</groupId>
             <artifactId>pensjon-behandleAutomatiskOmregning-tjenestespesifikasjon</artifactId>
             <classifier>jaxws</classifier>
             <version>1.0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/pensjon-behandleAutomatiskOmregning-tjenestespesifikasjon-1.0.3-jaxws.jar</systemPath>
         </dependency>
+
+<!--        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>pensjon-behandleAutomatiskOmregning-v1-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikansjoner.version}</version>
+        </dependency>-->
     </dependencies>
+
+    <repositories>
+        <!-- Skal brukes hvis bygget kjøres fra en Github Action -->
+        <repository>
+            <id>github-package-registry-navikt</id>
+            <url>https://maven.pkg.github.com/navikt/maven-release</url>
+        </repository>
+        <!-- Skal brukes hvis bygget kjører utenfor NAV (f.eks. en ekstern maskin, eller Circle CI) -->
+        <repository>
+            <id>external-mirror-github-navikt</id>
+            <url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
