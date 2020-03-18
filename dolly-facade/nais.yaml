@@ -6,7 +6,7 @@ metadata:
   labels:
     team: pensjontestdata
 spec:
-  image: repo.adeo.no:5443/navikt/pensjon-testdata-dolly-facade:IMAGE_VERSION
+  image: {{ image }}
   port: 8081
   ingresses:
     - https://pensjon-testdata-dolly-facade.nais.preprod.local
