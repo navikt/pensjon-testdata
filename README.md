@@ -1,4 +1,7 @@
 # Pensjon testdata
+![Build and deploy dolly-facade on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20dolly-facade%20on%20push%20to%20master/badge.svg)
+
+![Build and deploy client on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20client%20on%20push%20to%20master/badge.svg)
 
 Løsningen består av følgende komponenter: 
 
@@ -40,8 +43,9 @@ Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
 Applikasjonen er tilgjengelig på http://localhost:9090/
 
 #### Release
-Kjør `build-and-deploy-all.sh` som bygger, pusher til repo.adeo.no og legger ut nye versjoner av server 
-og client i default nais cluster (koblet mot Q2) 
+Gjøres fra github-actions ved push til master branch. Ved commit til hver applikasjon, skal det trigges bygg som deployes ut til aktuelle testmiljø. 
+
+Bygg kan overvåkes her: https://github.com/navikt/pensjon-testdata/actions
 
 
 #### Uthenting av testdata/database logger
