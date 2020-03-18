@@ -3,7 +3,7 @@
         <mirror>
             <id>NAV internal Nexus</id>
             <mirrorOf>central</mirrorOf>
-            <url>https://repo.adeo.no/repository/maven-public</url>
+            <url>https://maven.pkg.github.com/navikt/maven-release</url>
         </mirror>
     </mirrors>
 </settings>
