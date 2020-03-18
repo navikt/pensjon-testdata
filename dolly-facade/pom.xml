@@ -86,16 +86,6 @@
     </build>
     <repositories>
         <repository>
-            <id>nexus-internal</id>
-            <url>https://repo.adeo.no/repository/maven-public</url>
-        </repository>
-        <!-- Skal brukes hvis bygget kjører internt (f.eks. Jenkins, fra utviklerimage, eller via ScaleFT) -->
-        <repository>
-            <id>internal-mirror-github-navikt</id>
-            <url>https://repo.adeo.no/repository/github-package-registry-navikt/</url>
-        </repository>
-        <!-- Skal brukes hvis bygget kjøres fra en Github Action -->
-        <repository>
             <id>github-package-registry</id>
             <url>https://maven.pkg.github.com/navikt/maven-release</url>
         </repository>
