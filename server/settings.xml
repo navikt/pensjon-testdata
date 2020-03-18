@@ -1,9 +1,0 @@
-<settings>
-    <mirrors>
-        <mirror>
-            <id>NAV internal Nexus</id>
-            <mirrorOf>central</mirrorOf>
-            <url>https://repo.adeo.no/repository/maven-public</url>
-        </mirror>
-    </mirrors>
-</settings>
