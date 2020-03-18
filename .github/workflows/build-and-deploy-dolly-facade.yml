@@ -3,6 +3,7 @@ name: Build and deploy dolly-facade on push to master
 on:
   push:
     paths:
+      - '.github/workflows/build-and-deploy-dolly-facade.yml'
       - 'dolly-facade/**'
 
 env:
