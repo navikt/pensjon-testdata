@@ -1,27 +1,9 @@
-FROM openjdk:8-jdk-alpine as build
-WORKDIR /app
+FROM openjdk:8-jdk-alpine
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY settings.xml settings.xml
-COPY pom.xml .
-
-RUN dos2unix ./mvnw
-
-RUN ./mvnw -s settings.xml dependency:go-offline -B
-
-
-COPY src src
-
-RUN ./mvnw package -DskipTests -s settings.xml
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-
-FROM openjdk:8-jre-alpine
-ARG DEPENDENCY=/app/target/dependency
-
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+COPY target/dependency/BOOT-INF/lib /app/lib
+COPY lib /app/lib
+COPY target/dependency/META-INF /app/META-INF
+COPY target/dependency/BOOT-INF/classes /app
 
 ENV SECRET_BASEDIR /
 

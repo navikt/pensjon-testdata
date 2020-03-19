@@ -1,0 +1,9 @@
+<settings>
+    <mirrors>
+        <mirror>
+            <id>Github Repo</id>
+            <mirrorOf>central</mirrorOf>
+            <url>https://maven.pkg.github.com/navikt/maven-release</url>
+        </mirror>
+    </mirrors>
+</settings>
