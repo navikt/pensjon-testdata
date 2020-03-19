@@ -1,8 +1,6 @@
 # Pensjon testdata
 ![Build and deploy client on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20client%20on%20push%20to%20master/badge.svg)
-
 ![Build and deploy server on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20server%20on%20push%20to%20master/badge.svg)
-
 ![Build and deploy dolly-facade on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20dolly-facade%20on%20push%20to%20master/badge.svg)
 
 
