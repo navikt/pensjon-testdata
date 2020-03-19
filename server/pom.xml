@@ -115,7 +115,7 @@
     <repositories>
         <!-- Skal brukes hvis bygget kjøres fra en Github Action -->
         <repository>
-            <id>github-package-registry-navikt</id>
+            <id>github-package-registry</id>
             <url>https://maven.pkg.github.com/navikt/maven-release</url>
         </repository>
         <!-- Skal brukes hvis bygget kjører utenfor NAV (f.eks. en ekstern maskin, eller Circle CI) -->
