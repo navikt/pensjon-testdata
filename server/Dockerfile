@@ -1,6 +1,7 @@
 FROM openjdk:8-jdk-alpine
 
 COPY target/dependency/BOOT-INF/lib /app/lib
+COPY lib /app/lib
 COPY target/dependency/META-INF /app/META-INF
 COPY target/dependency/BOOT-INF/classes /app
 
