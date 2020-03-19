@@ -57,7 +57,7 @@ public class BrevController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/brev")
     public ResponseEntity<Brev[]> hentBrevkoder()  {
-        List<Map<String, Object>> result  = jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT * FROM T_K_BATCHBREV");
+        List<Map<String, Object>> result  = jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT * FROM PEN.T_K_BATCHBREV");
 
         Brev[] alleBrev = result
                 .stream()
