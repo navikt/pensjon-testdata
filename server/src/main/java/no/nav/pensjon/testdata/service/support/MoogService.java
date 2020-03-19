@@ -24,7 +24,7 @@ public class MoogService {
 
     public List<String> execute(String fom, String tom, List<String> identer) throws SQLException, IOException {
         String sql = fileRepository
-                .readSqlFileAsString("fetch-testdata-log")
+                .readSqlFileAsString("moog_db/fetch-testdata-log")
                 .replace("{fom}", fom)
                 .replace("{tom}",tom);
         Connection connection = moogDataSource.getConnection();
