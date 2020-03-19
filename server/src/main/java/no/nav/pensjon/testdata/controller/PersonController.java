@@ -91,7 +91,7 @@ public class PersonController {
 
     private void createSamPerson(OpprettPersonRequest request) {
         if (!brukerFinnes(ComponentCode.SAM, request.getFnr())) {
-            String personPreparedStatement = "INSERT INTO T_PERSON " +
+            String personPreparedStatement = "INSERT INTO SAM.T_PERSON " +
                     "(FNR_FK, " +
                     "DATO_OPPRETTET, " +
                     "OPPRETTET_AV, " +
@@ -114,7 +114,7 @@ public class PersonController {
 
     private void createPenPerson(OpprettPersonRequest request) {
         if (!brukerFinnes(ComponentCode.PEN, request.getFnr())) {
-            String personPreparedStatement = "INSERT INTO T_PERSON " +
+            String personPreparedStatement = "INSERT INTO PEN.T_PERSON " +
                     "(FNR_FK, " +
                     "DATO_FODSEL, " +
                     "DATO_DOD, " +
