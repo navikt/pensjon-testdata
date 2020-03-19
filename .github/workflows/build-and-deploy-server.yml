@@ -60,7 +60,7 @@ jobs:
           RESOURCE: server/nais-t4.yaml
 
   deploy_q4:
-    name: Deploy server to NAIS - T4 namespace
+    name: Deploy server to NAIS - Q4 namespace
     needs: tag_build_and_deploy
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
