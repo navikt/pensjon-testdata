@@ -20,7 +20,7 @@ import static no.nav.pensjon.testdata.configuration.support.EnvironmentResolver.
 @RestController
 @Api(tags = {"Opptjening"})
 @SwaggerDefinition(tags = {
-        @Tag(name = "", description = "Endepunkt som gjennomfører behandling av inntekter og opptjening mot POPP")
+        @Tag(name = "", description = "Endepunkt som gjennomfører distribusjon av inntekter og opptjening til POPP")
 })
 public class OpptjeningController {
 

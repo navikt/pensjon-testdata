@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @Api(tags = {"Testdata"})
 @SwaggerDefinition(tags = {
-        @Tag(name = "", description = "Endepunkter som gjennomfører behandling av testdata")
+        @Tag(name = "", description = "Endepunkter som gjennomfører behandling av testdata innenfor pensjonsområdet")
 })
 public class TestdataController {
 

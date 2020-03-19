@@ -39,7 +39,7 @@ const HentTestdata = () => {
                 snackbarApi.openSnackbar('Henting av testdata-logg feilet!', 'error');
             }
         ).then(json => {
-                console.log("Fetched testdata from server, recieved " + json.length + " elements");
+                console.log("Hentet testdata fra server, mottok " + json.length + " elementer");
                 setData(json);
             }
         ).finally(() => {
