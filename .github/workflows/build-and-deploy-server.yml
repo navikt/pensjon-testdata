@@ -1,13 +1,13 @@
-name: Build and deploy dolly-facade on push to master
+name: Build and deploy server on push to master
 
 on:
   push:
     paths:
-      - '.github/workflows/build-and-deploy-dolly-facade.yml'
-      - 'dolly-facade/**'
+      - '.github/workflows/build-and-deploy-server.yml'
+      - 'server/**'
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-dolly-facade:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-server:${{ github.sha }}
 
 jobs:
   tag_build_and_deploy:
@@ -19,21 +19,22 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**dolly-facade/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**server/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd dolly-facade
-          ./mvnw package -DskipTests
+          cd server
+          ./mvnw package -DskipTests -B
           mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
           docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
-  deploy:
-    name: Deploy dolly-facade to NAIS
+
+  deploy_q2:
+    name: Deploy server to NAIS - Q2 namespace
     needs: tag_build_and_deploy
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -43,4 +44,17 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
-          RESOURCE: dolly-facade/nais.yaml
+          RESOURCE: server/nais-q2.yaml
+
+  deploy_t4:
+    name: Deploy server to NAIS - T4 namespace
+    needs: deploy_q2
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: server/nais-t4.yaml
