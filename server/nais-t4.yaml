@@ -32,6 +32,14 @@ spec:
       value: "https://security-token-service-t4.nais.preprod.local"
     - name: "popp_endpoint_url"
       value: "https://wasapp-t4.adeo.no/popp-ws/api"
+    - name: "pen_vedtaksbrev_endpoint"
+      value: "https://wasapp-t4.adeo.no/pensjon-ws/Vedtaksbrev"
+    - name: "pen_auto_omregning_endpoint"
+      value: "https://wasapp-t4.adeo.no/pensjon-ws/BehandleAutomatiskOmregning_v1"
+    - name: "norg_endpoint_url"
+      value: "https://app-t1.adeo.no/norg2/api"
+    - name: "preg_rest_veiet_grunnbelop_endpoint.url"
+      value: "https://wasapp-t4.adeo.no/preg-ws/api/grunnbelop/veiet"
   vault:
     enabled: true
     paths:
