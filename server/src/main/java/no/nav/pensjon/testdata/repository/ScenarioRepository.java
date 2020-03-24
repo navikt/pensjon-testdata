@@ -10,7 +10,8 @@ import no.nav.pensjon.testdata.repository.support.TestScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +29,8 @@ public class ScenarioRepository {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
 
+    @Autowired
+    ResourceLoader resourceLoader;
 
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
         TestScenario testScenario = getTestScenario(scenarioId);
@@ -45,8 +48,8 @@ public class ScenarioRepository {
     }
 
     public TestScenario getTestScenario(String scenarioId) throws IOException {
-        ClassPathResource resource = new ClassPathResource("/scenario/");
 
+        Resource resource = resourceLoader.getResource("classpath:scenario");
         for (File file : resource.getFile().listFiles()) {
             if (file.isDirectory()) {
                 TestScenario scenario = getObjectMapper().readValue(Paths.get(file.toString(), "scenario.json").toFile(), TestScenario.class);

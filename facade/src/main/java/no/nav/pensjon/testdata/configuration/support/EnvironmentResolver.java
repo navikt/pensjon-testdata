@@ -23,7 +23,7 @@ public class EnvironmentResolver {
         } else {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                ClassPathResource resource = new ClassPathResource(CONFIGURATION_FILE);
+                ClassPathResource resource = new ClassPathResource("classpath:" + CONFIGURATION_FILE);
                 List<Environment> config = objectMapper
                         .readValue(resource.getFile(), new TypeReference<List<Environment>>() {
                         });
