@@ -43,7 +43,7 @@ public class OracleRepository {
         if (canDatabaseBeCleared()) {
             logger.info("Removing all data from database");
 
-            List<String> sql = fileRepository.readSqlFile("/unload");
+            List<String> sql = fileRepository.readSqlFile("unload");
             sql.forEach(query -> jdbcTemplateWrapper.execute(ComponentCode.PEN, query));
             logger.info("All data from database cleared");
         } else {
@@ -54,7 +54,7 @@ public class OracleRepository {
     @Transactional
     public void clearDatabaseForPerson(String fnr) throws IOException {
         alterSession();
-        String sqlFile = fileRepository.readSqlFileAsString("/clear-oracle-data-for-person");
+        String sqlFile = fileRepository.readSqlFileAsString("clear-oracle-data-for-person");
 
         //PEN
         logger.info("Fjerner data i PEN for person");

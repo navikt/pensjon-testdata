@@ -32,7 +32,7 @@ public class POPPDataExtractorService {
     public List<String> extractDataFromPOPP(String fnr) throws IOException {
         logger.info("Started to extract data from POPP");
         oracleRepository.alterSession();
-        String sqlSource = fileRepository.readSqlFileAsString("/popp-extract-data");
+        String sqlSource = fileRepository.readSqlFileAsString("popp-extract-data");
 
         List<String> sqlQueryList = Arrays.asList(sqlSource.split("#"));
 
