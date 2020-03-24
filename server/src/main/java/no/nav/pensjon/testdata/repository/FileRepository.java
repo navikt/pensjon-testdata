@@ -51,10 +51,10 @@ public class FileRepository {
         for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
 
-                logger.info("Trying to read: " + file.toString() + "scenario.json");
+                logger.info("Trying to read: " + file.toString() + "/scenario.json");
 
                 TestScenario scenario = scenarioRepository.getObjectMapper()
-                        .readValue(PathUtil.readPath(file.toString() + "scenario.json").toFile(), TestScenario.class);
+                        .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
                 allScenarios.add(scenario.getName());
             }
         }
