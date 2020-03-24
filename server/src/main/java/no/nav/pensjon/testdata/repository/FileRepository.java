@@ -3,6 +3,8 @@ package no.nav.pensjon.testdata.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
@@ -19,6 +21,8 @@ import java.util.regex.Pattern;
 
 @Repository
 public class FileRepository {
+
+    Logger logger = LoggerFactory.getLogger(FileRepository.class);
 
     @Autowired
     private ScenarioRepository scenarioRepository;
@@ -46,8 +50,11 @@ public class FileRepository {
         List<String> allScenarios = new ArrayList<>();
         for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
+
+                logger.info("Trying to read: " + file.toString() + "scenario.json");
+
                 TestScenario scenario = scenarioRepository.getObjectMapper()
-                        .readValue(Paths.get(file.toString(),"scenario.json").toFile(), TestScenario.class);
+                        .readValue(PathUtil.readPath(file.toString() + "scenario.json").toFile(), TestScenario.class);
                 allScenarios.add(scenario.getName());
             }
         }
