@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>no.nav.pensjon</groupId>
-    <artifactId>testdata-dolly-facade</artifactId>
+    <artifactId>testdata-facade</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>testdata-dolly-facade</name>
+    <name>testdata-facade</name>
     <description>Load-unload-testdata-pensjon</description>
 
     <properties>
