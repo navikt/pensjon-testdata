@@ -7,7 +7,7 @@ import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.consumer.opptjening.TestdataConsumerBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
-import no.nav.pensjon.testdata.controller.support.response.DollyResponse;
+import no.nav.pensjon.testdata.controller.support.response.ResponseAgregate;
 import no.nav.pensjon.testdata.controller.support.response.Response;
 import no.nav.pensjon.testdata.controller.support.response.ResponseEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class PersonController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/api/v1/person")
     @ApiOperation(value = "Oppretter personer innenfor pensjonsområdet (PEN, POPP og SAM)")
-    public ResponseEntity<DollyResponse> opprettPerson(
+    public ResponseEntity<ResponseAgregate> opprettPerson(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
@@ -37,7 +37,7 @@ public class PersonController {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
 
-        DollyResponse dollyResponse = new DollyResponse();
+        ResponseAgregate responseAgregate = new ResponseAgregate();
         request.getMiljoer()
                 .stream()
                 .parallel()
@@ -53,10 +53,10 @@ public class PersonController {
                     ResponseEnvironment env = new ResponseEnvironment();
                     env.setMiljo(miljo);
                     env.setResponse(response);
-                    dollyResponse.addStatus(env);
+                    responseAgregate.addStatus(env);
                 });
 
-        return ResponseEntity.ok(dollyResponse);
+        return ResponseEntity.ok(responseAgregate);
     }
 
     private OpprettPersonRemoteRequest createRemoteRequest(OpprettPersonRequest request) {

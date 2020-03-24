@@ -3,7 +3,7 @@ package no.nav.pensjon.testdata.controller.support.response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DollyResponse {
+public class ResponseAgregate {
 
     private List<ResponseEnvironment> status = new ArrayList<>();
 

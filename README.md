@@ -1,7 +1,7 @@
 # Pensjon testdata
 ![Build and deploy client on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20client%20on%20push%20to%20master/badge.svg)
 ![Build and deploy server on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20server%20on%20push%20to%20master/badge.svg)
-![Build and deploy dolly-facade on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20dolly-facade%20on%20push%20to%20master/badge.svg)
+![Build and deploy facade on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20facade%20on%20push%20to%20master/badge.svg)
 
 
 
@@ -9,7 +9,7 @@ Løsningen består av følgende komponenter:
 
 1. pensjon-testdata-client
 2. pensjon-testdata-server
-3. pensjon-testdata-dolly-facade (distribusjon av testdata fra dolly til pensjonsområdets testmiljøer)
+3. pensjon-testdata-facade (distribusjon av testdata til pensjonsområdets testmiljøer)
 
 #### Utviklingsmiljø
 

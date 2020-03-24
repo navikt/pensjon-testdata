@@ -16,12 +16,12 @@ import java.util.List;
 @RestController
 @Api(tags = {"Miljo"})
 @SwaggerDefinition(tags = {
-        @Tag(name = "", description = "Endepunkter for håndtering av miljødistribusjon fra Dolly til pensjonsområdet")
+        @Tag(name = "", description = "Endepunkter for håndtering av miljødistribusjon til pensjonsområdet")
 })
 public class MiljoController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/v1/miljo")
-    @ApiOperation(value = "Miljøer der endepunkt for samhandling mellom Dolly og Pensjonsområdet er tilgjengelig")
+    @ApiOperation(value = "Miljøer der endepunkt for samhandling for testdata inn mot Pensjonsområdet er tilgjengelig")
     public ResponseEntity<List<String>> opprettPerson() {
         List<String> miljo = new ArrayList<>();
 

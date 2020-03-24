@@ -28,7 +28,7 @@ public class OpptjeningController {
     private TestdataConsumerBean testdataConsumerBean;
 
     @RequestMapping(method = RequestMethod.POST, path = "/api/v1/inntekt")
-    public ResponseEntity<DollyResponse> lagreInntekt(
+    public ResponseEntity<ResponseAgregate> lagreInntekt(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
@@ -36,7 +36,7 @@ public class OpptjeningController {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
 
-        DollyResponse dollyResponse = new DollyResponse();
+        ResponseAgregate responseAgregate = new ResponseAgregate();
         request.getMiljoer()
                 .stream()
                 .parallel()
@@ -52,9 +52,9 @@ public class OpptjeningController {
                     ResponseEnvironment env = new ResponseEnvironment();
                     env.setMiljo(miljo);
                     env.setResponse(response);
-                    dollyResponse.addStatus(env);
+                    responseAgregate.addStatus(env);
                 });
-        return ResponseEntity.ok(dollyResponse);
+        return ResponseEntity.ok(responseAgregate);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/v1/inntekt")
