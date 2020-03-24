@@ -45,7 +45,7 @@ public class OpptjeningController {
                     Response response = testdataConsumerBean.lagreInntekt(
                             remoteRequest,
                             token,
-                            getAvaiableEnvironments().get(miljo).getUrl(),
+                            getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
                             callId,
                             consumerId);
 
@@ -71,7 +71,7 @@ public class OpptjeningController {
                 fnr,
                 miljo,
                 token,
-                getAvaiableEnvironments().get(miljo).getUrl(),
+                getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
                 callId,
                 consumerId);
         inntektliste.setInntekter(inntekter);

@@ -47,7 +47,7 @@ public class PersonController {
                             callId,
                             consumerId,
                             token,
-                            getAvaiableEnvironments().get(miljo).getUrl(),
+                            getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
                             remoteRequest);
 
                     ResponseEnvironment env = new ResponseEnvironment();
