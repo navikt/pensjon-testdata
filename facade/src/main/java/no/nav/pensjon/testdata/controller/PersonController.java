@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 import static no.nav.pensjon.testdata.configuration.support.EnvironmentResolver.erAlleMiljoerTilgjengelig;
 import static no.nav.pensjon.testdata.configuration.support.EnvironmentResolver.getAvaiableEnvironments;
 
@@ -33,7 +35,7 @@ public class PersonController {
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody OpprettPersonRequest request) {
+            @RequestBody OpprettPersonRequest request) throws IOException {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
 
@@ -47,7 +49,7 @@ public class PersonController {
                             callId,
                             consumerId,
                             token,
-                            getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
+                            getAvaiableEnvironments().get(miljo).getUrl(),
                             remoteRequest);
 
                     ResponseEnvironment env = new ResponseEnvironment();
