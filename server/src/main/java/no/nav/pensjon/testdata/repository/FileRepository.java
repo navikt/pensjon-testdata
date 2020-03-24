@@ -1,9 +1,9 @@
 package no.nav.pensjon.testdata.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
@@ -22,11 +22,8 @@ public class FileRepository {
     @Autowired
     private ScenarioRepository scenarioRepository;
 
-    @Autowired
-    ResourceLoader  resourceLoader;
-
     public List<String> readSqlFile(String sqlFile) throws  IOException {
-        Resource resource = resourceLoader.getResource("classpath:" + sqlFile + ".sql");
+        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
         Path path = Paths.get(resource.getFile().getPath());
         if (Files.exists(path)) {
             String allSql = new String(Files.readAllBytes(path));
@@ -37,7 +34,7 @@ public class FileRepository {
     }
 
     public String readSqlFileAsString(String sqlFile) throws  IOException {
-        Resource resource = resourceLoader.getResource("classpath:" + sqlFile + ".sql");
+        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
         Path path = Paths.get(resource.getFile().getPath());
         if (Files.exists(path)) {
             return new String(Files.readAllBytes(path)).replace("\n", " ").replace("\r", " ");
@@ -47,7 +44,8 @@ public class FileRepository {
     }
 
     public List<String> getAllTestcases() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:scenario");
+        ClassPathResource resource = new ClassPathResource("/scenario/");
+        ObjectMapper objectMapper = new ObjectMapper();
         List<String> allScenarios = new ArrayList<>();
         for (File file : resource.getFile().listFiles()) {
             if (file.isDirectory()) {
