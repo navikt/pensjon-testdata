@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class OpptjeningController {
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
-            @RequestBody LagreInntektRequest request) {
+            @RequestBody LagreInntektRequest request) throws IOException {
 
         erAlleMiljoerTilgjengelig(request.getMiljoer());
 
@@ -45,7 +46,7 @@ public class OpptjeningController {
                     Response response = testdataConsumerBean.lagreInntekt(
                             remoteRequest,
                             token,
-                            getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
+                            getAvaiableEnvironments().get(miljo).getUrl(),
                             callId,
                             consumerId);
 
@@ -63,7 +64,7 @@ public class OpptjeningController {
             @RequestHeader("Nav-Consumer-Id") String consumerId,
             @RequestHeader(value = "Authorization") String token,
             @RequestParam String fnr,
-            @RequestParam String miljo) {
+            @RequestParam String miljo) throws IOException {
         Inntekter inntektliste = new Inntekter();
 
         erAlleMiljoerTilgjengelig(Collections.singletonList(miljo));
@@ -71,7 +72,7 @@ public class OpptjeningController {
                 fnr,
                 miljo,
                 token,
-                getAvaiableEnvironments(envInputStream).get(miljo).getUrl(),
+                getAvaiableEnvironments().get(miljo).getUrl(),
                 callId,
                 consumerId);
         inntektliste.setInntekter(inntekter);
