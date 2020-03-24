@@ -78,6 +78,7 @@ public class TestVerktoyController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/iverksett")
+    @Transactional
     public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request) {
         try {
             mockService.iverksett(request.getVedtakId());
@@ -91,6 +92,7 @@ public class TestVerktoyController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/attester")
+    @Transactional
     public ResponseEntity attester(@RequestBody IverksettVedtakRequest request) {
         try {
             mockService.attester(request.getVedtakId());
@@ -103,6 +105,7 @@ public class TestVerktoyController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/flytte-sak")
+    @Transactional
     public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request) {
         try {
             mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
@@ -127,11 +130,13 @@ public class TestVerktoyController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/enheter")
+    @Transactional
     public ResponseEntity<String> hentEnheter() {
         return ResponseEntity.ok(norgConsumerBean.hentEnheter());
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/omregning")
+    @Transactional
     public ResponseEntity<String> automatiskOmregning(@RequestBody AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
         omregningCounter.increment();
         AutomatiskOmregningAvYtelseResponse response = automatiskOmregning.automatiskOmregning(request);
