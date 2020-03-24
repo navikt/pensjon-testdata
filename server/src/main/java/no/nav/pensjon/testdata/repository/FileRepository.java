@@ -1,6 +1,7 @@
 package no.nav.pensjon.testdata.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -23,8 +24,7 @@ public class FileRepository {
     private ScenarioRepository scenarioRepository;
 
     public List<String> readSqlFile(String sqlFile) throws  IOException {
-        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
-        Path path = Paths.get(resource.getFile().getPath());
+        Path path = PathUtil.readPath( sqlFile + ".sql");
         if (Files.exists(path)) {
             String allSql = new String(Files.readAllBytes(path));
             return Arrays.asList(allSql.split(System.getProperty("line.separator")));
@@ -34,8 +34,7 @@ public class FileRepository {
     }
 
     public String readSqlFileAsString(String sqlFile) throws  IOException {
-        ClassPathResource resource = new ClassPathResource(sqlFile + ".sql");
-        Path path = Paths.get(resource.getFile().getPath());
+        Path path = PathUtil.readPath(sqlFile + ".sql");
         if (Files.exists(path)) {
             return new String(Files.readAllBytes(path)).replace("\n", " ").replace("\r", " ");
         } else {
@@ -44,10 +43,8 @@ public class FileRepository {
     }
 
     public List<String> getAllTestcases() throws IOException {
-        ClassPathResource resource = new ClassPathResource("/scenario/");
-        ObjectMapper objectMapper = new ObjectMapper();
         List<String> allScenarios = new ArrayList<>();
-        for (File file : resource.getFile().listFiles()) {
+        for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
                 TestScenario scenario = scenarioRepository.getObjectMapper()
                         .readValue(Paths.get(file.toString(),"scenario.json").toFile(), TestScenario.class);
