@@ -1,18 +1,15 @@
 package no.nav.pensjon.testdata.configuration;
 
 
-
 import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
 import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.xml.ws.handler.HandlerResolver;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

@@ -1,12 +1,10 @@
 package no.nav.pensjon.testdata.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
@@ -14,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -7,15 +7,16 @@ import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseException;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +97,8 @@ public class OracleRepository {
 
     public boolean canDatabaseBeCleared() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        ClassPathResource resource = new ClassPathResource("clear-database-whiteliste.json");
-        List<String> databaseWhiteList = mapper.readValue(resource.getFile(), new TypeReference<List<String>>() {
+        Path path = PathUtil.readPath("clear-database-whiteliste.json");
+        List<String> databaseWhiteList = mapper.readValue(path.toFile(), new TypeReference<>() {
         });
         String server = SecretUtil.readSecret("db/pen/jdbc_url");
         return isWhitelistedDatabase(server, databaseWhiteList);

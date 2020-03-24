@@ -3,11 +3,11 @@ package no.nav.pensjon.testdata.service;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,8 +35,7 @@ public class MockService {
 
     @Transactional
     public void iverksett(Long vedtakId) throws IOException, SQLException {
-        ClassPathResource resource = new ClassPathResource("/mock/iverksetting.sql");
-        Path path = Paths.get(resource.getFile().getPath());
+        Path path = PathUtil.readPath("mock/iverksetting.sql");
         String allSql = null;
         if (Files.exists(path)) {
             allSql = new String(Files.readAllBytes(path));
