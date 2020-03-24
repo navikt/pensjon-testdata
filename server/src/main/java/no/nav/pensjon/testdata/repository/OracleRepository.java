@@ -7,19 +7,17 @@ import no.nav.pensjon.testdata.configuration.SecretUtil;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.controller.support.NonWhitelistedDatabaseException;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
-import no.nav.pensjon.testdata.repository.support.PathUtil;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +32,8 @@ public class OracleRepository {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
 
-    @Value("classpath:clear-database-whiteliste.json")
-    Resource dbWhitelistresourceFile;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Transactional
     public void clearDatabase() throws IOException, NonWhitelistedDatabaseException {
@@ -103,7 +101,10 @@ public class OracleRepository {
 
     public boolean canDatabaseBeCleared() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        List<String> databaseWhiteList = mapper.readValue(dbWhitelistresourceFile.getFile(), new TypeReference<>() {
+        Resource resource = resourceLoader.getResource("classpath:clear-database-whiteliste.json");
+        InputStream whiteListInputStream = resource.getInputStream();
+
+        List<String> databaseWhiteList = mapper.readValue(whiteListInputStream, new TypeReference<>() {
         });
         String server = SecretUtil.readSecret("db/pen/jdbc_url");
         return isWhitelistedDatabase(server, databaseWhiteList);
