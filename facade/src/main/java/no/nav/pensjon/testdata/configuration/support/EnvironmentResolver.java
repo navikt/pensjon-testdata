@@ -2,10 +2,14 @@ package no.nav.pensjon.testdata.configuration.support;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +17,6 @@ import java.util.Map;
 
 public class EnvironmentResolver {
 
-    private static String CONFIGURATION_FILE = "available-environments.json";
 
     private static Map<String, Environment> envCache;
 
@@ -23,9 +26,13 @@ public class EnvironmentResolver {
         } else {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                ClassPathResource resource = new ClassPathResource(CONFIGURATION_FILE);
+
+                ResourceLoader resourceLoader = new DefaultResourceLoader();
+                Resource resource = resourceLoader.getResource("classpath:available-environments.json");
+                InputStream envInputStream = resource.getInputStream();
+
                 List<Environment> config = objectMapper
-                        .readValue(resource.getFile(), new TypeReference<List<Environment>>() {
+                        .readValue(envInputStream, new TypeReference<List<Environment>>() {
                         });
                 Map<String, Environment> allEnvironments = new HashMap<>();
                 config
@@ -40,7 +47,7 @@ public class EnvironmentResolver {
         }
     }
 
-    public static void erAlleMiljoerTilgjengelig(List<String> miljoer) {
+    public static void erAlleMiljoerTilgjengelig(List<String> miljoer) throws IOException {
         if (miljoer == null || miljoer.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Ingen miljøer angitt ", null);
@@ -58,7 +65,7 @@ public class EnvironmentResolver {
 
     }
 
-    private static boolean erMiljoTilgjengelig(String miljo) {
+    private static boolean erMiljoTilgjengelig(String miljo) throws IOException {
         return getAvaiableEnvironments().get(miljo) != null;
     }
 }
