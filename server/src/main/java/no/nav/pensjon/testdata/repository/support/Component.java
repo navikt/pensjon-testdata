@@ -2,10 +2,10 @@ package no.nav.pensjon.testdata.repository.support;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,9 +49,9 @@ public class Component {
     public String getSqlAsString(String scenarioId) {
         StringBuilder sb = new StringBuilder();
         for (String file : this.sqlPaths) {
-            ClassPathResource resource = new ClassPathResource("scenario/" + scenarioId + "/" + file);
+            Path path = PathUtil.readPath("scenario/" + scenarioId + "/" + file);
             try {
-                sb.append(new String(Files.readAllBytes(resource.getFile().toPath())));
+                sb.append(new String(Files.readAllBytes(path)));
             } catch (IOException e) {
                 throw new RuntimeException("Fant ikke scenarie: " + scenarioId + "/" + file);
             }
@@ -61,10 +61,10 @@ public class Component {
 
     public void init(String scenarioId)  {
         for (String file : this.sqlPaths) {
-            ClassPathResource resource = new ClassPathResource("scenario/" + scenarioId + "/" + file);
-            if (resource.exists()) {
+            Path path = PathUtil.readPath("scenario/" + scenarioId + "/" + file);
+            if (path.toFile().exists()) {
                 try {
-                    String allSql = new String(Files.readAllBytes(resource.getFile().toPath()));
+                    String allSql = new String(Files.readAllBytes(path));
                     sql.addAll(Arrays.asList(allSql.split(System.getProperty("line.separator"))));
                 } catch (IOException e) {
                     throw new RuntimeException("Fant ikke scenarie: " + scenarioId + "/" + file);
