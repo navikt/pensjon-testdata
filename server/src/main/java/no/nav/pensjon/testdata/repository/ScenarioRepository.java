@@ -44,7 +44,7 @@ public class ScenarioRepository {
     public TestScenario getTestScenario(String scenarioId) throws IOException {
         for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
-                TestScenario scenario = getObjectMapper().readValue(Paths.get(file.toString(), "scenario.json").toFile(), TestScenario.class);
+                TestScenario scenario = getObjectMapper().readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
                 if (scenario.getName().equals(scenarioId)) {
                     return scenario;
                 }
