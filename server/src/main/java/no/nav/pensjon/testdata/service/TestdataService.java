@@ -68,7 +68,7 @@ public class TestdataService {
      * For syntetiske testdata har ikke noe blitt kommunisert til OS, og det kan derfor gi mening å ikke ta med dette innholdet.
      */
     private boolean removeOsOppdragslinjeStatus(String sql) {
-        return !sql.contains("T_OS_OPPDRLINJE_S") || !sql.contains("T_OS_TRANSAKSJON");
+        return !sql.contains("T_OS_OPPDRLINJE_S") && !sql.contains("T_OS_TRANSAKSJON");
     }
 
 
