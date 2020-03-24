@@ -62,13 +62,13 @@ public class TestdataService {
     }
 
     /*
-     * Ser bort ifra SQL relatert til T_OS_OPPDRLINJE_S or T_OS_TRANSAKSJON, i et forsøk på å fjerne avhengigheter mot OS.
+     * Ser bort ifra SQL relatert til T_OS_OPPDRLINJE_S , T_OS_TRANSAKSJON og T_OS_KVITTERING, i et forsøk på å fjerne avhengigheter mot OS.
      * Tabellen gir PEN et bilde av hva som er kommunisert til OS tidligere.
      *
      * For syntetiske testdata har ikke noe blitt kommunisert til OS, og det kan derfor gi mening å ikke ta med dette innholdet.
      */
     private boolean removeOsOppdragslinjeStatus(String sql) {
-        return !sql.contains("T_OS_OPPDRLINJE_S") && !sql.contains("T_OS_TRANSAKSJON");
+        return !sql.contains("T_OS_OPPDRLINJE_S") && !sql.contains("T_OS_TRANSAKSJON") && !sql.contains("T_OS_KVITTERING");
     }
 
 
