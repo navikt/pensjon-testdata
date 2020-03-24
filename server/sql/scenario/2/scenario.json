@@ -1,0 +1,14 @@
+{
+  "scenarioId": "2",
+  "name": "Uføretrygd løpende",
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": {
+        "gammelPersonId": "22333252",
+        "key": "fnr"
+      }
+    }
+  ]
+}

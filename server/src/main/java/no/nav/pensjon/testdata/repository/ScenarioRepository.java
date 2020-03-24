@@ -3,10 +3,7 @@ package no.nav.pensjon.testdata.repository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.repository.support.Component;
-import no.nav.pensjon.testdata.repository.support.Person;
-import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
-import no.nav.pensjon.testdata.repository.support.TestScenario;
+import no.nav.pensjon.testdata.repository.support.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +42,7 @@ public class ScenarioRepository {
     }
 
     public TestScenario getTestScenario(String scenarioId) throws IOException {
-        ClassPathResource resource = new ClassPathResource("/scenario/");
-
-        for (File file : resource.getFile().listFiles()) {
+        for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
                 TestScenario scenario = getObjectMapper().readValue(Paths.get(file.toString(), "scenario.json").toFile(), TestScenario.class);
                 if (scenario.getName().equals(scenarioId)) {
