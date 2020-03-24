@@ -12,10 +12,13 @@ import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,9 @@ public class OracleRepository {
 
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
+
+    @Value("classpath:clear-database-whiteliste.json")
+    Resource dbWhitelistresourceFile;
 
     @Transactional
     public void clearDatabase() throws IOException, NonWhitelistedDatabaseException {
@@ -97,8 +103,7 @@ public class OracleRepository {
 
     public boolean canDatabaseBeCleared() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        Path path = PathUtil.readPath("clear-database-whiteliste.json");
-        List<String> databaseWhiteList = mapper.readValue(path.toFile(), new TypeReference<>() {
+        List<String> databaseWhiteList = mapper.readValue(dbWhitelistresourceFile.getFile(), new TypeReference<>() {
         });
         String server = SecretUtil.readSecret("db/pen/jdbc_url");
         return isWhitelistedDatabase(server, databaseWhiteList);
