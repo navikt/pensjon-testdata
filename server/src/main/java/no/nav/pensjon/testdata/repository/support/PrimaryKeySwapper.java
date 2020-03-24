@@ -49,7 +49,7 @@ public class PrimaryKeySwapper {
     }
 
     private static String generateNewPrimaryKey(String oldPrimaryKey) {
-        Integer newPrimaryKey = Integer.valueOf(oldPrimaryKey) + 100000000 + (new Random()).nextInt(100000000);
+        Integer newPrimaryKey = Integer.valueOf(oldPrimaryKey) + 500000000 + (new Random()).nextInt(900000000);
         return newPrimaryKey.toString();
     }
 }
