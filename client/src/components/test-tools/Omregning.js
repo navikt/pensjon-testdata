@@ -120,8 +120,8 @@ const Omregning = () => {
             <CardContent>
                 <p>Vil benytte tjenester i Pesys gjennomføre automatisk omregning av en ytelse, tilsvarende omregning med batchen <i>BPEN093 Omregning</i></p>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
-                           label="SakId"
-                           name="sakId"
+                           label="Saksnummer"
+                           name="sakid"
                            key="sakId"
                            variant="outlined"
                            helperText={sakIdValidationText}

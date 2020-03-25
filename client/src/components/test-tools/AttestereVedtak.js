@@ -55,7 +55,7 @@ const AttestereVedtak = () => {
             <CardContent>
                 <p>Gjennomfører attestering av vedtak i PEN, merk at løsningen <b>ikke</b> benytter tjenestelaget til PEN, og er derfor en forenkling av løsningen som faktisk vil benyttes ved ordinær saksbehandling.</p>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
-                           label="VedtakId"
+                           label="Vedtaks-ID"
                            name="vedtakid"
                            key="vedtakid"
                            variant="outlined"
