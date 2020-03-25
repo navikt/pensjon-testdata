@@ -1,1 +1,0 @@
-exec java ${DEFAULT_JVM_OPTS} ${JAVA_OPTS} -cp app:app/lib/* no.nav.pensjon.testdata.FacadeApplication ${RUNTIME_OPTS} $@
