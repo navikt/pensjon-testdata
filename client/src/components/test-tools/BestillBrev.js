@@ -152,8 +152,8 @@ const BestillBrev = () => {
                            error={isNotValid(brukerValidationText)}
                 /><br/>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
-                           label="SakId"
-                           name="sakId"
+                           label="Saksnummer"
+                           name="sakid"
                            key="sakId"
                            variant="outlined"
                            helperText={sakIdValidationText}
@@ -170,8 +170,8 @@ const BestillBrev = () => {
                            error={isNotValid(kravIdValidationText)}
                 /><br/>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
-                           label="VedtakId"
-                           name="vedtakId"
+                           label="Vedtaks-ID"
+                           name="vedtakid"
                            key="vedtakId"
                            variant="outlined"
                            helperText={vedtakIdValidationText}
