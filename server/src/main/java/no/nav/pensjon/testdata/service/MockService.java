@@ -73,7 +73,7 @@ public class MockService {
 
         kravlinjer.forEach(kravlinje -> {
             String kravlinjeId = ((BigDecimal) kravlinje.get("KRAVLINJE_ID")).toString();
-            String nextSequenceValue = ((BigDecimal) jdbcTemplateWrapper.queryForList(ComponentCode.PEN, "SELECT S_KRAVLINJE_S.nextval FROM DUAL").get(0).get("NEXTVAL")).toString();
+            String nextSequenceValue = ((BigDecimal) jdbcTemplateWrapper.queryForList(ComponentCode.PEN, "SELECT PEN.S_KRAVLINJE_S.nextval FROM DUAL").get(0).get("NEXTVAL")).toString();
 
             String insertKravlinjeStatusSql = "INSERT INTO PEN.T_KRAVLINJE_S " +
                     "(KRAVLINJE_S_ID, KRAVLINJE_ID, K_KRAVLINJE_S, DATO_OPPRETTET, OPPRETTET_AV, DATO_ENDRET," +
