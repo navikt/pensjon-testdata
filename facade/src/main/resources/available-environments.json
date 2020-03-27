@@ -10,5 +10,9 @@
   {
     "env": "q4",
     "url": "https://pensjon-testdata-server-q4.nais.preprod.local/api"
+  },
+  {
+    "env": "q1",
+    "url": "https://pensjon-testdata-server-q1.nais.preprod.local/api"
   }
 ]
