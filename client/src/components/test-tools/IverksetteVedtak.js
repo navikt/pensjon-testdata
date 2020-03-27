@@ -68,7 +68,7 @@ const IverksetteVedtak = () => {
             <CardContent>
                 <p>Gjennomfører iverksetting av vedtak i PEN, merk at løsningen <b>ikke</b> benytter tjenestelaget til PEN, og ikke overfører ytelsen til Oppdrag. Kan ikke sees på som en fullverdig test av iverksetting.</p>
                 <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
-                           label="VedtakId"
+                           label="Vedtaks-ID"
                            name="vedtakid"
                            key="vedtakid"
                            variant="outlined"
