@@ -2,13 +2,13 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pensjon-testdata-server
-  namespace: q4
+  namespace: q1
   labels:
     team: pensjontestdata
 spec:
   image: {{ image }}
   ingresses:
-    - https://pensjon-testdata-server-q4.nais.preprod.local
+    - https://pensjon-testdata-server-q1.nais.preprod.local
   liveness:
     path: api/isAlive
     initialDelay: 10
@@ -31,29 +31,29 @@ spec:
     - name: "sts_endpoint_url"
       value: "https://security-token-service.nais.preprod.local"
     - name: "popp_endpoint_url"
-      value: "https://wasapp-q4.adeo.no/popp-ws/api"
+      value: "https://wasapp-q1.adeo.no/popp-ws/api"
     - name: "pen_vedtaksbrev_endpoint"
-      value: "https://wasapp-q4.adeo.no/pensjon-ws/Vedtaksbrev"
+      value: "https://wasapp-q1.adeo.no/pensjon-ws/Vedtaksbrev"
     - name: "pen_auto_omregning_endpoint"
-      value: "https://wasapp-q4.adeo.no/pensjon-ws/BehandleAutomatiskOmregning_v1"
+      value: "https://wasapp-q1.adeo.no/pensjon-ws/BehandleAutomatiskOmregning_v1"
     - name: "norg_endpoint_url"
-      value: "https://app-q4.adeo.no/norg2/api"
+      value: "https://app-q1.adeo.no/norg2/api"
     - name: "preg_rest_veiet_grunnbelop_endpoint_url"
-      value: "https://wasapp-q4.adeo.no/preg-ws/api/grunnbelop/veiet"
+      value: "https://wasapp-q1.adeo.no/preg-ws/api/grunnbelop/veiet"
   vault:
     enabled: true
     paths:
-      - kvPath: "oracle/data/dev/config/pen_q4"
+      - kvPath: "oracle/data/dev/config/pen_q1"
         mountPath: "/secrets/db/pen"
-      - kvPath: "oracle/data/dev/config/popp_q4"
+      - kvPath: "oracle/data/dev/config/popp_q1"
         mountPath: "/secrets/db/popp"
-      - kvPath: "oracle/data/dev/config/sam_q4"
+      - kvPath: "oracle/data/dev/config/sam_q1"
         mountPath: "/secrets/db/sam"
-      - kvPath: "oracle/data/dev/creds/pen_q4-pen_testdata"
+      - kvPath: "oracle/data/dev/creds/pen_q1-pen_testdata"
         mountPath: "/secrets/oracle/pen"
-      - kvPath: "oracle/data/dev/creds/popp_q4-popp_testdata"
+      - kvPath: "oracle/data/dev/creds/popp_q1-popp_testdata"
         mountPath: "/secrets/oracle/popp"
-      - kvPath: "oracle/data/dev/creds/sam_q4-sam_testdata"
+      - kvPath: "oracle/data/dev/creds/sam_q1-sam_testdata"
         mountPath: "/secrets/oracle/sam"
       - kvPath: "serviceuser/data/dev/srvpensjon"
         mountPath: "/secrets/srvpensjon"

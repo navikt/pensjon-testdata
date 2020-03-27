@@ -5,16 +5,17 @@ services:
       context: server
       dockerfile: Dockerfile
     environment:
-      - sts_endpoint_url=https://security-token-service.nais.preprod.local
-      - popp_endpoint_url=https://wasapp-q2.adeo.no/popp-ws/api/inntekt
+      SECRET_BASEDIR: "/"
+      sts_endpoint_url: "https://security-token-service-t4.nais.preprod.local"
+      popp_endpoint_url: "https://wasapp-t4.adeo.no/popp-ws/api/inntekt"
+      pen_vedtaksbrev_endpoint: "https://pen:8080/pensjon-ws/Vedtaksbrev"
+      pen_auto_omregning_endpoint: "https://pen:8080/pensjon-ws/BehandleAutomatiskOmregning_v1"
+      norg_endpoint_url: "https://app-t1.adeo.no/norg2/api"
+      preg_rest_veiet_grunnbelop_endpoint_url: "http://preg:8070/preg-ws/api/grunnbelop/veiet"
     volumes:
       - "${PWD}/server/secrets:/secrets"
     ports:
-      - "8080:8080"
-    restart: always
-    networks:
-      - backend
-      - frontend
+      - "8081:8080"
 
   pensjon-testdata-client:
     build:
@@ -24,13 +25,5 @@ services:
       - SERVER_HOSTNAME=http://pensjon-testdata-server:8080
     ports:
       - "9090:80"
-    restart: always
     depends_on:
       - pensjon-testdata-server
-    networks:
-      - frontend
-
-
-networks:
-  backend:
-  frontend:
