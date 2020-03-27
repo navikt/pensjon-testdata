@@ -35,7 +35,7 @@ public class ScenarioRepository {
                 }
             }
         }
-        PrimaryKeySwapper.initializePrimaryKeyRegistry(testScenario.getAllePersoner());
+        PrimaryKeySwapper.initializePrimaryKeyRegistry(testScenario.getAllePersonIds());
         return testScenario;
     }
 
