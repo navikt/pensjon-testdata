@@ -1,17 +1,18 @@
 package no.nav.pensjon.testdata.repository.support;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
-import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 
 @JsonIgnoreProperties({"nyPersonId","finnesIDatabase","fodselsDato"})
 public class Person {
@@ -22,7 +23,7 @@ public class Person {
     private LocalDate fodselsDato;
 
     @JsonProperty("kontroller")
-    private List<AbstractScenarioValidator> kontroller;
+    private List<AbstractScenarioValidator> kontroller = new ArrayList<>(0);
 
     public String getGammelPersonId() {
         return gammelPersonId;
@@ -69,11 +70,13 @@ public class Person {
     }
 
     public void validate() throws ScenarioValidationException {
-        if (kontroller != null) {
             for (AbstractScenarioValidator validator : kontroller) {
                 validator.validate(this);
             }
-        }
+    }
+
+    public List<AbstractScenarioValidator> getKontrollers() {
+        return kontroller;
     }
 
     public LocalDate getFodselsDato() {

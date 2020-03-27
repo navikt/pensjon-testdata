@@ -1,18 +1,13 @@
 package no.nav.pensjon.testdata.controller.support;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GetTestcasesResponse {
 
     List<Testcase> data;
 
-    public GetTestcasesResponse(List<String> input) {
-        this.data = new ArrayList<>();
-        data.addAll(input.stream()
-                .map(Testcase::new)
-                .collect(Collectors.toList()));
+    public GetTestcasesResponse(List<Testcase> data) {
+        this.data = data;
     }
 
     public List<Testcase> getData() {
@@ -23,13 +18,13 @@ public class GetTestcasesResponse {
         this.data = data;
     }
 
-
-
-    private class Testcase {
+    public static class Testcase {
         private String navn;
+        private List<String> begrensninger;
 
-        public Testcase(String navn) {
+        public Testcase(String navn, List<String> begrensninger) {
             this.navn = navn;
+            this.begrensninger = begrensninger;
         }
 
         public String getNavn() {
@@ -38,6 +33,14 @@ public class GetTestcasesResponse {
 
         public void setNavn(String navn) {
             this.navn = navn;
+        }
+
+        public List<String> getBegrensninger() {
+            return begrensninger;
+        }
+
+        public void setBegrensninger(List<String> begrensninger) {
+            this.begrensninger = begrensninger;
         }
     }
 }

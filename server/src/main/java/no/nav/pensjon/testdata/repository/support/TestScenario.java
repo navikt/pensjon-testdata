@@ -1,12 +1,13 @@
 package no.nav.pensjon.testdata.repository.support;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 
 public class TestScenario {
     private String scenarioId;
@@ -37,15 +38,15 @@ public class TestScenario {
         return components;
     }
 
-    public Map<String, String> getAllePersoner() {
-        Map<String, String> allePersoner = new HashMap<>();
-        components
-                .stream()
-                .forEach(component -> component.getPersoner()
-                        .stream()
-                        .forEach(person -> allePersoner.put(person.getGammelPersonId(), person.getNyPersonId())));
+    public Map<String, String> getAllePersonIds() {
+        return getAllePersoner().stream()
+                .collect(Collectors.toMap(Person::getGammelPersonId, Person::getNyPersonId));
+    }
 
-        return allePersoner;
+    public List<Person> getAllePersoner(){
+        return components.stream()
+                .flatMap(c -> c.getPersoner().stream())
+                .collect(Collectors.toList());
     }
 
     public String getAllSql() {
