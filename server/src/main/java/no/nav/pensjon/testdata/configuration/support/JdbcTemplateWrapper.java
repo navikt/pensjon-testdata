@@ -30,7 +30,7 @@ public class JdbcTemplateWrapper {
 
     public String queryForString(ComponentCode component,String sql,  Object[] params) {
         if (jdbcTemplateMap.get(component) != null) {
-            return jdbcTemplateMap.get(component).queryForObject(sql, params, (resultSet, i) -> resultSet.getString(0));
+            return jdbcTemplateMap.get(component).queryForObject(sql, params, (resultSet, i) -> resultSet.getString(1));
         } else {
             throw new RuntimeException("Not possible when " + component + " is not available");
         }
