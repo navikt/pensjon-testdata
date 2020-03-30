@@ -55,10 +55,11 @@ public class AutomatiskOmregning {
     }
 
     private String getSakType(String sakId) {
-       return (String) jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT K_SAK_T FROM PEN.T_SAK WHERE SAK_ID='"+sakId+"'").get(0).get("K_SAK_T");
+        return jdbcTemplateWrapper.queryForString(ComponentCode.PEN, "SELECT K_SAK_T FROM PEN.T_SAK WHERE SAK_ID = ? fetch first 1 rows only", new Object[]{sakId});
+
     }
 
     private String getFnr(String sakId) {
-        return (String) jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT FNR_FK FROM PEN.T_PERSON WHERE EXISTS ( SELECT 1 FROM PEN.T_SAK WHERE SAK_ID='" + sakId + "') ").get(0).get("FNR_FK");
+        return jdbcTemplateWrapper.queryForString(ComponentCode.PEN, "SELECT FNR_FK FROM PEN.T_PERSON WHERE EXISTS ( SELECT 1 FROM PEN.T_SAK WHERE SAK_ID = ?) fetch first 1 rows only ", new Object[]{sakId});
     }
 }
