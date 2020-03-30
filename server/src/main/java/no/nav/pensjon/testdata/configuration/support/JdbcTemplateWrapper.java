@@ -1,33 +1,21 @@
 package no.nav.pensjon.testdata.configuration.support;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
 
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
  * Muliggjøre kjøring av applikasjonen uten at alle datakilder er tilgjengelig.
  */
 public class JdbcTemplateWrapper {
-
-    private JdbcTemplate jdbcTemplatePen;
-
-    private JdbcTemplate jdbcTemplatePopp;
-
-    private JdbcTemplate jdbcTemplateSam;
-
     private HashMap<ComponentCode, JdbcTemplate> jdbcTemplateMap = new HashMap<>();
 
     public JdbcTemplateWrapper(JdbcTemplate jdbcTemplatePen, JdbcTemplate jdbcTemplatePopp, JdbcTemplate jdbcTemplateSam) {
-        this.jdbcTemplatePen = jdbcTemplatePen;
-        this.jdbcTemplatePopp = jdbcTemplatePopp;
-        this.jdbcTemplateSam = jdbcTemplateSam;
-
         jdbcTemplateMap.put(ComponentCode.PEN, jdbcTemplatePen);
         jdbcTemplateMap.put(ComponentCode.POPP, jdbcTemplatePopp);
         jdbcTemplateMap.put(ComponentCode.SAM, jdbcTemplateSam);
@@ -40,6 +28,15 @@ public class JdbcTemplateWrapper {
         }
     }
 
+    public String queryForString(ComponentCode component,String sql,  Object[] params) {
+        if (jdbcTemplateMap.get(component) != null) {
+            return jdbcTemplateMap.get(component).queryForObject(sql, params, (resultSet, i) -> resultSet.getString(0));
+        } else {
+            throw new RuntimeException("Not possible when " + component + " is not available");
+        }
+    }
+
+
     public List<Map<String, Object>> queryForList(ComponentCode component, String sql) {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).queryForList(sql);
@@ -51,15 +48,6 @@ public class JdbcTemplateWrapper {
     public <T> List<T>  queryForList(ComponentCode component, String sql,  RowMapper<T> rowMapper) {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).query(sql, rowMapper);
-        } else {
-            throw new RuntimeException("Not possible when " + component + " is not available");
-        }
-    }
-
-
-    public List<Map<String, Object>> queryForList(ComponentCode component, String sql, PreparedStatementCallback callback)  {
-        if (jdbcTemplateMap.get(component) != null) {
-            return jdbcTemplateMap.get(component).queryForList(sql, callback);
         } else {
             throw new RuntimeException("Not possible when " + component + " is not available");
         }
