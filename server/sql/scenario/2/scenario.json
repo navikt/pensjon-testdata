@@ -1,6 +1,7 @@
 {
   "scenarioId": "2",
   "name": "Uføretrygd løpende",
+  "fritekstbeskrivelse": null,
   "components" : [
     {
       "component": "PEN",

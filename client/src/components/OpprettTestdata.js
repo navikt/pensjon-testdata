@@ -9,7 +9,8 @@ const OpprettTestdata = () => {
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
     const [fieldValues, setFieldValues] = useState({});
-    const [limitBars, setLimitBars] = useState([]);
+    const [limitations, setLimitations] = useState([]);
+    const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
 
     useEffect(() => {
@@ -25,10 +26,14 @@ const OpprettTestdata = () => {
     const onChange = (event) => {
         setSelected(event.target.value);
         if (event.target.value.length > 0) {
-            var tryLimits = setLimitBars(
+            setDescription(
                 testcases.filter(testcase => event.target.value === testcase.navn)
-                .filter(testcase => testcase.begrensninger.length > 0)
-                .map(testcase => testcase.begrensninger));
+                    .map(testcase => testcase.fritekstbeskrivelse)[0]);
+
+            setLimitations(
+                testcases.filter(testcase => event.target.value === testcase.navn)
+                    .filter(testcase => testcase.begrensninger.length > 0)
+                    .map(testcase => testcase.begrensninger));
 
             fetch('/api/testdata/handlebars/' + event.target.value)
                 .then(res => res.json())
@@ -39,7 +44,8 @@ const OpprettTestdata = () => {
         } else {
             setHandlebars([]);
             setFieldValues([]);
-            setLimitBars([]);
+            setLimitations([]);
+            setDescription('');
         }
     };
 
@@ -87,8 +93,12 @@ const OpprettTestdata = () => {
                     <option value={testcase.navn} key={testcase.navn}>{testcase.navn}</option>
                 ))}
             </Select>
-                {limitBars.length > 0 ?
-                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitBars.map((field) =>(<li>{field}</li>))}</ul></div> :
+                {description ?
+                    <div><b>Beskrivelse av scenario:</b><br/><ul style={{listStyleType: 'none',}}><li>{description}</li></ul></div> :
+                    <div/>
+                }
+                {limitations.length > 0 ?
+                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field) =>(<li>{field}</li>))}</ul></div> :
                     <div/>
                 }
             <div>

@@ -19,10 +19,12 @@ public class GetTestcasesResponse {
     }
 
     public static class Testcase {
+        private String fritekstbeskrivelse;
         private String navn;
         private List<String> begrensninger;
 
-        public Testcase(String navn, List<String> begrensninger) {
+        public Testcase(String navn, List<String> begrensninger, String fritekstbeskrivelse) {
+            this.fritekstbeskrivelse = fritekstbeskrivelse;
             this.navn = navn;
             this.begrensninger = begrensninger;
         }
@@ -41,6 +43,14 @@ public class GetTestcasesResponse {
 
         public void setBegrensninger(List<String> begrensninger) {
             this.begrensninger = begrensninger;
+        }
+
+        public String getFritekstbeskrivelse() {
+            return fritekstbeskrivelse;
+        }
+
+        public void setFritekstbeskrivelse(String fritekstbeskrivelse) {
+            this.fritekstbeskrivelse = fritekstbeskrivelse;
         }
     }
 }

@@ -12,15 +12,18 @@ import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationE
 public class TestScenario {
     private String scenarioId;
     private String name;
+    private String fritekstbeskrivelse = null;
     private List<Component> components;
 
     @JsonCreator
     public TestScenario(
             @JsonProperty("scenarioId") String scenarioId,
             @JsonProperty("name") String name,
+            @JsonProperty("fritekstbeskrivelse") String fritekstbeskrivelse,
             @JsonProperty("components") List<Component> components) {
         this.scenarioId = scenarioId;
         this.name = name;
+        this.fritekstbeskrivelse = fritekstbeskrivelse;
         this.components = components;
 
         components.stream().forEach(component -> component.init(scenarioId));
@@ -36,6 +39,10 @@ public class TestScenario {
 
     public List<Component> getComponents() {
         return components;
+    }
+
+    public String getFritekstbeskrivelse() {
+        return fritekstbeskrivelse;
     }
 
     public Map<String, String> getAllePersonIds() {

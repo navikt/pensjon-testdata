@@ -1,6 +1,7 @@
 {
   "scenarioId": "3",
   "name": "Gjenlevende løpende",
+  "fritekstbeskrivelse": null,
   "components" : [
     {
       "component": "PEN",
