@@ -23,12 +23,16 @@ public class FodselsMaanedValidator extends AbstractScenarioValidator {
 
     @Override
     public String getErrorMessage() {
-        return "Bruker er ikke født i riktig måned/år, må være født: "  + maaned + "/" + aar  ;
+        return "Bruker er ikke født i riktig måned/år, må være født: "  + printMaaned() + "/" + aar;
     }
 
     @Override
     public String getDescription() {
-        return "Bruker må være født mm/åå: " + maaned + "/" + aar;
+        return "Bruker må være født mm/åå: " + printMaaned() + "/" + aar;
+    }
+
+    private String printMaaned(){
+        return String.valueOf(maaned).length() == 1 ? "0" + maaned : "" + maaned;
     }
 
     public int getMaaned() {
