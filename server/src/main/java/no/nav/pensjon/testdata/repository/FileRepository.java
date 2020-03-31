@@ -1,20 +1,25 @@
 package no.nav.pensjon.testdata.repository;
 
-import no.nav.pensjon.testdata.repository.support.PathUtil;
-import no.nav.pensjon.testdata.repository.support.TestScenario;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import no.nav.pensjon.testdata.repository.support.PathUtil;
+import no.nav.pensjon.testdata.repository.support.TestScenario;
 
 @Repository
 public class FileRepository {
@@ -43,8 +48,8 @@ public class FileRepository {
         }
     }
 
-    public List<String> getAllTestcases() throws IOException {
-        List<String> allScenarios = new ArrayList<>();
+    public List<TestScenario> getAllTestcases() throws IOException {
+        List<TestScenario> allScenarios = new ArrayList<>();
         for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
 
@@ -52,7 +57,7 @@ public class FileRepository {
 
                 TestScenario scenario = scenarioRepository.getObjectMapper()
                         .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
-                allScenarios.add(scenario.getName());
+                allScenarios.add(scenario);
             }
         }
         return allScenarios;

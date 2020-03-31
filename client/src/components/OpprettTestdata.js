@@ -9,7 +9,8 @@ const OpprettTestdata = () => {
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
     const [fieldValues, setFieldValues] = useState({});
-
+    const [limitations, setLimitations] = useState([]);
+    const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
 
     useEffect(() => {
@@ -17,13 +18,23 @@ const OpprettTestdata = () => {
             .then(res => res.json())
             .then((data) => {
                 setTestcases(data.data);
-            }).catch(console.log)
+            })
+            .catch(console.log)
     }, []);
 
 
     const onChange = (event) => {
         setSelected(event.target.value);
         if (event.target.value.length > 0) {
+            setDescription(
+                testcases.filter(testcase => event.target.value === testcase.navn)
+                    .map(testcase => testcase.fritekstbeskrivelse)[0]);
+
+            setLimitations(
+                testcases.filter(testcase => event.target.value === testcase.navn)
+                    .filter(testcase => testcase.begrensninger.length > 0)
+                    .map(testcase => testcase.begrensninger));
+
             fetch('/api/testdata/handlebars/' + event.target.value)
                 .then(res => res.json())
                 .then((data) => {
@@ -33,6 +44,8 @@ const OpprettTestdata = () => {
         } else {
             setHandlebars([]);
             setFieldValues([]);
+            setLimitations([]);
+            setDescription('');
         }
     };
 
@@ -80,6 +93,14 @@ const OpprettTestdata = () => {
                     <option value={testcase.navn} key={testcase.navn}>{testcase.navn}</option>
                 ))}
             </Select>
+                {description ?
+                    <div><b>Beskrivelse av scenario:</b><br/><ul style={{listStyleType: 'none',}}><li>{description}</li></ul></div> :
+                    <div/>
+                }
+                {limitations.length > 0 ?
+                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field) =>(<li>{field}</li>))}</ul></div> :
+                    <div/>
+                }
             <div>
                 {handlebars.map((field) => (
                     <Input style={{textAlign: 'left',}} bredde="XL" label={field.handlebar} name={field.handlebar}
@@ -95,4 +116,5 @@ const OpprettTestdata = () => {
         </div>
     );
 }
+
 export default OpprettTestdata
