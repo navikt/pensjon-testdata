@@ -126,6 +126,7 @@ const BestillBrev = () => {
             <CardHeader title="Bestill brev"/>
             <CardContent>
                 <p>Benytter tjenestelaget til PEN for å bestille automatiske brev, som ordinært bestilles av batcher og automatiske prosesser.</p>
+                <p>Merk at for brev som normalt bestilles av følgende batcher <i>BPEN002, BPEN006, BPEN010, BPEN015, BPEN030 og BPEN056</i> er man avhengig av at nødvendig brevinformasjon er bygget opp i testdata som benyttes.</p>
                 <Autocomplete
                     id="Brev"
                     options={brevkoder}
