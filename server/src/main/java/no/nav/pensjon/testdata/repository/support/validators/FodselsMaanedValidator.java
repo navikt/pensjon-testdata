@@ -1,8 +1,8 @@
 package no.nav.pensjon.testdata.repository.support.validators;
 
-import no.nav.pensjon.testdata.repository.support.Person;
-
 import java.time.LocalDate;
+
+import no.nav.pensjon.testdata.repository.support.Person;
 
 public class FodselsMaanedValidator extends AbstractScenarioValidator {
     private int maaned;
@@ -23,7 +23,16 @@ public class FodselsMaanedValidator extends AbstractScenarioValidator {
 
     @Override
     public String getErrorMessage() {
-        return "Bruker er ikke født i riktig måned/år, må være født: "  + maaned + "/" + aar  ;
+        return "Bruker er ikke født i riktig måned/år, må være født: "  + printMaaned() + "/" + aar;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Bruker må være født mm/åå: " + printMaaned() + "/" + aar;
+    }
+
+    private String printMaaned(){
+        return String.valueOf(maaned).length() == 1 ? "0" + maaned : "" + maaned;
     }
 
     public int getMaaned() {
