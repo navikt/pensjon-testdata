@@ -39,7 +39,7 @@ spec:
     - name: "norg_endpoint_url"
       value: "https://app-t1.adeo.no/norg2/api"
     - name: "preg_rest_veiet_grunnbelop_endpoint_url"
-      value: "https://wasapp-t4.adeo.no/preg-ws/api/grunnbelop/veiet"
+      value: "https://pensjon-preg-t4.nais.preprod.local/api/grunnbelop/veiet"
   vault:
     enabled: true
     paths:
