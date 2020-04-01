@@ -7,7 +7,8 @@ on:
       - 'facade/**'
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-facade:${{ github.sha }}
+  TARGET: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-facade
+  IMAGE: ${TARGET}:${{ github.sha }}
 
 jobs:
   tag_build_and_deploy:
@@ -31,7 +32,7 @@ jobs:
         run: |
           cd facade
           ./mvnw package -DskipTests
-          docker build --tag ${IMAGE} .
+          docker build -t ${IMAGE} -t ${TARGET}:latest .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
   deploy:
