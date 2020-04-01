@@ -27,4 +27,6 @@ public abstract class AbstractScenarioValidator {
     public void setType(String type) {
         this.type = type;
     }
+
+    public abstract String getDescription();
 }
