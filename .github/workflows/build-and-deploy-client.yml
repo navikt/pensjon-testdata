@@ -8,7 +8,7 @@ on:
 
 env:
   TARGET: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-client
-  IMAGE: ${{ TARGET }}:${{ github.sha }}
+  IMAGE: ${TARGET}:${{ github.sha }}
 
 jobs:
   tag_build_and_deploy:
@@ -41,7 +41,6 @@ jobs:
           npm run build
           docker build -t ${IMAGE} -t ${TARGET}:latest .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker push ${TARGET}:latest
           docker push ${IMAGE}
   deploy_q2:
     name: Deploy client to NAIS - Q2 namespace
