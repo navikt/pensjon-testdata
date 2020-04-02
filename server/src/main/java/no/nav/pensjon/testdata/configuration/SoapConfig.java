@@ -3,6 +3,7 @@ package no.nav.pensjon.testdata.configuration;
 
 import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
 import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
+import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,8 @@ public class SoapConfig {
                 .serviceInterface(Vedtaksbrev.class)
                 .endpointAddress(vedtaksbrevEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
-                        new BasicAuthSoapSecurityHandler(username, password)
+                        new BasicAuthSoapSecurityHandler(username, password),
+                        new StelvioContextHandler()
                 ).collect(Collectors.toList()))
                 .getObject();
     }
@@ -55,7 +57,8 @@ public class SoapConfig {
                 .portName("BehandleAutomatiskOmregning_v1Port")
                 .endpointAddress(automatiskOmregningEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
-                        new BasicAuthSoapSecurityHandler(username, password)
+                        new BasicAuthSoapSecurityHandler(username, password),
+                        new StelvioContextHandler()
                 ).collect(Collectors.toList()))
                 .getObject();
     }
