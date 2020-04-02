@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +34,6 @@ public class TestdataService {
     @Autowired
     private MoogService moogService;
 
-    private Logger logger = LoggerFactory.getLogger(TestdataService.class);
-
     @Transactional
     public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
         oracleRepository.alterSession();
@@ -56,22 +53,24 @@ public class TestdataService {
                 .map(sql -> HandlebarTransformer.execute(sql, handlebars))
                 .map(ChangeStampTransformer::execute)
                 .map(PrimaryKeySwapper::swapPrimaryKeysInSql)
+                .map(this::createPenOrgEnhetIfNotExistsAndUpdateQuery)
                 .map(this::removeTrailingSemicolon)
                 .filter(this::removeOsOppdragslinjeStatus)
-                .peek(this::addNewPenOrgEnhetIfNotExists)
                 .forEach(statement -> scenarioRepository.execute(component, statement));
     }
 
-    private void addNewPenOrgEnhetIfNotExists(String query) {
+    private String createPenOrgEnhetIfNotExistsAndUpdateQuery(String query) {
         if (StringUtils.containsIgnoreCase(query, "PEN_ORG_ENHET_ID")){
             String orgEnhetId = SqlColumnValueExtractor.extract(query, "PEN_ORG_ENHET_ID")
                .orElseThrow(() -> new IllegalArgumentException("Could not find pen_org_enhet id in the query! " + query));
-            createPenOrgEnhetIfNotExisted(orgEnhetId);
-        }
-    }
 
-    private void createPenOrgEnhetIfNotExisted(String s) {
-        logger.info(s);
+            Optional<String> primaryKey = scenarioRepository.insertPenOrgEnhetIfNotExists(orgEnhetId);
+            if (primaryKey.isPresent()){
+                PrimaryKeySwapper.updatePrimaryKey(orgEnhetId, primaryKey.get());
+                return StringUtils.replace(query, orgEnhetId, primaryKey.get());
+            }
+        }
+        return query;
     }
 
     public String removeTrailingSemicolon(String str) {

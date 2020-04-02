@@ -1,11 +1,16 @@
 package no.nav.pensjon.testdata.repository.support;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class PrimaryKeySwapper {
 
@@ -18,7 +23,6 @@ public class PrimaryKeySwapper {
 
     public static String swapPrimaryKeysInSql(String sql) {
         List<String> oldPrimaryKeys = getPrimaryKeys(sql);
-        removeExcludedIds(oldPrimaryKeys);
 
         oldPrimaryKeys.stream()
                 .filter(key -> !primaryKeyRegistry.containsKey(key))
@@ -32,10 +36,10 @@ public class PrimaryKeySwapper {
         return StringUtils.replaceEach(sql, oldPrimaryKeys.toArray(new String[0]), newPrimaryKeys.toArray(new String[0]));
     }
 
-    private static void removeExcludedIds(List<String> primaryKeys) {
-        String[] penOrgEnhetIds = {"100000007", "65885471", "150003452"};
-        Arrays.stream(penOrgEnhetIds)
-                .forEach(key -> primaryKeys.remove(key));
+    public static void updatePrimaryKey(String generatedPk, String realPk){
+        primaryKeyRegistry.entrySet().stream()
+                .filter(e -> e.getValue().equalsIgnoreCase(generatedPk))
+                .forEach(e -> primaryKeyRegistry.replace(e.getKey(), generatedPk, realPk));
     }
 
     private static List<String> getPrimaryKeys(String sql) {
