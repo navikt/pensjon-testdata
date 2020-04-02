@@ -60,7 +60,7 @@ public interface SqlColumnValueExtractor {
         return IntStream.range(0, columnsList.length)
                 .filter(i -> StringUtils.contains(columnsList[i], column))
                 .mapToObj(i -> valuesList[i])
-                .map(orgEnhetId -> StringUtils.strip(orgEnhetId, "'"))
+                .map(columnValue -> StringUtils.strip(columnValue, "'"))
                 .filter(StringUtils::isNotBlank)
                 .findFirst();
     }
