@@ -7,6 +7,7 @@ on:
       - 'server/**'
 
 env:
+  LATEST: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-server:latest
   IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-server:${{ github.sha }}
 
 jobs:
@@ -32,8 +33,10 @@ jobs:
           cd server
           ./mvnw package -B
           docker build --tag ${IMAGE} .
+          docker tag ${IMAGE} ${LATEST}
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
+          docker push ${LATEST}
 
   deploy_q2:
     name: Deploy server to NAIS - Q2 namespace
