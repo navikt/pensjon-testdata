@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PrimaryKeySwapper {
 
-    private static Map<String, String> primaryKeyRegistry = new HashMap<>();
+    static Map<String, String> primaryKeyRegistry = new HashMap<>();
 
     public static void initializePrimaryKeyRegistry(Map<String, String> init) {
         primaryKeyRegistry.clear();
