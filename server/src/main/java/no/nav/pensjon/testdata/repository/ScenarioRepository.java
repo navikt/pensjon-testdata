@@ -78,4 +78,8 @@ public class ScenarioRepository {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return objectMapper;
     }
+
+    public void setJdbcTemplateWrapper(JdbcTemplateWrapper jdbcTemplateWrapper) {
+        this.jdbcTemplateWrapper = jdbcTemplateWrapper;
+    }
 }
