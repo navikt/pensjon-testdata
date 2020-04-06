@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,25 +51,23 @@ public class TestdataService {
                 .map(String::trim)
                 .map(sql -> HandlebarTransformer.execute(sql, handlebars))
                 .map(ChangeStampTransformer::execute)
+                .peek(this::createPenOrgEnhetIfNotExists)
                 .map(PrimaryKeySwapper::swapPrimaryKeysInSql)
-                .map(this::createPenOrgEnhetIfNotExistsAndUpdateQuery)
                 .map(this::removeTrailingSemicolon)
                 .filter(this::removeOsOppdragslinjeStatus)
                 .forEach(statement -> scenarioRepository.execute(component, statement));
     }
 
-    private String createPenOrgEnhetIfNotExistsAndUpdateQuery(String query) {
+    private void createPenOrgEnhetIfNotExists(String query) {
         if (StringUtils.containsIgnoreCase(query, "PEN_ORG_ENHET_ID")){
             String orgEnhetId = SqlColumnValueExtractor.extract(query, "PEN_ORG_ENHET_ID")
                .orElseThrow(() -> new IllegalArgumentException("Could not find pen_org_enhet id in the query! " + query));
 
-            Optional<String> primaryKey = scenarioRepository.insertPenOrgEnhetIfNotExists(orgEnhetId);
-            if (primaryKey.isPresent()){
-                PrimaryKeySwapper.updatePrimaryKey(orgEnhetId, primaryKey.get());
-                return StringUtils.replace(query, orgEnhetId, primaryKey.get());
+            if (!PrimaryKeySwapper.containsPrimaryKey(orgEnhetId)){
+                scenarioRepository.insertPenOrgEnhetIfNotExists(orgEnhetId)
+                        .ifPresent(primaryKey -> PrimaryKeySwapper.updatePrimaryKey(orgEnhetId, primaryKey));
             }
         }
-        return query;
     }
 
     public String removeTrailingSemicolon(String str) {
