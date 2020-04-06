@@ -61,16 +61,16 @@ public class ScenarioRepository {
 
     public Optional<String> insertPenOrgEnhetIfNotExists(String penOrgEnhetId){
         try{
-            jdbcTemplateWrapper.queryForString(ComponentCode.PEN,
+            String key = jdbcTemplateWrapper.queryForString(ComponentCode.PEN,
                 "SELECT PEN_ORG_ENHET_ID FROM PEN.T_PEN_ORG_ENHET WHERE PEN_ORG_ENHET_ID = ?", new Object[] {penOrgEnhetId});
+            return Optional.ofNullable(key);
         } catch (EmptyResultDataAccessException e){
             String nextSequenceValue = jdbcTemplateWrapper.queryForList(ComponentCode.PEN, "SELECT PEN.S_PEN_ORG_ENHET.nextval FROM DUAL").get(0).get("NEXTVAL").toString();
             jdbcTemplateWrapper.execute(ComponentCode.PEN,
                     "INSERT INTO PEN.T_PEN_ORG_ENHET (PEN_ORG_ENHET_ID, ORG_ENHET_ID_FK, DATO_OPPRETTET, OPPRETTET_AV, DATO_ENDRET, ENDRET_AV, VERSJON)"
-                    + " VALUES (" + nextSequenceValue + ", 'XXXXXX', CURRENT_TIMESTAMP, 'TESTDATA', CURRENT_TIMESTAMP, 'TESTDATA', 0)");
-            return Optional.of(nextSequenceValue);
+                    + " VALUES (" + nextSequenceValue + ", '4415', CURRENT_TIMESTAMP, 'TESTDATA', CURRENT_TIMESTAMP, 'TESTDATA', 0)");
+            return Optional.ofNullable(nextSequenceValue);
         }
-        return Optional.empty();
     }
 
     public ObjectMapper getObjectMapper() {
