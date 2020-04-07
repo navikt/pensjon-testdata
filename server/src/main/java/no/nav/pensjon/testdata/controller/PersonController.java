@@ -1,16 +1,16 @@
 package no.nav.pensjon.testdata.controller;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
-import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
-import no.nav.pensjon.testdata.repository.OracleRepository;
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import java.sql.Date;
-import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
+import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
+import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 
 @RestController
 @Api(tags = {"Person"})
@@ -130,6 +140,7 @@ public class PersonController {
             java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato());
             java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato()) : null;
             java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato()) : null;
+            int landKode = fetchLandKode(request.getBostedsland());
 
             jdbcTemplateWrapper.execute(ComponentCode.PEN, personPreparedStatement, (PreparedStatementCallback<Boolean>) ps -> {
                 ps.setString(1, request.getFnr());
@@ -149,7 +160,7 @@ public class PersonController {
                 }
 
                 if (request.getBostedsland() != null) {
-                    ps.setInt(5, 161); //TODO: Need to fetch the acctual bostedsland from T_K_LAND_3_TEGN
+                    ps.setInt(5, landKode);
                 } else {
                     ps.setNull(5, Types.VARCHAR);
                 }
@@ -164,6 +175,18 @@ public class PersonController {
             });
         }
     }
+
+    private int fetchLandKode(String bostedsland) {
+        return Optional.ofNullable(bostedsland)
+                .filter(StringUtils::isNotBlank)
+                .map(b -> jdbcTemplateWrapper.queryForList(ComponentCode.PEN, "SELECT K_LAND_3_TEGN_ID FROM T_K_LAND_3_TEGN where land_3_tegn = '" + bostedsland + "'"))
+                .filter(list -> !list.isEmpty())
+                .map(v -> v.get(0).get("K_LAND_3_TEGN_ID"))
+                .map(v -> (BigDecimal)v)
+                .map(BigDecimal::intValue)
+                .orElse(161);
+    }
+
     private Date getSqlDate(java.util.Date date) {
         return Date.valueOf(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
