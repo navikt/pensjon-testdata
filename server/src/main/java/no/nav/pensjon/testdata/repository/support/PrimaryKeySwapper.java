@@ -1,15 +1,19 @@
 package no.nav.pensjon.testdata.repository.support;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PrimaryKeySwapper {
+import org.apache.commons.lang3.StringUtils;
 
-    private static Map<String, String> primaryKeyRegistry = new HashMap<>();
+public class PrimaryKeySwapper {
+    static Map<String, String> primaryKeyRegistry = new ConcurrentHashMap<>();
 
     public static void initializePrimaryKeyRegistry(Map<String, String> init) {
         primaryKeyRegistry.clear();
@@ -18,7 +22,6 @@ public class PrimaryKeySwapper {
 
     public static String swapPrimaryKeysInSql(String sql) {
         List<String> oldPrimaryKeys = getPrimaryKeys(sql);
-        removeExcludedIds(oldPrimaryKeys);
 
         oldPrimaryKeys.stream()
                 .filter(key -> !primaryKeyRegistry.containsKey(key))
@@ -28,14 +31,15 @@ public class PrimaryKeySwapper {
                 .stream()
                 .map(oldPrimaryKey -> (primaryKeyRegistry.get(oldPrimaryKey)))
                 .collect(Collectors.toList());
-
         return StringUtils.replaceEach(sql, oldPrimaryKeys.toArray(new String[0]), newPrimaryKeys.toArray(new String[0]));
     }
 
-    private static void removeExcludedIds(List<String> primaryKeys) {
-        String[] penOrgEnhetIds = {"100000007", "65885471", "150003452"};
-        Arrays.stream(penOrgEnhetIds)
-                .forEach(key -> primaryKeys.remove(key));
+    public static void updatePrimaryKey(String key, String value){
+        primaryKeyRegistry.put(key, value);
+    }
+
+    public static boolean containsPrimaryKey(String primaryKey){
+        return primaryKeyRegistry.containsKey(primaryKey);
     }
 
     private static List<String> getPrimaryKeys(String sql) {

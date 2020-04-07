@@ -1,5 +1,15 @@
 package no.nav.pensjon.testdata.service;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.Component;
@@ -9,14 +19,7 @@ import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationE
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
 import no.nav.pensjon.testdata.service.support.MoogService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import no.nav.pensjon.testdata.service.support.SqlColumnValueExtractor;
 
 @Service
 public class TestdataService {
@@ -48,10 +51,23 @@ public class TestdataService {
                 .map(String::trim)
                 .map(sql -> HandlebarTransformer.execute(sql, handlebars))
                 .map(ChangeStampTransformer::execute)
+                .peek(this::createPenOrgEnhetIfNotExists)
                 .map(PrimaryKeySwapper::swapPrimaryKeysInSql)
                 .map(this::removeTrailingSemicolon)
                 .filter(this::removeOsOppdragslinjeStatus)
                 .forEach(statement -> scenarioRepository.execute(component, statement));
+    }
+
+    private void createPenOrgEnhetIfNotExists(String query) {
+        if (StringUtils.containsIgnoreCase(query, "PEN_ORG_ENHET_ID")){
+            String orgEnhetId = SqlColumnValueExtractor.extract(query, "PEN_ORG_ENHET_ID")
+               .orElseThrow(() -> new IllegalArgumentException("Could not find pen_org_enhet id in the query! " + query));
+
+            if (!PrimaryKeySwapper.containsPrimaryKey(orgEnhetId)){
+                scenarioRepository.insertPenOrgEnhetIfNotExists(orgEnhetId)
+                        .ifPresent(primaryKey -> PrimaryKeySwapper.updatePrimaryKey(orgEnhetId, primaryKey));
+            }
+        }
     }
 
     public String removeTrailingSemicolon(String str) {
@@ -71,14 +87,10 @@ public class TestdataService {
         return !sql.contains("T_OS_OPPDRLINJE_S") && !sql.contains("T_OS_TRANSAKSJON") && !sql.contains("T_OS_KVITTERING");
     }
 
-
-
     /*
      * Henter testdata log fra Q2 støttedatabase (d26dbvl010.test.local)
      */
     public List<String> fetchTestdataLog(String fom, String tom, List<String> identer) throws SQLException, IOException {
-        return moogService.execute(fom,tom,identer);
+        return moogService.execute(fom, tom, identer);
     }
-
-
 }

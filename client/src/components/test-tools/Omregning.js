@@ -72,7 +72,7 @@ const Omregning = () => {
 
         str = String(str);
         if (ch.length !== 1) {
-            throw 'Invalid Input'
+            throw new Error("Invalid Input");
         }
 
         len = len - str.length;
