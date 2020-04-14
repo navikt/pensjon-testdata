@@ -82,4 +82,5 @@ public class ScenarioRepository {
     public void setJdbcTemplateWrapper(JdbcTemplateWrapper jdbcTemplateWrapper) {
         this.jdbcTemplateWrapper = jdbcTemplateWrapper;
     }
+
 }
