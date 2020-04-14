@@ -98,8 +98,4 @@ public class TestdataService {
     public List<String> fetchTestdataLog(String fom, String tom, List<String> identer) throws SQLException, IOException {
         return moogService.execute(fom, tom, identer);
     }
-
-    public List<Long> fetchPersonsExistingCases(String personId) {
-        return scenarioRepository.getExistingCaseIds(personId);
-    }
 }
