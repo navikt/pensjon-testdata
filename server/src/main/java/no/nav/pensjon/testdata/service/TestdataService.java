@@ -15,6 +15,7 @@ import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.Component;
 import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
+import no.nav.pensjon.testdata.repository.support.validators.PersonErBruktITestScenarioerValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
@@ -33,12 +34,16 @@ public class TestdataService {
     @Autowired
     private MoogService moogService;
 
+    @Autowired
+    private PersonErBruktITestScenarioerValidator personErBruktITestScenarioerValidator;
+
     @Transactional
     public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
         oracleRepository.alterSession();
         TestScenario scenario = scenarioRepository.init(testCaseId, handlebars);
 
         scenario.validate();
+        scenario.getAllePersoner().forEach(personErBruktITestScenarioerValidator::validate);
 
         scenario.getComponents()
                 .stream()
@@ -92,5 +97,9 @@ public class TestdataService {
      */
     public List<String> fetchTestdataLog(String fom, String tom, List<String> identer) throws SQLException, IOException {
         return moogService.execute(fom, tom, identer);
+    }
+
+    public List<Long> fetchPersonsExistingCases(String personId) {
+        return scenarioRepository.getExistingCaseIds(personId);
     }
 }
