@@ -2,7 +2,6 @@ package no.nav.pensjon.testdata.repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,10 +83,4 @@ public class ScenarioRepository {
         this.jdbcTemplateWrapper = jdbcTemplateWrapper;
     }
 
-    public List<Long> getExistingCaseIds(String personId) {
-        return jdbcTemplateWrapper.queryForList(
-                ComponentCode.PEN,
-                "SELECT s.SAK_ID FROM PEN.t_sak s WHERE s.person_id = " + personId,
-                (rs, rowNum) -> rs.getLong("SAK_ID"));
-    }
 }
