@@ -28,7 +28,7 @@ public class FodselsMaanedValidator extends AbstractScenarioValidator {
 
     @Override
     public String getDescription() {
-        return "Bruker må være født mm/åå: " + printMaaned() + "/" + aar;
+        return "Bruker må være født i måned/år: " + printMaaned() + "/" + aar;
     }
 
     private String printMaaned(){
