@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -113,11 +112,7 @@ public class TestdataController {
     @GetMapping("/testdata/handlebars/{testcase}")
     public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable String testcase) {
         try {
-            Set<String> result = fileRepository.getTestcaseHandlebars(testcase);
-            return ResponseEntity.ok(result
-                    .stream()
-                    .map(Handlebar::new)
-                    .collect(Collectors.toList()));
+            return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + testcase, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

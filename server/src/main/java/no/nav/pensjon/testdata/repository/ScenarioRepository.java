@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,8 @@ public class ScenarioRepository {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
 
+    private final Map<String, TestScenario> tilgjengeligeTestScenarioer = new ConcurrentHashMap<>();
+
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
         TestScenario testScenario = getTestScenario(scenarioId);
         for (Component component : testScenario.getComponents()) {
@@ -44,6 +47,13 @@ public class ScenarioRepository {
     }
 
     public TestScenario getTestScenario(String scenarioId) throws IOException {
+        if (!tilgjengeligeTestScenarioer.containsKey(scenarioId)){
+            tilgjengeligeTestScenarioer.put(scenarioId, fetchTestScenario(scenarioId));
+        }
+        return tilgjengeligeTestScenarioer.get(scenarioId);
+    }
+
+    private TestScenario fetchTestScenario(String scenarioId) throws IOException {
         for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
             if (file.isDirectory()) {
                 TestScenario scenario = getObjectMapper().readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
