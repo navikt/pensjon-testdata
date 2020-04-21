@@ -14,8 +14,6 @@ const OpprettTestdata = () => {
     const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
 
-    const { register} = useForm();
-
     useEffect(() => {
         fetch('/api/testdata')
             .then(res => res.json())
@@ -24,6 +22,8 @@ const OpprettTestdata = () => {
             })
             .catch(console.log)
     }, []);
+
+    const { register, handleSubmit, feilmelding} = useForm();
 
 
     const onChange = (event) => {
@@ -54,7 +54,6 @@ const OpprettTestdata = () => {
 
     const lagre = async (event) => {
         setIsProcessing(true);
-        event.preventDefault();
         const response = await fetch('/api/testdata', {
             method: 'POST',
             headers: {
@@ -62,7 +61,7 @@ const OpprettTestdata = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                handlebars: fieldValues,
+                handlebars: event,
                 testCaseId: selected
             })
         });
@@ -81,9 +80,9 @@ const OpprettTestdata = () => {
     };
 
 
-    async function validateHandleBar(name, val) {
+    async function validateHandleBar(val) {
         console.log(val);
-        const response = await fetch('/api/validation?handlebar=' + name + '&value=' + val, {
+        const response = await fetch('/api/validation?handlebar=fnr&value=' + val, {
             method: 'POST'
         });
         if (response.status !== 200) {
@@ -95,17 +94,33 @@ const OpprettTestdata = () => {
         }
     }
 
+    const validateFnr = async (val) => {
+        console.log(val);
+        const response = await fetch('/api/validation?handlebar=fnr&value=' + val, {
+            method: 'POST'
+        });
+        if (response.status !== 200) {
+            const text = await response.text();
+            snackbarApi.openSnackbar(text, 'warning');
+            return false;
+        }
+        else{
+            snackbarApi.closeSnackbar();
+            return true;
+        }
+    };
+
     const fieldChangeHandler = (event) => {
         let name = event.target.name;
         let val = event.target.value.trim();
         let copy = JSON.parse(JSON.stringify(fieldValues))
         copy[name] = val;
         setFieldValues(copy);
-        validateHandleBar(name, val);
+        //validateHandleBar(val);
     };
 
     return (
-        <form onSubmit={lagre} style={{ textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
+        <form onSubmit={handleSubmit(lagre)} style={{ textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
             <Select bredde="xl" label='Velg scenario:' onChange={e => onChange(e)}>
                 <option value=''>Velg</option>
                 {testcases.map((testcase) => (
@@ -122,15 +137,11 @@ const OpprettTestdata = () => {
                 }
             <div>
                 {handlebars.map((field) => (
-                    <Input style={{textAlign: 'left',}} required type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
+                    <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
                            key={field.handlebar}
-                           // onChange={e => fieldChangeHandler(e)}
-                           ref={
-                               register({
-                                   name: 'customRegister',
-                                   validate: async value => await fetch('/api/validation/handlebar=' + field.handlebar + '&value=' + value)
-                               })
-                           }
+                           //onChange={e => fieldChangeHandler(e)}
+                           inputRef={register({required: true, validate: validateFnr})}
+                            feil = {feilmelding}
                     />
                 ))}
             </div>
@@ -140,6 +151,6 @@ const OpprettTestdata = () => {
                 <Knapp className="btn">Lagre</Knapp>}
         </form>
     );
-}
+};
 
 export default OpprettTestdata
