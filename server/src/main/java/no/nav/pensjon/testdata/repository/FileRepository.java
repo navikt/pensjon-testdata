@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,17 +84,21 @@ public class FileRepository {
             String group = m.group();
             logger.info(group);
             String bar = group.replace("'", "").replace("{", "").replace("}", "");
-            String[] handleBarValidators = StringUtils.split(bar, "|");
-            String handlebar = handleBarValidators[0];
+            String[] handleBarSpecs = StringUtils.split(bar, "|");
 
-            List<String> validators = Collections.emptyList();
-            if (handleBarValidators.length > 1){
-                validators = Stream.of(StringUtils.split(handleBarValidators[1], ";"))
+            Handlebar handlebar = new Handlebar(handleBarSpecs[0]);
+            if (handleBarSpecs.length > 1){
+                handlebar.setInputtype(handleBarSpecs[1]);
+            }
+
+            if (handleBarSpecs.length > 2){
+                List<String> validators = Stream.of(StringUtils.split(handleBarSpecs[2], ";"))
                         .map(String::toLowerCase)
                         .collect(Collectors.toList());
+                handlebar.setValidators(validators);
             }
-            logger.info(handlebar + " vs " + validators);
-            handleBars.add(new Handlebar(handlebar, validators));
+            logger.info(handlebar.toString());
+            handleBars.add(handlebar);
         }
         return new ArrayList<>(handleBars);
     }
