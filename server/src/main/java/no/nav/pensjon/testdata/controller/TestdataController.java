@@ -34,6 +34,7 @@ import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
 import no.nav.pensjon.testdata.controller.support.Handlebar;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -55,6 +56,9 @@ public class TestdataController {
 
     @Autowired
     FileRepository fileRepository;
+
+    @Autowired
+    ScenarioRepository scenarioRepository;
 
     @Autowired
     GrunnbelopConsumerBean grunnbelopConsumer;
@@ -90,7 +94,7 @@ public class TestdataController {
     @RequestMapping(method = RequestMethod.GET, path = "/testdata")
     public ResponseEntity getTestcases() {
         try {
-            List<GetTestcasesResponse.Testcase> testcases = fileRepository.getAllTestcases().stream()
+            List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                     .map(s -> new GetTestcasesResponse.Testcase(
                             s.getName(),
                             s.getAllePersoner().stream()

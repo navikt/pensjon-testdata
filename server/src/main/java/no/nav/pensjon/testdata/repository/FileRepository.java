@@ -1,6 +1,5 @@
 package no.nav.pensjon.testdata.repository;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,8 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -29,8 +26,6 @@ import no.nav.pensjon.testdata.repository.support.TestScenario;
 
 @Repository
 public class FileRepository {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileRepository.class);
 
     @Autowired
     private ScenarioRepository scenarioRepository;
@@ -56,33 +51,16 @@ public class FileRepository {
         }
     }
 
-    public List<TestScenario> getAllTestcases() throws IOException {
-        List<TestScenario> allScenarios = new ArrayList<>();
-        for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
-            if (file.isDirectory()) {
-
-                logger.info("Trying to read: " + file.toString() + "/scenario.json");
-
-                TestScenario scenario = scenarioRepository.getObjectMapper()
-                        .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
-                allScenarios.add(scenario);
-            }
-        }
-        return allScenarios;
-    }
-
     public List<Handlebar> getTestcaseHandlebars(String scenarioId) throws IOException {
         TestScenario scenario = scenarioRepository.getTestScenario(scenarioId);
         return handleBars.computeIfAbsent(scenario.getScenarioId(), s -> fetchHandlebars(scenario.getAllSql()));
     }
 
     private List<Handlebar> fetchHandlebars(String sql) {
-        logger.info(sql);
         Set<Handlebar> handleBars = new LinkedHashSet<>();
         Matcher m = Pattern.compile("'\\{(.{1,30})\\}{1}'").matcher(sql);
         while (m.find()) {
             String group = m.group();
-            logger.info(group);
             String bar = group.replace("'", "").replace("{", "").replace("}", "");
             String[] handleBarSpecs = StringUtils.split(bar, "|");
 
@@ -97,7 +75,6 @@ public class FileRepository {
                         .collect(Collectors.toList());
                 handlebar.setValidators(validators);
             }
-            logger.info(handlebar.toString());
             handleBars.add(handlebar);
         }
         return new ArrayList<>(handleBars);

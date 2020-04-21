@@ -2,6 +2,8 @@ package no.nav.pensjon.testdata.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -28,7 +32,7 @@ public class ScenarioRepository {
 
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
-
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioRepository.class);
     private final Map<String, TestScenario> tilgjengeligeTestScenarioer = new ConcurrentHashMap<>();
 
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
@@ -46,11 +50,35 @@ public class ScenarioRepository {
         return testScenario;
     }
 
-    public TestScenario getTestScenario(String scenarioId) throws IOException {
-        if (!tilgjengeligeTestScenarioer.containsKey(scenarioId)){
-            tilgjengeligeTestScenarioer.put(scenarioId, fetchTestScenario(scenarioId));
+    public List<TestScenario> getAllTestScenarios() throws IOException {
+        if (tilgjengeligeTestScenarioer.isEmpty()){
+            List<TestScenario> allScenarios = new ArrayList<>();
+            for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
+                if (file.isDirectory()) {
+
+                    logger.info("Trying to read: " + file.toString() + "/scenario.json");
+
+                    TestScenario scenario = getObjectMapper()
+                            .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
+                    allScenarios.add(scenario);
+                }
+            }
+            allScenarios.forEach(s -> tilgjengeligeTestScenarioer.put(s.getScenarioId(), s));
         }
-        return tilgjengeligeTestScenarioer.get(scenarioId);
+        return new ArrayList<>(tilgjengeligeTestScenarioer.values());
+    }
+
+    public TestScenario getTestScenario(String scenarioName) throws IOException {
+        Optional<TestScenario> scenario = tilgjengeligeTestScenarioer.values()
+                .stream()
+                .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
+                .findFirst();
+        if (scenario.isEmpty()){
+            TestScenario testScenario = fetchTestScenario(scenarioName);
+            tilgjengeligeTestScenarioer.put(testScenario.getScenarioId(), testScenario);
+            return testScenario;
+        }
+        return scenario.get();
     }
 
     private TestScenario fetchTestScenario(String scenarioId) throws IOException {
