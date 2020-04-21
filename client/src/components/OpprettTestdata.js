@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./support/Snackbar";
+import { useForm } from 'react-hook-form';
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -12,6 +13,8 @@ const OpprettTestdata = () => {
     const [limitations, setLimitations] = useState([]);
     const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
+
+    const { register} = useForm();
 
     useEffect(() => {
         fetch('/api/testdata')
@@ -51,6 +54,7 @@ const OpprettTestdata = () => {
 
     const lagre = async (event) => {
         setIsProcessing(true);
+        event.preventDefault();
         const response = await fetch('/api/testdata', {
             method: 'POST',
             headers: {
@@ -77,16 +81,31 @@ const OpprettTestdata = () => {
     };
 
 
+    async function validateHandleBar(name, val) {
+        console.log(val);
+        const response = await fetch('/api/validation?handlebar=' + name + '&value=' + val, {
+            method: 'POST'
+        });
+        if (response.status !== 200) {
+            const text = await response.text();
+            snackbarApi.openSnackbar(text, 'warning');
+        }
+        else{
+            snackbarApi.closeSnackbar();
+        }
+    }
+
     const fieldChangeHandler = (event) => {
         let name = event.target.name;
         let val = event.target.value.trim();
         let copy = JSON.parse(JSON.stringify(fieldValues))
         copy[name] = val;
         setFieldValues(copy);
+        validateHandleBar(name, val);
     };
 
     return (
-        <div style={{textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
+        <form onSubmit={lagre} style={{ textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
             <Select bredde="xl" label='Velg scenario:' onChange={e => onChange(e)}>
                 <option value=''>Velg</option>
                 {testcases.map((testcase) => (
@@ -98,22 +117,28 @@ const OpprettTestdata = () => {
                     <div/>
                 }
                 {limitations.length > 0 ?
-                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field) =>(<li>{field}</li>))}</ul></div> :
+                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field, i) =>(<li key={i}>{field}</li>))}</ul></div> :
                     <div/>
                 }
             <div>
                 {handlebars.map((field) => (
-                    <Input style={{textAlign: 'left',}} bredde="XL" label={field.handlebar} name={field.handlebar}
+                    <Input style={{textAlign: 'left',}} required type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
                            key={field.handlebar}
-                           onChange={e => fieldChangeHandler(e)}/>
+                           // onChange={e => fieldChangeHandler(e)}
+                           ref={
+                               register({
+                                   name: 'customRegister',
+                                   validate: async value => await fetch('/api/validation/handlebar=' + field.handlebar + '&value=' + value)
+                               })
+                           }
+                    />
                 ))}
             </div>
 
             {isProcessing ?
                 <Knapp className="btn" spinner> </Knapp> :
-                <Knapp className="btn" onClick={e => lagre(e)}>Lagre</Knapp>}
-
-        </div>
+                <Knapp className="btn">Lagre</Knapp>}
+        </form>
     );
 }
 

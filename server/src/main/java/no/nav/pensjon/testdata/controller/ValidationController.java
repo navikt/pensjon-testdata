@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
@@ -31,7 +30,7 @@ public class ValidationController {
             validationService.validate(Collections.singletonMap(handlebar, value));
         }
         catch(ScenarioValidationException e){
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
         }
         return ResponseEntity.ok("OK");
     }

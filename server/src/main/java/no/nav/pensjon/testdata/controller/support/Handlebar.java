@@ -7,11 +7,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Handlebar {
     String handlebar;
+    String inputtype = "text";
     List<String> validators;
 
-    public Handlebar(String handlebar, List<String> validators) {
+    public Handlebar(String handlebar) {
         this.handlebar = handlebar;
-        this.validators = validators;
     }
 
     public String getHandlebar() {
@@ -28,6 +28,14 @@ public class Handlebar {
 
     public void setValidators(List<String> validators) {
         this.validators = validators;
+    }
+
+    public String getInputtype() {
+        return inputtype;
+    }
+
+    public void setInputtype(String inputtype) {
+        this.inputtype = inputtype;
     }
 
     @Override
@@ -52,5 +60,14 @@ public class Handlebar {
         return new HashCodeBuilder(17, 37)
                 .append(handlebar)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Handlebar{" +
+                "handlebar='" + handlebar + '\'' +
+                ", inputtype='" + inputtype + '\'' +
+                ", validators=" + validators +
+                '}';
     }
 }
