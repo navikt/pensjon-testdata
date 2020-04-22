@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.controller.support;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -8,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class Handlebar {
     String handlebar;
     String inputtype = "text";
-    List<String> validators;
+    List<String> validators = new ArrayList<>();
 
     public Handlebar(String handlebar) {
         this.handlebar = handlebar;

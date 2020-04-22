@@ -69,28 +69,11 @@ public class ScenarioRepository {
     }
 
     public TestScenario getTestScenario(String scenarioName) throws IOException {
-        Optional<TestScenario> scenario = tilgjengeligeTestScenarioer.values()
+        return getAllTestScenarios()
                 .stream()
                 .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
-                .findFirst();
-        if (scenario.isEmpty()){
-            TestScenario testScenario = fetchTestScenario(scenarioName);
-            tilgjengeligeTestScenarioer.put(testScenario.getScenarioId(), testScenario);
-            return testScenario;
-        }
-        return scenario.get();
-    }
-
-    private TestScenario fetchTestScenario(String scenarioId) throws IOException {
-        for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
-            if (file.isDirectory()) {
-                TestScenario scenario = getObjectMapper().readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
-                if (scenario.getName().equals(scenarioId)) {
-                    return scenario;
-                }
-            }
-        }
-        throw new RuntimeException("Could not find scenario!");
+                .findFirst()
+                .orElseThrow(IOException::new);
     }
 
     public void execute(Component component, String sql) {
