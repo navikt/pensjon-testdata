@@ -9,7 +9,6 @@ const OpprettTestdata = () => {
     const [testcases, setTestcases] = useState([]);
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
-    const [fieldValues, setFieldValues] = useState({});
     const [limitations, setLimitations] = useState([]);
     const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
@@ -23,7 +22,7 @@ const OpprettTestdata = () => {
             .catch(console.log)
     }, []);
 
-    const { register, handleSubmit, feilmelding} = useForm();
+    const { register, handleSubmit} = useForm();
 
 
     const onChange = (event) => {
@@ -46,7 +45,6 @@ const OpprettTestdata = () => {
                 .catch(console.log)
         } else {
             setHandlebars([]);
-            setFieldValues([]);
             setLimitations([]);
             setDescription('');
         }
@@ -79,24 +77,8 @@ const OpprettTestdata = () => {
         setIsProcessing(false);
     };
 
-
-    async function validateHandleBar(val) {
-        console.log(val);
-        const response = await fetch('/api/validation?handlebar=fnr&value=' + val, {
-            method: 'POST'
-        });
-        if (response.status !== 200) {
-            const text = await response.text();
-            snackbarApi.openSnackbar(text, 'warning');
-        }
-        else{
-            snackbarApi.closeSnackbar();
-        }
-    }
-
-    const validateFnr = async (val) => {
-        console.log(val);
-        const response = await fetch('/api/validation?handlebar=fnr&value=' + val, {
+    async function validateHandlebar(handlebar, val) {
+        const response = await fetch('/api/validation?handlebar=' + handlebar + '&value=' + val, {
             method: 'POST'
         });
         if (response.status !== 200) {
@@ -108,15 +90,20 @@ const OpprettTestdata = () => {
             snackbarApi.closeSnackbar();
             return true;
         }
-    };
+    }
 
-    const fieldChangeHandler = (event) => {
-        let name = event.target.name;
-        let val = event.target.value.trim();
-        let copy = JSON.parse(JSON.stringify(fieldValues))
-        copy[name] = val;
-        setFieldValues(copy);
-        //validateHandleBar(val);
+    const handlebarValidate = async (val, handlebar, validator) => {
+        for (const customValidator of validator) {
+            if (customValidator === 'fnr'){
+                if (val.length === 11){
+                    return await validateHandlebar(handlebar, val);
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     return (
@@ -139,9 +126,8 @@ const OpprettTestdata = () => {
                 {handlebars.map((field) => (
                     <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
                            key={field.handlebar}
-                           //onChange={e => fieldChangeHandler(e)}
-                           inputRef={register({required: true, validate: validateFnr})}
-                            feil = {feilmelding}
+                           inputRef={register({required: true,
+                               validate: value => handlebarValidate(value, field.handlebar, field.validators)})}
                     />
                 ))}
             </div>
