@@ -20,6 +20,7 @@ public class ValidationService {
             String value = handlebar.getValue();
 
             switch (handlebarName){
+                case "fnr_avdod_ektefelle":
                 case "fnr": fnrValidators.forEach(v -> v.validate(value));
             }
         }
