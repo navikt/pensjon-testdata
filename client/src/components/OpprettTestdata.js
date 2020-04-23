@@ -127,7 +127,7 @@ const OpprettTestdata = () => {
                     <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
                            key={field.handlebar}
                            inputRef={register({required: true,
-                               validate: value => handlebarValidate(value, field.handlebar, field.validators)})}
+                               validate: async value => await handlebarValidate(value, field.handlebar, field.validators)})}
                     />
                 ))}
             </div>
