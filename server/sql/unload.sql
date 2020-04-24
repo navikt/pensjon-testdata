@@ -267,8 +267,6 @@ update PEN.T_KRAVHODE set FORRIGE_IVERKSATTE_KRAV = null
 delete from PEN.T_KRAVHODE
 delete from PEN.T_SAK
 delete from PEN.T_PERSON
-delete from PEN.T_POENGREKKE
-delete from PEN.T_SLUTTPOENGTALL
 delete from PEN.T_PEN_UNDER_UTBET
 delete from PEN.T_ANVENDT_TRYGDETID
 delete from PEN.T_FREMSKRIVING_DET
@@ -293,3 +291,6 @@ delete from PEN.T_BER_UFORE_PER
 delete from PEN.T_UFORE_EXTRA_UT
 delete from PEN.T_LONNSVEKST_INFO
 delete from PEN.T_REGULERING_INFO
+delete from PEN.T_FRAMT_POENGTALL
+delete from PEN.T_POENGREKKE
+delete from PEN.T_SLUTTPOENGTALL
