@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -104,4 +106,8 @@ public class ScenarioRepository {
         this.jdbcTemplateWrapper = jdbcTemplateWrapper;
     }
 
+    @Bean
+    public ApplicationRunner initializer(ScenarioRepository repository) {
+        return args -> repository.getAllTestScenarios();
+    }
 }
