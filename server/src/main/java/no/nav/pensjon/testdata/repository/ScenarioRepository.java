@@ -2,12 +2,17 @@ package no.nav.pensjon.testdata.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -27,6 +32,8 @@ public class ScenarioRepository {
 
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
+    private static final Logger logger = LoggerFactory.getLogger(ScenarioRepository.class);
+    private final Map<String, TestScenario> tilgjengeligeTestScenarioer = new ConcurrentHashMap<>();
 
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
         TestScenario testScenario = getTestScenario(scenarioId);
@@ -43,16 +50,30 @@ public class ScenarioRepository {
         return testScenario;
     }
 
-    public TestScenario getTestScenario(String scenarioId) throws IOException {
-        for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
-            if (file.isDirectory()) {
-                TestScenario scenario = getObjectMapper().readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
-                if (scenario.getName().equals(scenarioId)) {
-                    return scenario;
+    public List<TestScenario> getAllTestScenarios() throws IOException {
+        if (tilgjengeligeTestScenarioer.isEmpty()){
+            List<TestScenario> allScenarios = new ArrayList<>();
+            for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
+                if (file.isDirectory()) {
+
+                    logger.info("Trying to read: " + file.toString() + "/scenario.json");
+
+                    TestScenario scenario = getObjectMapper()
+                            .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
+                    allScenarios.add(scenario);
                 }
             }
+            allScenarios.forEach(s -> tilgjengeligeTestScenarioer.put(s.getScenarioId(), s));
         }
-        throw new RuntimeException("Could not find scenario!");
+        return new ArrayList<>(tilgjengeligeTestScenarioer.values());
+    }
+
+    public TestScenario getTestScenario(String scenarioName) throws IOException {
+        return getAllTestScenarios()
+                .stream()
+                .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
+                .findFirst()
+                .orElseThrow(IOException::new);
     }
 
     public void execute(Component component, String sql) {
