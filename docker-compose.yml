@@ -27,3 +27,8 @@ services:
       - "9090:80"
     depends_on:
       - pensjon-testdata-server
+
+networks:
+  default:
+    external:
+      name: pensjon-local
