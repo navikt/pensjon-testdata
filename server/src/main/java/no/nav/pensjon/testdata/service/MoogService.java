@@ -1,4 +1,4 @@
-package no.nav.pensjon.testdata.service.support;
+package no.nav.pensjon.testdata.service;
 
 import no.nav.pensjon.testdata.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,23 +11,26 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MoogService {
 
-    @Qualifier("moog-datasource")
     @Autowired
-    private DataSource moogDataSource;
+    @Qualifier("moog-datasource")
+    private Optional<DataSource> moogDataSource;
 
     @Autowired
     private FileRepository fileRepository;
 
     public List<String> execute(String fom, String tom, List<String> identer) throws SQLException, IOException {
+        final DataSource dataSource = moogDataSource.orElseThrow(() -> new RuntimeException("Ikke tilgjengelig uten MOOG"));
+
         String sql = fileRepository
                 .readSqlFileAsString("moog_db/fetch-testdata-log")
                 .replace("{fom}", fom)
                 .replace("{tom}",tom);
-        Connection connection = moogDataSource.getConnection();
+        Connection connection = dataSource.getConnection();
         alterSessionNlsParameters(connection);
 
         List<String> logg = fetchTestdataLog( sql, connection);
