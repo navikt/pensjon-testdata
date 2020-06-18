@@ -1,15 +1,5 @@
 package no.nav.pensjon.testdata.service;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.Component;
@@ -18,8 +8,16 @@ import no.nav.pensjon.testdata.repository.support.TestScenario;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
-import no.nav.pensjon.testdata.service.support.MoogService;
 import no.nav.pensjon.testdata.service.support.SqlColumnValueExtractor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TestdataService {
@@ -45,7 +43,6 @@ public class TestdataService {
         scenario.validate();
 
         scenario.getComponents()
-                .stream()
                 .forEach(component -> processComponent(component, handlebars));
     }
 
