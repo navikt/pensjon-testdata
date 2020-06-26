@@ -49,7 +49,7 @@ public class MoogService {
         try (Connection c = connection;
              Statement s = c.createStatement()) {
             try {
-                s.executeUpdate("begin dbms_output.enable(1000000); end;");
+                s.executeUpdate("begin dbms_output.enable(buffer_size => NULL); end;");
                 s.execute(sql);
 
                 try (CallableStatement call = c.prepareCall(
