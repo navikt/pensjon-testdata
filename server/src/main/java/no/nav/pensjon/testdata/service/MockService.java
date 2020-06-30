@@ -117,7 +117,7 @@ public class MockService {
         jdbcTemplateWrapper.execute(ComponentCode.PEN, flyttEnhetSql);
     }
 
-    public void opprettPerson(String fnr) {
+    public void opprettPenPerson(String fnr) {
         //If FNR what so simple ;)
         String year = 19 + fnr.substring(4,6);
         String month = fnr.substring(2,4);
@@ -150,5 +150,25 @@ public class MockService {
                 "'0'," +
                 "NULL)";
         jdbcTemplateWrapper.execute(ComponentCode.PEN, sql);
+    }
+
+    public void opprettPoppPerson(String fnr) {
+        String sql = "insert into " +
+                "POPP.T_PERSON(" +
+                "FNR_FK," +
+                "DATO_OPPRETTET," +
+                "OPPRETTET_AV," +
+                "DATO_ENDRET," +
+                "ENDRET_AV," +
+                "VERSJON)" +
+                "values " +
+                "('"+
+                fnr + "'," +
+                "CURRENT_TIMESTAMP," +
+                "'MOOG'," +
+                "CURRENT_TIMESTAMP," +
+                "'MOOG'," +
+                "'0')";
+        jdbcTemplateWrapper.execute(ComponentCode.POPP, sql);
     }
 }

@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./support/Snackbar";
+import { useForm } from 'react-hook-form';
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [testcases, setTestcases] = useState([]);
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
-    const [fieldValues, setFieldValues] = useState({});
     const [limitations, setLimitations] = useState([]);
     const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
@@ -21,6 +21,8 @@ const OpprettTestdata = () => {
             })
             .catch(console.log)
     }, []);
+
+    const { register, handleSubmit} = useForm();
 
 
     const onChange = (event) => {
@@ -43,7 +45,6 @@ const OpprettTestdata = () => {
                 .catch(console.log)
         } else {
             setHandlebars([]);
-            setFieldValues([]);
             setLimitations([]);
             setDescription('');
         }
@@ -58,7 +59,7 @@ const OpprettTestdata = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                handlebars: fieldValues,
+                handlebars: event,
                 testCaseId: selected
             })
         });
@@ -76,17 +77,37 @@ const OpprettTestdata = () => {
         setIsProcessing(false);
     };
 
+    async function validateHandlebar(handlebar, val) {
+        const response = await fetch('/api/validation?handlebar=' + handlebar + '&value=' + val, {
+            method: 'POST'
+        });
+        if (response.status !== 200) {
+            const text = await response.text();
+            snackbarApi.openSnackbar(text, 'warning');
+            return false;
+        }
+        else{
+            snackbarApi.closeSnackbar();
+            return true;
+        }
+    }
 
-    const fieldChangeHandler = (event) => {
-        let name = event.target.name;
-        let val = event.target.value.trim();
-        let copy = JSON.parse(JSON.stringify(fieldValues))
-        copy[name] = val;
-        setFieldValues(copy);
+    const handlebarValidate = async (val, handlebar, validator) => {
+        for (const customValidator of validator) {
+            if (customValidator === 'fnr'){
+                if (val.length === 11){
+                    return await validateHandlebar(handlebar, val);
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     return (
-        <div style={{textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
+        <form onSubmit={handleSubmit(lagre)} style={{ textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
             <Select bredde="xl" label='Velg scenario:' onChange={e => onChange(e)}>
                 <option value=''>Velg</option>
                 {testcases.map((testcase) => (
@@ -98,23 +119,24 @@ const OpprettTestdata = () => {
                     <div/>
                 }
                 {limitations.length > 0 ?
-                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field) =>(<li>{field}</li>))}</ul></div> :
+                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field, i) =>(<li key={i}>{field}</li>))}</ul></div> :
                     <div/>
                 }
             <div>
                 {handlebars.map((field) => (
-                    <Input style={{textAlign: 'left',}} bredde="XL" label={field.handlebar} name={field.handlebar}
+                    <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
                            key={field.handlebar}
-                           onChange={e => fieldChangeHandler(e)}/>
+                           inputRef={register({required: true,
+                               validate: async value => await handlebarValidate(value, field.handlebar, field.validators)})}
+                    />
                 ))}
             </div>
 
             {isProcessing ?
                 <Knapp className="btn" spinner> </Knapp> :
-                <Knapp className="btn" onClick={e => lagre(e)}>Lagre</Knapp>}
-
-        </div>
+                <Knapp className="btn">Lagre</Knapp>}
+        </form>
     );
-}
+};
 
 export default OpprettTestdata
