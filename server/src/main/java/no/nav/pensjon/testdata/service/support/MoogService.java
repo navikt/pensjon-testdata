@@ -1,16 +1,25 @@
 package no.nav.pensjon.testdata.service.support;
 
-import no.nav.pensjon.testdata.repository.FileRepository;
+import java.io.IOException;
+import java.sql.Array;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import no.nav.pensjon.testdata.repository.FileRepository;
 
 @Service
 public class MoogService {
@@ -30,7 +39,9 @@ public class MoogService {
         Connection connection = moogDataSource.getConnection();
         alterSessionNlsParameters(connection);
 
-        List<String> logg = fetchTestdataLog( sql, connection);
+        List<String> logg = fetchTestdataLog( sql, connection).parallelStream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         List<String> result = fjernUonskedeIdenter(identer, logg);
         return result;
     }
