@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
 import no.nav.pensjon.testdata.controller.support.Handlebar;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -56,6 +56,9 @@ public class TestdataController {
 
     @Autowired
     FileRepository fileRepository;
+
+    @Autowired
+    ScenarioRepository scenarioRepository;
 
     @Autowired
     GrunnbelopConsumerBean grunnbelopConsumer;
@@ -91,7 +94,7 @@ public class TestdataController {
     @RequestMapping(method = RequestMethod.GET, path = "/testdata")
     public ResponseEntity getTestcases() {
         try {
-            List<GetTestcasesResponse.Testcase> testcases = fileRepository.getAllTestcases().stream()
+            List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                     .map(s -> new GetTestcasesResponse.Testcase(
                             s.getName(),
                             s.getAllePersoner().stream()
@@ -113,11 +116,7 @@ public class TestdataController {
     @GetMapping("/testdata/handlebars/{testcase}")
     public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable String testcase) {
         try {
-            Set<String> result = fileRepository.getTestcaseHandlebars(testcase);
-            return ResponseEntity.ok(result
-                    .stream()
-                    .map(Handlebar::new)
-                    .collect(Collectors.toList()));
+            return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
         } catch (IOException e) {
             logger.info("Could not find requested testcase: " + testcase, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

@@ -1,14 +1,15 @@
 package no.nav.pensjon.testdata.configuration;
 
+import no.nav.pensjon.testdata.configuration.support.SecretMissingException;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static java.nio.file.Files.exists;
 
 public class SecretUtil {
     public static String readSecret(String path) throws IOException {
@@ -22,6 +23,9 @@ public class SecretUtil {
         }
 
         Path secretPath = basepath.resolve("secrets").resolve(path);
+        if (!exists(secretPath)) {
+            throw new SecretMissingException(path, secretPath);
+        }
         return String.join("\n", Files.readAllLines(secretPath));
     }
 }
