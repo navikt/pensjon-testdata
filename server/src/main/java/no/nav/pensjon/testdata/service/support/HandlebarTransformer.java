@@ -1,9 +1,9 @@
 package no.nav.pensjon.testdata.service.support;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class HandlebarTransformer {
 
@@ -15,7 +15,7 @@ public class HandlebarTransformer {
                 String unprocessedSql = sql;
                 while (unprocessedSql.contains("{" + key)){
                     unprocessedSql = StringUtils.substringAfter(unprocessedSql, "{" + key);
-                    String replaceKey = "{" + key + StringUtils.substringBefore(unprocessedSql, "'");
+                    String replaceKey = "{" + key + StringUtils.substringBefore(unprocessedSql, "}") + "}";
                     handlebarSqlKeys.put(key, replaceKey);
                 }
             }
