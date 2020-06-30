@@ -26,7 +26,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDate;
 
 @RestController
 @Api(tags = {"Testverktøy"})
@@ -121,8 +120,10 @@ public class TestVerktoyController {
     @Transactional
     public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
         try {
-            mockService.opprettPerson(fnr);
+            mockService.opprettPenPerson(fnr);
+            mockService.opprettPoppPerson(fnr);
         } catch (Exception e) {
+            logger.error(e.getMessage(),e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
