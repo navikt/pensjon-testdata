@@ -16,6 +16,7 @@ import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.meldinger.A
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.function.Consumer;
 
 @RestController
 @Api(tags = {"Testverktøy"})
@@ -119,15 +121,23 @@ public class TestVerktoyController {
     @PostMapping(path = "/person/{fnr}")
     @Transactional
     public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
+        opprettPersonIgnorerDuplikater(mockService::opprettPenPerson, fnr);
+        opprettPersonIgnorerDuplikater(mockService::opprettPoppPerson, fnr);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private void opprettPersonIgnorerDuplikater(Consumer<String> consumer, String fnr) {
         try {
-            mockService.opprettPenPerson(fnr);
-            mockService.opprettPoppPerson(fnr);
+            consumer.accept(fnr);
+        }
+        catch (DuplicateKeyException e){
+            logger.warn("personen med fnr: " + fnr + " finnes i DB fra før");
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
-        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/enheter")
