@@ -44,9 +44,8 @@ public class JdbcWrapperConfig {
         try{
             wrapper.execute(code, sql);
         }
-        catch (CannotGetJdbcConnectionException e){
+        catch (Exception e){
             LoggerFactory.getLogger("JdbcWrapperConfig").error("Could not run init query on " + code + " db", e);
-            throw  e;
         }
     }
 }
