@@ -33,7 +33,7 @@ public class DatasourceConfig {
         dataSourceBuilder.url(dbUrl);
         dataSourceBuilder.username(username);
         dataSourceBuilder.password(password);
-
+        logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
     }
 
@@ -53,6 +53,7 @@ public class DatasourceConfig {
         dataSourceBuilder.username(username);
         dataSourceBuilder.password(password);
 
+        logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
     }
 
@@ -72,6 +73,7 @@ public class DatasourceConfig {
         dataSourceBuilder.username(username);
         dataSourceBuilder.password(password);
 
+        logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
     }
 
@@ -91,6 +93,11 @@ public class DatasourceConfig {
         dataSourceBuilder.username(username);
         dataSourceBuilder.password(password);
 
+        logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
+    }
+
+    private void logDBDetails(String dbUrl, String username) {
+        logger.info("url=" + dbUrl + ", username=" + username);
     }
 }
