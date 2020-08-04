@@ -2,11 +2,13 @@ package no.nav.pensjon.testdata.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.support.DatabaseStartupValidator;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -17,8 +19,7 @@ public class DatasourceConfig {
 
     Logger logger = LoggerFactory.getLogger(DatasourceConfig.class);
 
-    @Primary
-    @Bean
+    @Bean("pen-datasource")
     @ConditionalOnProperty(
             value="pen.db.enabled",
             havingValue = "true")
@@ -35,6 +36,17 @@ public class DatasourceConfig {
         dataSourceBuilder.password(password);
         logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+            value="pen.db.enabled",
+            havingValue = "true")
+    public DatabaseStartupValidator penDatabaseStartupValidator(@Qualifier("pen-datasource") DataSource dataSource) {
+        DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
+        databaseStartupValidator.setDataSource(dataSource);
+        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        return databaseStartupValidator;
     }
 
     @Bean(name = "popp-datasource")
@@ -57,6 +69,17 @@ public class DatasourceConfig {
         return dataSourceBuilder.build();
     }
 
+    @Bean
+    @ConditionalOnProperty(
+            value="popp.db.enabled",
+            havingValue = "true")
+    public DatabaseStartupValidator poppDatabaseStartupValidator(@Qualifier("popp-datasource") DataSource dataSource) {
+        DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
+        databaseStartupValidator.setDataSource(dataSource);
+        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        return databaseStartupValidator;
+    }
+
     @Bean(name = "sam-datasource")
     @ConditionalOnProperty(
             value="sam.db.enabled",
@@ -75,6 +98,17 @@ public class DatasourceConfig {
 
         logDBDetails(dbUrl, username);
         return dataSourceBuilder.build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+            value="sam.db.enabled",
+            havingValue = "true")
+    public DatabaseStartupValidator samDatabaseStartupValidator(@Qualifier("sam-datasource") DataSource dataSource) {
+        DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
+        databaseStartupValidator.setDataSource(dataSource);
+        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        return databaseStartupValidator;
     }
 
     @Bean(name = "moog-datasource")
