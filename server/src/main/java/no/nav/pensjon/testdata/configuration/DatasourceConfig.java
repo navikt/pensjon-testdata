@@ -8,6 +8,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.support.DatabaseStartupValidator;
 
 import javax.sql.DataSource;
@@ -19,7 +20,8 @@ public class DatasourceConfig {
 
     Logger logger = LoggerFactory.getLogger(DatasourceConfig.class);
 
-    @Bean("pen-datasource")
+    @Primary
+    @Bean
     @ConditionalOnProperty(
             value="pen.db.enabled",
             havingValue = "true")
@@ -42,7 +44,7 @@ public class DatasourceConfig {
     @ConditionalOnProperty(
             value="pen.db.enabled",
             havingValue = "true")
-    public DatabaseStartupValidator penDatabaseStartupValidator(@Qualifier("pen-datasource") DataSource dataSource) {
+    public DatabaseStartupValidator penDatabaseStartupValidator(DataSource dataSource) {
         DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
         databaseStartupValidator.setDataSource(dataSource);
         databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());

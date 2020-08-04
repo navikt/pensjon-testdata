@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -16,12 +17,13 @@ public class JdbcTemplateConfig {
 
     Logger logger = LoggerFactory.getLogger(JdbcTemplateConfig.class);
 
+    @Primary
     @Bean(name = "penJdbcTemplate")
     @ConditionalOnProperty(
             value="pen.db.enabled",
             havingValue = "true")
     @DependsOn("penDatabaseStartupValidator")
-    public JdbcTemplate penJdbcTemplate(@Qualifier("pen-datasource") DataSource ds) {
+    public JdbcTemplate penJdbcTemplate(DataSource ds) {
         logger.info("Creating PEN jdbcTemplate");
         return new JdbcTemplate(ds);
     }
