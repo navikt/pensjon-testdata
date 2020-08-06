@@ -1,0 +1,30 @@
+{
+  "scenarioId": "5",
+  "name": "AP2016 løpende 07-1954",
+  "fritekstbeskrivelse": null,
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": {
+        "gammelPersonId": "22432486",
+        "key": "fnr",
+        "kontroller": [
+          {
+            "type": "fodselMaaned",
+            "maaned": 7,
+            "aar": 1954
+          }
+        ]
+      }
+    },
+    {
+      "component": "POPP",
+      "sqlPaths":["popp.sql"],
+      "personer": {
+        "gammelPersonId": "22468586",
+        "key": "fnr"
+      }
+    }
+  ]
+}
