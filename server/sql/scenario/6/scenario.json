@@ -1,0 +1,19 @@
+{
+  "scenarioId": "6",
+  "name": "AP2011 løpende 08-1953",
+  "fritekstbeskrivelse": null,
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": [{
+        "gammelPersonId": "22450688",
+        "key": "fnr"
+      },
+      {
+        "gammelPersonId": "22450853",
+        "key": "fnr_ektefelle"
+      }]
+    }
+  ]
+}
