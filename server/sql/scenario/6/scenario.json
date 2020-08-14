@@ -1,0 +1,34 @@
+{
+  "scenarioId": "6",
+  "name": "AP2011 løpende 08-1953",
+  "fritekstbeskrivelse": null,
+  "components" : [
+    {
+      "component": "PEN",
+      "sqlPaths":["pen.sql"],
+      "personer": [{
+        "gammelPersonId": "22450688",
+        "key": "fnr",
+        "kontroller": [
+          {
+            "type": "fodselMaaned",
+            "maaned": 8,
+            "aar": 1953
+          }
+        ]
+      },
+      {
+        "gammelPersonId": "22450853",
+        "key": "fnr_ektefelle"
+      }]
+    },
+    {
+      "component": "POPP",
+      "sqlPaths":["popp.sql"],
+      "personer": {
+        "gammelPersonId": "22489254",
+        "key": "fnr"
+      }
+    }
+  ]
+}
