@@ -8,7 +8,14 @@
       "sqlPaths":["pen.sql"],
       "personer": [{
         "gammelPersonId": "22450688",
-        "key": "fnr"
+        "key": "fnr",
+        "kontroller": [
+          {
+            "type": "fodselMaaned",
+            "maaned": 8,
+            "aar": 1953
+          }
+        ]
       },
       {
         "gammelPersonId": "22450853",
