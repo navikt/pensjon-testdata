@@ -21,6 +21,14 @@
         "gammelPersonId": "22450853",
         "key": "fnr_ektefelle"
       }]
+    },
+    {
+      "component": "POPP",
+      "sqlPaths":["popp.sql"],
+      "personer": {
+        "gammelPersonId": "22489254",
+        "key": "fnr"
+      }
     }
   ]
 }
