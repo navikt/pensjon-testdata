@@ -85,6 +85,7 @@ public class TestVerktoyController {
             mockService.iverksett(request.getVedtakId());
             iverksettVedtakCounter.increment();
         } catch (Exception e) {
+            logger.error("Klarte ikke å iverksette " + e.getMessage(), e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
@@ -99,6 +100,7 @@ public class TestVerktoyController {
             mockService.attester(request.getVedtakId());
             attestedVedtakCounter.increment();
         } catch (Exception e) {
+            logger.error("Could not attest " + e.getMessage(), e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
@@ -112,6 +114,7 @@ public class TestVerktoyController {
             mockService.flyttEnhet(request.getSakId(), request.getNyEnhet());
             flyttSakCounter.increment();
         } catch (Exception e) {
+            logger.error("Could not move case" + e.getMessage(), e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }

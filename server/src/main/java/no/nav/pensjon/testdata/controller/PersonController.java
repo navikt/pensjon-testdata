@@ -1,15 +1,16 @@
 package no.nav.pensjon.testdata.controller;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
+import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
+import no.nav.pensjon.testdata.repository.OracleRepository;
+import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,24 +19,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
-
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
-import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
-import no.nav.pensjon.testdata.repository.OracleRepository;
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
+import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Optional;
 
 @RestController
 @Api(tags = {"Person"})
@@ -94,6 +87,7 @@ public class PersonController {
             dollyLagrePersonCounter.increment();
         } catch (Exception e) {
             dollyLagrePersonFailedCounter.increment();
+            logger.error("Failed to create person with msg: " + e.getMessage(), e);
             throw e;
         }
         return ResponseEntity.ok(HttpStatus.OK);

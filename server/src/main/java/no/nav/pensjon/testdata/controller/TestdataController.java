@@ -1,43 +1,32 @@
 package no.nav.pensjon.testdata.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-
 import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
-import no.nav.pensjon.testdata.controller.support.ClearTestdataRequest;
-import no.nav.pensjon.testdata.controller.support.CreateTestdataRequest;
-import no.nav.pensjon.testdata.controller.support.FetchTestdataRequest;
-import no.nav.pensjon.testdata.controller.support.GetTestcasesResponse;
-import no.nav.pensjon.testdata.controller.support.Handlebar;
+import no.nav.pensjon.testdata.controller.support.*;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Api(tags = {"Testdata"})
@@ -46,7 +35,7 @@ import no.nav.pensjon.testdata.service.TestdataService;
 })
 public class TestdataController {
 
-    private final Logger logger = LoggerFactory.getLogger(TestdataController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestdataController.class);
 
     @Autowired
     OracleRepository oracleRepository;
@@ -83,7 +72,7 @@ public class TestdataController {
             opprettTestdataTotal.increment();
 
         } catch (IOException e) {
-            logger.info("Could not find requested testcase: " + request.getTestCaseId(), e);
+            logger.error("Could not find requested testcase: " + request.getTestCaseId(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (ScenarioValidationException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
@@ -108,6 +97,7 @@ public class TestdataController {
                     .collect(Collectors.toList());
             return ResponseEntity.ok(new GetTestcasesResponse(testcases));
         } catch (IOException e) {
+            logger.error("Could not fetch testcases: " + e.getMessage(), e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
@@ -118,10 +108,10 @@ public class TestdataController {
         try {
             return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
         } catch (IOException e) {
-            logger.info("Could not find requested testcase: " + testcase, e);
+            logger.error("Could not find requested testcase: " + testcase, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            logger.info("Could not create testcase", e);
+            logger.error("Could not create testcase", e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
@@ -133,7 +123,7 @@ public class TestdataController {
         try {
             oracleRepository.clearDatabase();
         } catch (Exception e) {
-            logger.info("Clearing of database failed", e);
+            logger.error("Clearing of database failed " + e.getMessage(), e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
         }
@@ -146,6 +136,7 @@ public class TestdataController {
             try {
                 oracleRepository.clearDatabaseForPerson(fnr);
             } catch (IOException e) {
+                logger.error("Could not clear db for person " + e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         });
