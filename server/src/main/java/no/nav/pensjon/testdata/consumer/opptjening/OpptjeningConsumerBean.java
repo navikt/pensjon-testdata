@@ -1,25 +1,19 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class OpptjeningConsumerBean {
@@ -51,6 +45,7 @@ public class OpptjeningConsumerBean {
                     restRequest,
                     String.class);
         } catch (RestClientResponseException e) {
+            logger.error("Request to POPP /inntekt failed with msg: " + e.getMessage(), e);
             if (e.getRawStatusCode() == 401) {
                 throw new RuntimeException("User is not authorized to use this service!", e);
             } else if (e.getRawStatusCode() == 512) {
@@ -89,6 +84,7 @@ public class OpptjeningConsumerBean {
                     restRequest,
                     String.class);
         } catch (RestClientResponseException e) {
+            logger.error("Request to POPP /person failed with msg: " + e.getMessage(), e);
             if (e.getRawStatusCode() == 401) {
                 throw new RuntimeException("User is not authorized to use this service!", e);
             }
