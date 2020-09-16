@@ -7,8 +7,8 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.brev.BrevConsumer;
+import no.nav.pensjon.testdata.consumer.brev.BrevMetaDataConsumer;
 import no.nav.pensjon.testdata.controller.support.BestillBrevRequest;
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.BestillAutomatiskBrevAdresseMangler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Api(tags = {"Brev"})
@@ -37,6 +37,9 @@ public class BrevController {
 
     @Autowired
     private MeterRegistry meterRegistry;
+
+    @Autowired
+    private BrevMetaDataConsumer brevMetaData;
 
     private static Counter opprettBrevCounter;
 
@@ -56,40 +59,8 @@ public class BrevController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/brev")
-    public ResponseEntity<Brev[]> hentBrevkoder()  {
-        List<Map<String, Object>> result  = jdbcTemplateWrapper.queryForList(ComponentCode.PEN,"SELECT * FROM PEN.T_K_BATCHBREV");
-
-        Brev[] alleBrev = result
-                .stream()
-                .map(entity -> new Brev((String) entity.get("K_BATCHBREV_ID"), (String) entity.get("INNHOLD")))
-                .toArray(Brev[]::new);
-
-        return ResponseEntity.ok(alleBrev);
+    public ResponseEntity<List<BrevMetaData>> hentBrevkoder() throws IOException {
+        return ResponseEntity.ok(brevMetaData.getAllBrev());
     }
 
-    public class Brev {
-        private String kodeverdi;
-        private String dekode;
-
-        public Brev(String kodeverdi, String dekode) {
-            this.kodeverdi = kodeverdi;
-            this.dekode = dekode;
-        }
-
-        public String getKodeverdi() {
-            return kodeverdi;
-        }
-
-        public void setKodeverdi(String kodeverdi) {
-            this.kodeverdi = kodeverdi;
-        }
-
-        public String getDekode() {
-            return dekode;
-        }
-
-        public void setDekode(String dekode) {
-            this.dekode = dekode;
-        }
-    }
 }
