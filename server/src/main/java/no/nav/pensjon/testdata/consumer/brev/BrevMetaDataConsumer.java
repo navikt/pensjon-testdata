@@ -2,6 +2,8 @@ package no.nav.pensjon.testdata.consumer.brev;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.controller.BrevMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Service
 public class BrevMetaDataConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(BrevMetaDataConsumer.class);
 
     @Value("${brevmetadata.endpoint.url}")
     private String brevMetaDataUrl;
@@ -34,10 +37,9 @@ public class BrevMetaDataConsumer {
                         null,
                         String.class);
 
-                Map<String, Object> metaData = objectMapper.readValue(response.getBody(), Map.class);
                 brevdataList.add(BrevdataMapper.mapBrev(objectMapper.readValue(response.getBody(), Map.class)));
             } catch (Exception e) {
-                System.out.println("missing code " + batchCode);
+                logger.warn("Missing brev code " + batchCode);
             }
         }
         return brevdataList;
