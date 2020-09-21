@@ -9,11 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class OpptjeningConsumerBean {
@@ -45,7 +41,8 @@ public class OpptjeningConsumerBean {
                     restRequest,
                     String.class);
         } catch (RestClientResponseException e) {
-            logger.error("Request to POPP /inntekt failed with msg: " + e.getMessage(), e);
+            String message = "Request to POPP/inntekt failed with msg: " + e.getMessage();
+            logger.error(message, e);
             if (e.getRawStatusCode() == 401) {
                 throw new RuntimeException("User is not authorized to use this service!", e);
             } else if (e.getRawStatusCode() == 512) {
@@ -54,15 +51,7 @@ public class OpptjeningConsumerBean {
                             "Person ikke funnet i POPP ", e);
                 }
             }
-            String functionalError = getFunctionalError(e.getResponseBodyAsString());
-
-            if (functionalError != null) {
-                throw new ResponseStatusException(
-                        HttpStatus.EXPECTATION_FAILED, functionalError, e);
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error while trying to save InntektListe to POPP", e);
-            }
+            throw new RuntimeException(message, e);
         }
         return response.getStatusCodeValue() == 200;
     }
@@ -84,27 +73,15 @@ public class OpptjeningConsumerBean {
                     restRequest,
                     String.class);
         } catch (RestClientResponseException e) {
-            logger.error("Request to POPP /person failed with msg: " + e.getMessage(), e);
+            String message = "Request to POPP/person failed with msg: " + e.getMessage();
+            logger.error(message, e);
             if (e.getRawStatusCode() == 401) {
                 throw new RuntimeException("User is not authorized to use this service!", e);
             }
-            String functionalError = getFunctionalError(e.getResponseBodyAsString());
+            throw new RuntimeException(message, e);
 
-            if (functionalError != null) {
-                throw new RuntimeException(functionalError, e);
-            } else {
-                throw new RuntimeException("Unexpected error while trying to save Person to POPP", e);
-            }
         }
         return response.getStatusCodeValue() == 200;
-    }
-
-    private String getFunctionalError(String body) {
-        Matcher matcher = Pattern.compile("message=(?<msg>.+?),+.+?]").matcher(body);
-        while(matcher.find()) {
-            return matcher.group("msg");
-        }
-        return null;
     }
 
 }
