@@ -3,9 +3,11 @@ package no.nav.pensjon.testdata.configuration;
 
 import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
 import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
+import no.nav.pensjon.testdata.configuration.support.SAMLSoapSecurityHandler;
 import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
 import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,9 @@ public class SoapConfig {
     @Value("${pen.auto.omregning.endpoint}")
     private String automatiskOmregningEndpoint;
 
+    @Autowired
+    private SAMLSoapSecurityHandler samlSoapSecurityHandler;
+
     @Bean
     public Vedtaksbrev bestillAutomatiskBrev() throws IOException {
         String username = SecretUtil.readSecret("srvpensjon/username");
@@ -37,6 +42,7 @@ public class SoapConfig {
                 .serviceInterface(Vedtaksbrev.class)
                 .endpointAddress(vedtaksbrevEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
+                        samlSoapSecurityHandler,
                         new BasicAuthSoapSecurityHandler(username, password),
                         new StelvioContextHandler()
                 ).collect(Collectors.toList()))
@@ -57,6 +63,7 @@ public class SoapConfig {
                 .portName("BehandleAutomatiskOmregning_v1Port")
                 .endpointAddress(automatiskOmregningEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
+                        samlSoapSecurityHandler,
                         new BasicAuthSoapSecurityHandler(username, password),
                         new StelvioContextHandler()
                 ).collect(Collectors.toList()))
