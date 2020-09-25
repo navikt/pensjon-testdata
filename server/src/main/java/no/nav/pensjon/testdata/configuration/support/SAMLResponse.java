@@ -1,14 +1,24 @@
 package no.nav.pensjon.testdata.configuration.support;
 
-import java.time.LocalDateTime;
+import java.util.Base64;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SAMLResponse {
 
+    @JsonProperty("access_token")
     private String accessToken;
+    @JsonProperty("issued_token_type")
     private String issuedTokenType;
+    @JsonProperty("token_type")
     private String tokenType;
+    @JsonIgnore
     private String decodedToken;
-    private LocalDateTime expiresAt;
+    @JsonProperty("expires_in")
+    private long expiresIn;
 
     /**
      * @return the original Base64 encoded token
@@ -41,29 +51,29 @@ public class SAMLResponse {
      * @return the XML saml assertion
      */
     public String getDecodedToken() {
-        return decodedToken;
+        return new String(Base64.getDecoder().decode(accessToken.getBytes()));
     }
 
     public void setDecodedToken(String decodedToken) {
         this.decodedToken = decodedToken;
     }
 
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
+    public long getExpiresIn() {
+        return expiresIn;
     }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
+    public void setExpiresIn(long expiresIn) {
+        this.expiresIn = expiresIn;
     }
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
+        return expiresIn > 0;
     }
 
     @Override
     public String toString() {
         return "SAMLResponse{tokenType='" + tokenType + '\'' +
-                ", expiresAt=" + expiresAt +
+                ", expiresIn=" + expiresIn +
                 '}';
     }
 }

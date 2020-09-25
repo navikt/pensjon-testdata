@@ -1,23 +1,30 @@
 package no.nav.pensjon.testdata.configuration.support;
 
+import java.io.IOException;
+import java.util.Base64;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.pensjon.testdata.configuration.SecretUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.util.Base64;
+import no.nav.pensjon.testdata.configuration.SecretUtil;
 
 @Service
 public class SAMLTokenProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SAMLTokenProvider.class);
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${sts.endpoint.url}")
     private String endpointUrl;
@@ -34,7 +41,7 @@ public class SAMLTokenProvider {
                     HttpMethod.GET,
                     tokenRequest,
                     String.class);
-            return new ObjectMapper().readValue(response.getBody(), SAMLResponse.class);
+            return objectMapper.readValue(response.getBody(), SAMLResponse.class);
         } catch (RestClientResponseException | IOException e) {
             LOG.error("Feil ved henting av systembruker SAML-token", e);
             throw new RuntimeException("Feil ved henting av systembruker SAML-token", e);
