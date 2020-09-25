@@ -1,5 +1,24 @@
 package no.nav.pensjon.testdata.configuration.support;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,19 +27,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.*;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.Set;
 
 @Service
 public class SAMLSoapSecurityHandler implements SOAPHandler<SOAPMessageContext> {
@@ -66,7 +72,7 @@ public class SAMLSoapSecurityHandler implements SOAPHandler<SOAPMessageContext> 
     private SOAPElement generateSecurityHeaderWithSAML(SAMLResponse samlToken) {
         SOAPElement secHeader;
         try {
-            LOG.debug("Token expires: {}", samlToken.getExpiresAt());
+            LOG.debug("Token expires: {}", samlToken.getExpiresIn());
             SOAPFactory sFactory = SOAPFactory.newInstance();
 
             Name headerName = sFactory.createName("Security", "wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");

@@ -1,21 +1,22 @@
 package no.nav.pensjon.testdata.configuration;
 
 
-import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
-import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
-import no.nav.pensjon.testdata.configuration.support.SAMLSoapSecurityHandler;
-import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
-import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
-import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
+import java.io.IOException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
+import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
+import no.nav.pensjon.testdata.configuration.support.SAMLSoapSecurityHandler;
+import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
+import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
+import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
 
 @Configuration
 public class SoapConfig {
@@ -42,9 +43,7 @@ public class SoapConfig {
                 .serviceInterface(Vedtaksbrev.class)
                 .endpointAddress(vedtaksbrevEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
-                        samlSoapSecurityHandler,
-                        new BasicAuthSoapSecurityHandler(username, password),
-                        new StelvioContextHandler()
+                        samlSoapSecurityHandler
                 ).collect(Collectors.toList()))
                 .getObject();
     }
