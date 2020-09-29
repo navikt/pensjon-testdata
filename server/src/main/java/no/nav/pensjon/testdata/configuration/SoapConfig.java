@@ -62,7 +62,6 @@ public class SoapConfig {
                 .portName("BehandleAutomatiskOmregning_v1Port")
                 .endpointAddress(automatiskOmregningEndpoint)
                 .handlerResolver(portInfo -> Stream.of(
-                        samlSoapSecurityHandler,
                         new BasicAuthSoapSecurityHandler(username, password),
                         new StelvioContextHandler()
                 ).collect(Collectors.toList()))
