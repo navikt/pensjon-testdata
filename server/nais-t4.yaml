@@ -33,7 +33,7 @@ spec:
     - name: "popp_endpoint_url"
       value: "https://wasapp-t4.adeo.no/popp-ws/api"
     - name: "pen_vedtaksbrev_endpoint"
-      value: "https://wasapp-t4.adeo.no/pensjon-ws/Vedtaksbrev"
+      value: "https://pensjon-pen-t4.dev.adeo.no/pen/services/Vedtaksbrev"
     - name: "pen_auto_omregning_endpoint"
       value: "https://wasapp-t4.adeo.no/pensjon-ws/BehandleAutomatiskOmregning_v1"
     - name: "norg_endpoint_url"

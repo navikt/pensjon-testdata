@@ -1,19 +1,25 @@
 package no.nav.pensjon.testdata.configuration;
 
 
-import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
-import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
-import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
-import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
-import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.ws.handler.Handler;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import no.nav.pensjon.testdata.configuration.support.BasicAuthSoapSecurityHandler;
+import no.nav.pensjon.testdata.configuration.support.JaxWsConsumerProxyFactoryBean;
+import no.nav.pensjon.testdata.configuration.support.SAMLSoapSecurityHandler;
+import no.nav.pensjon.testdata.configuration.support.StelvioContextHandler;
+import no.nav.tjeneste.domene.pensjon.behandleautomatiskomregning.v1.binding.BehandleAutomatiskOmregningV1;
+import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.Vedtaksbrev;
 
 @Configuration
 public class SoapConfig {
@@ -23,6 +29,9 @@ public class SoapConfig {
 
     @Value("${pen.auto.omregning.endpoint}")
     private String automatiskOmregningEndpoint;
+
+    @Autowired
+    private SAMLSoapSecurityHandler samlSoapSecurityHandler;
 
     @Bean
     public Vedtaksbrev bestillAutomatiskBrev() throws IOException {
@@ -36,13 +45,17 @@ public class SoapConfig {
                 .serviceName("Vedtaksbrev")
                 .serviceInterface(Vedtaksbrev.class)
                 .endpointAddress(vedtaksbrevEndpoint)
-                .handlerResolver(portInfo -> Stream.of(
-                        new BasicAuthSoapSecurityHandler(username, password),
-                        new StelvioContextHandler()
-                ).collect(Collectors.toList()))
+                .handlerResolver(portInfo -> handlers(vedtaksbrevEndpoint, username, password))
                 .getObject();
     }
 
+    private List<Handler> handlers(String vedtaksbrevEndpoint, String username, String password){
+        if (vedtaksbrevEndpoint.contains("was")){
+            return Arrays.asList(new BasicAuthSoapSecurityHandler(username, password), new StelvioContextHandler());
+        } else{
+            return Collections.singletonList(samlSoapSecurityHandler);
+        }
+    }
 
     @Bean
     public BehandleAutomatiskOmregningV1 behandleAutomatiskOmregning() throws IOException {
@@ -56,10 +69,7 @@ public class SoapConfig {
                 .serviceName("BehandleAutomatiskOmregning_v1")
                 .portName("BehandleAutomatiskOmregning_v1Port")
                 .endpointAddress(automatiskOmregningEndpoint)
-                .handlerResolver(portInfo -> Stream.of(
-                        new BasicAuthSoapSecurityHandler(username, password),
-                        new StelvioContextHandler()
-                ).collect(Collectors.toList()))
+                .handlerResolver(portInfo -> handlers(vedtaksbrevEndpoint, username, password))
                 .getObject();
     }
 
