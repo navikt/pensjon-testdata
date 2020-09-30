@@ -395,5 +395,7 @@ public enum BatchBrevTypeCode {
     /**
      * Automatisk brev engangsbruk
      */
-    ADHOC_INFOBREV_AUTO;
+    ADHOC_INFOBREV_AUTO,
+
+    AP_INNV_AO_UT_AUTO;
 }
