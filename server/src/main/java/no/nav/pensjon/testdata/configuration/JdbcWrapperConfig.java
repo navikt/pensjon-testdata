@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
@@ -34,9 +33,9 @@ public class JdbcWrapperConfig {
     @Bean
     public ApplicationRunner initialize(JdbcTemplateWrapper wrapper){
         return args -> {
-            initDBConnection(wrapper, ComponentCode.PEN, "SELECT 1 FROM PEN.T_PERSON");
-            initDBConnection(wrapper, ComponentCode.POPP, "SELECT 1 FROM POPP.T_PERSON");
-            initDBConnection(wrapper, ComponentCode.SAM, "SELECT 1 FROM SAM.T_PERSON");
+            initDBConnection(wrapper, ComponentCode.PEN, "select 1 from dual");
+            initDBConnection(wrapper, ComponentCode.POPP, "select 1 from dual");
+            initDBConnection(wrapper, ComponentCode.SAM, "select 1 from dual");
         };
     }
 
