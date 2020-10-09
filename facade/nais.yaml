@@ -10,6 +10,7 @@ spec:
   port: 8081
   ingresses:
     - https://pensjon-testdata-facade.nais.preprod.local
+    - https://pensjon-testdata-facade.dev.adeo.no
   liveness:
     path: isAlive
     initialDelay: 10
