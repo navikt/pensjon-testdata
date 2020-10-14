@@ -37,7 +37,7 @@ public class BrevMetaDataConsumer {
                         null,
                         String.class);
 
-                brevdataList.add(BrevdataMapper.mapBrev(objectMapper.readValue(response.getBody(), Map.class)));
+                brevdataList.add(BrevdataMapper.mapBrev(batchCode.name(), objectMapper.readValue(response.getBody(), Map.class)));
             } catch (Exception e) {
                 logger.warn("Missing brev code " + batchCode);
             }
