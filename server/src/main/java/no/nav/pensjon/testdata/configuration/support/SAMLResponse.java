@@ -1,11 +1,10 @@
 package no.nav.pensjon.testdata.configuration.support;
 
+import java.util.Base64;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDateTime;
-import java.util.Base64;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SAMLResponse {
@@ -19,7 +18,7 @@ public class SAMLResponse {
     @JsonIgnore
     private String decodedToken;
     @JsonProperty("expires_in")
-    private LocalDateTime expiresIn;
+    private long expiresIn;
 
     /**
      * @return the original Base64 encoded token
@@ -59,16 +58,16 @@ public class SAMLResponse {
         this.decodedToken = decodedToken;
     }
 
-    public LocalDateTime getExpiresIn() {
+    public long getExpiresIn() {
         return expiresIn;
     }
 
-    public void setExpiresIn(LocalDateTime expiresIn) {
+    public void setExpiresIn(long expiresIn) {
         this.expiresIn = expiresIn;
     }
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresIn);
+        return expiresIn > 0;
     }
 
     @Override
