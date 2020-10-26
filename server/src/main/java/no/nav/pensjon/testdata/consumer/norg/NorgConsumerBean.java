@@ -30,7 +30,7 @@ public class NorgConsumerBean {
         fordelinger.add(new Fordeling("PEN"));
         fordelinger.add(new Fordeling("UFO"));
 
-        restRequest = new HttpEntity<>(fordelinger.toArray(), httpHeaders);
+        restRequest = new HttpEntity<>(fordelinger, httpHeaders);
         try {
             response = restTemplate.exchange(
                     UriComponentsBuilder.fromHttpUrl(norgEndpoint + "/v1/arbeidsfordelinger?skjermet=false").toUriString(),
@@ -41,34 +41,5 @@ public class NorgConsumerBean {
             throw new RuntimeException("Unexpected error while trying to fetch enheter from NORG", e);
         }
         return response.getBody();
-    }
-
-    class Fordeling {
-        private String tema;
-        private String enhetNummer;
-
-        public Fordeling() {
-            super();
-        }
-
-        public Fordeling(String tema) {
-            super();
-            this.tema = tema;
-        }
-
-        public String getTema() {
-            return tema;
-        }
-        public void setTema(String tema) {
-            this.tema = tema;
-        }
-
-        public String getEnhetNummer() {
-            return enhetNummer;
-        }
-
-        public void setEnhetNummer(String enhetNummer) {
-            this.enhetNummer = enhetNummer;
-        }
     }
 }
