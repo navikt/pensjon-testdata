@@ -3,9 +3,9 @@ package no.nav.pensjon.testdata.configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +17,7 @@ import java.io.IOException;
 
 @Configuration
 public class DatasourceConfig {
+    private static final int DB_VALIDATION_INTERVAL_SECONDS = 10;
 
     Logger logger = LoggerFactory.getLogger(DatasourceConfig.class);
 
@@ -44,10 +45,12 @@ public class DatasourceConfig {
     @ConditionalOnProperty(
             value="pen.db.enabled",
             havingValue = "true")
-    public DatabaseStartupValidator penDatabaseStartupValidator(DataSource dataSource) {
+    public DatabaseStartupValidator penDatabaseStartupValidator(DataSource dataSource, @Value("${db.startup.wait.seconds}") int timeout) {
         DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
         databaseStartupValidator.setDataSource(dataSource);
-        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        databaseStartupValidator.setValidationQuery("SELECT 1 FROM PEN.T_PERSON");
+        databaseStartupValidator.setInterval(DB_VALIDATION_INTERVAL_SECONDS);
+        databaseStartupValidator.setTimeout(timeout);
         return databaseStartupValidator;
     }
 
@@ -75,10 +78,12 @@ public class DatasourceConfig {
     @ConditionalOnProperty(
             value="popp.db.enabled",
             havingValue = "true")
-    public DatabaseStartupValidator poppDatabaseStartupValidator(@Qualifier("popp-datasource") DataSource dataSource) {
+    public DatabaseStartupValidator poppDatabaseStartupValidator(@Qualifier("popp-datasource") DataSource dataSource, @Value("${db.startup.wait.seconds}") int timeout) {
         DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
         databaseStartupValidator.setDataSource(dataSource);
-        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        databaseStartupValidator.setValidationQuery("SELECT 1 FROM POPP.T_PERSON");
+        databaseStartupValidator.setInterval(DB_VALIDATION_INTERVAL_SECONDS);
+        databaseStartupValidator.setTimeout(timeout);
         return databaseStartupValidator;
     }
 
@@ -106,10 +111,12 @@ public class DatasourceConfig {
     @ConditionalOnProperty(
             value="sam.db.enabled",
             havingValue = "true")
-    public DatabaseStartupValidator samDatabaseStartupValidator(@Qualifier("sam-datasource") DataSource dataSource) {
+    public DatabaseStartupValidator samDatabaseStartupValidator(@Qualifier("sam-datasource") DataSource dataSource, @Value("${db.startup.wait.seconds}") int timeout) {
         DatabaseStartupValidator databaseStartupValidator = new DatabaseStartupValidator();
         databaseStartupValidator.setDataSource(dataSource);
-        databaseStartupValidator.setValidationQuery(DatabaseDriver.ORACLE.getValidationQuery());
+        databaseStartupValidator.setValidationQuery("SELECT 1 FROM SAM.T_PERSON");
+        databaseStartupValidator.setInterval(DB_VALIDATION_INTERVAL_SECONDS);
+        databaseStartupValidator.setTimeout(timeout);
         return databaseStartupValidator;
     }
 

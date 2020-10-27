@@ -40,6 +40,8 @@ spec:
       value: "https://app-t1.adeo.no/norg2/api"
     - name: "preg_rest_veiet_grunnbelop_endpoint_url"
       value: "https://pensjon-preg-t4.nais.preprod.local/grunnbelop/veiet"
+    - name: "db_startup_wait_seconds"
+      value: "300"
   vault:
     enabled: true
     paths:
