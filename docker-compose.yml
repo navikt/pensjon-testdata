@@ -12,6 +12,7 @@ services:
       pen_auto_omregning_endpoint: "https://pen:8080/pensjon-ws/BehandleAutomatiskOmregning_v1"
       norg_endpoint_url: "https://app-t1.adeo.no/norg2/api"
       preg_rest_veiet_grunnbelop_endpoint_url: "http://preg:8070/preg-ws/api/grunnbelop/veiet"
+      db_startup_wait_seconds: "300"
     volumes:
       - "${PWD}/server/secrets:/secrets"
     ports:
