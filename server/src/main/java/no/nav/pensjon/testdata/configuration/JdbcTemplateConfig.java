@@ -24,7 +24,7 @@ public class JdbcTemplateConfig {
             havingValue = "true")
     @DependsOn("penDatabaseStartupValidator")
     public JdbcTemplate penJdbcTemplate(DataSource ds) {
-        logger.info("Creating PEN jdbcTemplate");
+        logger.info("Connected to PEN");
         return new JdbcTemplate(ds);
     }
 
@@ -34,7 +34,7 @@ public class JdbcTemplateConfig {
             havingValue = "true")
     @DependsOn("poppDatabaseStartupValidator")
     public JdbcTemplate poppJdbcTemplate(@Qualifier("popp-datasource") DataSource ds) {
-        logger.info("Creating POPP jdbcTemplate");
+        logger.info("Connected to POPP");
         return new JdbcTemplate(ds);
     }
 
@@ -44,7 +44,7 @@ public class JdbcTemplateConfig {
             havingValue = "true")
     @DependsOn("samDatabaseStartupValidator")
     public JdbcTemplate samJdbcTemplate(@Qualifier("sam-datasource") DataSource ds) {
-        logger.info("Creating SAM jdbcTemplate");
+        logger.info("Connected to SAM");
         return new JdbcTemplate(ds);
     }
 }
