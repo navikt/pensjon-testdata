@@ -1,33 +1,24 @@
 package no.nav.pensjon.testdata.repository;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.repository.support.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.repository.support.Component;
-import no.nav.pensjon.testdata.repository.support.ComponentCode;
-import no.nav.pensjon.testdata.repository.support.PathUtil;
-import no.nav.pensjon.testdata.repository.support.Person;
-import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
-import no.nav.pensjon.testdata.repository.support.TestScenario;
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 public class ScenarioRepository {
@@ -35,7 +26,13 @@ public class ScenarioRepository {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
     private static final Logger logger = LoggerFactory.getLogger(ScenarioRepository.class);
-    private final Map<String, TestScenario> tilgjengeligeTestScenarioer = new ConcurrentHashMap<>();
+    private Map<String, TestScenario> tilgjengeligeTestScenarioer;
+    private final ObjectMapper objectMapper;
+
+    {
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    }
 
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
         TestScenario testScenario = getTestScenario(scenarioId);
@@ -52,26 +49,28 @@ public class ScenarioRepository {
         return testScenario;
     }
 
-    public List<TestScenario> getAllTestScenarios() throws IOException {
-        if (tilgjengeligeTestScenarioer.isEmpty()){
-            List<TestScenario> allScenarios = new ArrayList<>();
-            for (File file : PathUtil.readPath("scenario/").toFile().listFiles()) {
-                if (file.isDirectory()) {
-
-                    logger.info("Trying to read: " + file.toString() + "/scenario.json");
-
-                    TestScenario scenario = getObjectMapper()
-                            .readValue(PathUtil.readPath(file.toString() + "/scenario.json").toFile(), TestScenario.class);
-                    allScenarios.add(scenario);
-                }
-            }
-            allScenarios.forEach(s -> tilgjengeligeTestScenarioer.put(s.getScenarioId(), s));
-        }
+    public List<TestScenario> getAllTestScenarios() {
         return new ArrayList<>(tilgjengeligeTestScenarioer.values());
     }
 
+    @PostConstruct
+    private void initTestScenarios(){
+        tilgjengeligeTestScenarioer = Arrays.stream(Objects.requireNonNull(PathUtil.readPath("scenario/").toFile().listFiles()))
+                .filter(File::isDirectory)
+                .map(f -> f.toString() + "/scenario.json")
+                .map(f -> {
+                    try {
+                        return objectMapper.readValue(PathUtil.readPath(f).toFile(), TestScenario.class);
+                    } catch (IOException e) {
+                        logger.error("Could not read scenario at path: " + f, e);
+                        throw new UncheckedIOException("Could not read scenario at path: " + f, e);
+                    }
+                }).collect(Collectors.toConcurrentMap(TestScenario::getScenarioId, Function.identity()));
+        logger.info("tilgjengelige scenarioer: " + tilgjengeligeTestScenarioer.keySet());
+    }
+
     public TestScenario getTestScenario(String scenarioName) throws IOException {
-        return getAllTestScenarios()
+        return tilgjengeligeTestScenarioer.values()
                 .stream()
                 .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
                 .findFirst()
@@ -96,18 +95,7 @@ public class ScenarioRepository {
         }
     }
 
-    public ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        return objectMapper;
-    }
-
     public void setJdbcTemplateWrapper(JdbcTemplateWrapper jdbcTemplateWrapper) {
         this.jdbcTemplateWrapper = jdbcTemplateWrapper;
-    }
-
-    @Bean
-    public ApplicationRunner initializer(ScenarioRepository repository) {
-        return args -> repository.getAllTestScenarios();
     }
 }

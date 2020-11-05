@@ -82,25 +82,19 @@ public class TestdataController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/testdata")
     public ResponseEntity getTestcases() {
-        try {
-            List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
-                    .map(s -> new GetTestcasesResponse.Testcase(
-                            s.getName(),
-                            s.getAllePersoner().stream()
-                            .map(p -> p.getKontrollers().stream()
-                                    .map(AbstractScenarioValidator::getDescription)
-                                    .collect(Collectors.joining(",")))
-                            .filter(description  -> !description.isEmpty())
-                            .collect(Collectors.toList()),
-                            s.getFritekstbeskrivelse())
-                    )
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(new GetTestcasesResponse(testcases));
-        } catch (IOException e) {
-            logger.error("Could not fetch testcases: " + e.getMessage(), e);
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, getStracktrace(e), e);
-        }
+        List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
+                .map(s -> new GetTestcasesResponse.Testcase(
+                        s.getName(),
+                        s.getAllePersoner().stream()
+                        .map(p -> p.getKontrollers().stream()
+                                .map(AbstractScenarioValidator::getDescription)
+                                .collect(Collectors.joining(",")))
+                        .filter(description  -> !description.isEmpty())
+                        .collect(Collectors.toList()),
+                        s.getFritekstbeskrivelse())
+                )
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new GetTestcasesResponse(testcases));
     }
 
     @GetMapping("/testdata/handlebars/{testcase}")
