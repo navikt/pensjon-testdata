@@ -29,7 +29,7 @@ Kjør `create-secrets-for-dev.sh` og erstatt innhold i underliggende filstruktur
 
 ###### Server
 Applikasjonen kjøres med `mvn spring-boot:run`
-Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
+Swagger er tilgjengelig på: http://localhost:8080/swagger-ui.html#/
 Prometheus API er tilgjengelig på: http://localhost:8080/api/prometheus
 
 ###### Client
@@ -41,8 +41,8 @@ Applikasjonen er tilgjengelig på http://localhost:3000/
 #### Docker (localhost)
 Kjør `docker-compose up --build`
 
-Swagger er tilgjengelig på: http://localhost:8080/api/swagger-ui.html#/
-Applikasjonen er tilgjengelig på http://localhost:9090/
+Swagger er tilgjengelig på: http://localhost:8081/swagger-ui.html
+Frontend er tilgjengelig på http://localhost:8081/ og http://localhost:9090/
 
 #### Release
 Gjøres fra github-actions ved push til master branch. Ved commit til hver applikasjon, skal det trigges bygg som deployes ut til aktuelle testmiljø. 
