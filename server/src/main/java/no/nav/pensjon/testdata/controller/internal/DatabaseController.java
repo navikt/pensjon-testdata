@@ -13,7 +13,7 @@ public class DatabaseController {
     @Autowired
     OracleRepository oracleRepository;
 
-    @GetMapping("/testdata/canclear/")
+    @GetMapping("api/testdata/canclear/")
     public ResponseEntity<Boolean> canDbBeCleared() throws IOException {
         if (oracleRepository.canDatabaseBeCleared()) {
             return ResponseEntity.ok(Boolean.TRUE);

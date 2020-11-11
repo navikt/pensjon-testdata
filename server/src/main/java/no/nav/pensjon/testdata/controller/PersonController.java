@@ -35,6 +35,7 @@ import java.util.Optional;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkter for person")
 })
+@RequestMapping("/api/person")
 public class PersonController {
 
     Logger logger = LoggerFactory.getLogger(PersonController.class);
@@ -66,7 +67,7 @@ public class PersonController {
                 .register(meterRegistry);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/person")
+    @PostMapping
     @Transactional
     @ApiOperation(value = "Oppretter personer innenfor pensjonsområdet (PEN, POPP og SAM)")
     public ResponseEntity<HttpStatus> opprettPerson(

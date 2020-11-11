@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkter som inneholder støttefunksjonalitet for test")
 })
+@RequestMapping("/api")
 public class TestVerktoyController {
 
     private final Logger logger = LoggerFactory.getLogger(TestVerktoyController.class);
@@ -78,7 +79,7 @@ public class TestVerktoyController {
                 .register(meterRegistry);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/iverksett")
+    @PostMapping("/iverksett")
     @Transactional
     public ResponseEntity iverksett(@RequestBody IverksettVedtakRequest request) {
         try {
@@ -93,7 +94,7 @@ public class TestVerktoyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/attester")
+    @PostMapping("/attester")
     @Transactional
     public ResponseEntity attester(@RequestBody IverksettVedtakRequest request) {
         try {
@@ -107,7 +108,7 @@ public class TestVerktoyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/flytte-sak")
+    @PostMapping("/flytte-sak")
     @Transactional
     public ResponseEntity flyttSak(@RequestBody FlyttSakRequest request) {
         try {
@@ -121,7 +122,7 @@ public class TestVerktoyController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PostMapping(path = "/person/{fnr}")
+    @PostMapping("/person/{fnr}")
     @Transactional
     public ResponseEntity<HttpStatus> opprettPerson(@PathVariable String fnr) {
         opprettPersonIgnorerDuplikater(mockService::opprettPenPerson, fnr);
@@ -143,13 +144,13 @@ public class TestVerktoyController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/enheter")
+    @GetMapping("/enheter")
     @Transactional
     public ResponseEntity<String> hentEnheter() {
         return ResponseEntity.ok(norgConsumerBean.hentEnheter());
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/omregning")
+    @PostMapping("/omregning")
     @Transactional
     public ResponseEntity<String> automatiskOmregning(@RequestBody AutomatiskOmregningRequest request) throws DatatypeConfigurationException, JsonProcessingException {
         omregningCounter.increment();

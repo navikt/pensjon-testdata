@@ -13,10 +13,7 @@ import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.BestillAutomatiskBrevA
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -27,6 +24,7 @@ import java.util.List;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkt for bestilling av automatiske brev i Pesys")
 })
+@RequestMapping("/api/brev")
 public class BrevController {
 
     @Autowired
@@ -51,15 +49,15 @@ public class BrevController {
                 .register(meterRegistry);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/brev")
+    @PostMapping
     public ResponseEntity<HttpStatus> bestillBrev(@RequestBody BestillBrevRequest body) throws BestillAutomatiskBrevAdresseMangler {
         brevConsumer.bestillAutomatiskBrev(body);
         opprettBrevCounter.increment();
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/brev")
-    public ResponseEntity<List<BrevMetaData>> hentBrevkoder() throws IOException {
+    @GetMapping
+    public ResponseEntity<List<BrevMetaData>> hentBrevkoder(){
         return ResponseEntity.ok(brevMetaData.getAllBrev());
     }
 

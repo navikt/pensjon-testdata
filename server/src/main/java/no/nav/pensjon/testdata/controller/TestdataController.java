@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkter som gjennomfører behandling av testdata innenfor pensjonsområdet")
 })
+@RequestMapping("/api/testdata")
 public class TestdataController {
 
     private static final Logger logger = LoggerFactory.getLogger(TestdataController.class);
@@ -55,7 +56,7 @@ public class TestdataController {
     @Autowired
     private MeterRegistry meterRegistry;
 
-    @RequestMapping(method = RequestMethod.POST, path = "/testdata")
+    @PostMapping
     public ResponseEntity createTestdata(@RequestBody CreateTestdataRequest request) {
 
         Counter opprettTestdataTotal = Counter
@@ -80,7 +81,7 @@ public class TestdataController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/testdata")
+    @GetMapping
     public ResponseEntity getTestcases() {
         List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
@@ -97,7 +98,7 @@ public class TestdataController {
         return ResponseEntity.ok(new GetTestcasesResponse(testcases));
     }
 
-    @GetMapping("/testdata/handlebars/{testcase}")
+    @GetMapping("/handlebars/{testcase}")
     public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable String testcase) {
         try {
             return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
@@ -112,7 +113,7 @@ public class TestdataController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/testdata/clear")
+    @PostMapping("/clear")
     public ResponseEntity delete(@RequestBody ClearTestdataRequest request) {
         try {
             oracleRepository.clearDatabase();
@@ -124,7 +125,7 @@ public class TestdataController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/testdata/clear/{fnr}")
+    @DeleteMapping("/clear/{fnr}")
     public ResponseEntity clearDataForPerson(@PathVariable String fnr) {
         Thread t = new Thread(() -> {
             try {
@@ -138,7 +139,7 @@ public class TestdataController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/testdata/log")
+    @PostMapping("/log")
     public ResponseEntity<List> fetchTestdata(@RequestBody FetchTestdataRequest request)
             throws IOException, SQLException {
         logger.info("Processing request from: " + request.getFom() + " to: " + request.getTom() + " with: " + request.getIdenter().toString());

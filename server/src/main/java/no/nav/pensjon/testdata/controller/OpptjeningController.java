@@ -34,6 +34,7 @@ import java.util.Map;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkter som gjennomfører behandling av opptjening")
 })
+@RequestMapping("/api")
 public class OpptjeningController {
 
     Logger logger = LoggerFactory.getLogger(OpptjeningController.class);
@@ -83,7 +84,7 @@ public class OpptjeningController {
         return ResponseEntity.ok(data);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/inntekt")
+    @PostMapping("/inntekt")
     public ResponseEntity lagreInntekt(@RequestBody LagreInntektRequest request) throws IOException {
         for (int aar = request.getFomAar(); aar <= request.getTomAar(); aar++) {
             Inntekt inntekt = fastsettInntekt(request, aar);
@@ -122,7 +123,7 @@ public class OpptjeningController {
         opptjeningConsumerBean.lagreInntekt(body);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/inntekt")
+    @GetMapping("/inntekt")
     public ResponseEntity<List<InntektPOPP>> hentInntekt(
             @RequestHeader("Nav-Call-Id") String callId,
             @RequestHeader("Nav-Consumer-Id") String consumerId,

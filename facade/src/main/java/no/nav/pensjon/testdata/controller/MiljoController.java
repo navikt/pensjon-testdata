@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,12 +24,13 @@ import java.util.List;
 @SwaggerDefinition(tags = {
         @Tag(name = "", description = "Endepunkter for håndtering av miljødistribusjon til pensjonsområdet")
 })
+@RequestMapping("/api/v1/miljo")
 public class MiljoController {
 
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @RequestMapping(method = RequestMethod.GET, path = "/api/v1/miljo")
+    @GetMapping
     @ApiOperation(value = "Miljøer der endepunkt for samhandling for testdata inn mot Pensjonsområdet er tilgjengelig")
     public ResponseEntity<List<String>> opprettPerson() throws IOException {
         List<String> miljo = new ArrayList<>();
