@@ -5,6 +5,7 @@ import no.nav.pensjon.testdata.repository.ScenarioRepository;
 import no.nav.pensjon.testdata.repository.support.Component;
 import no.nav.pensjon.testdata.repository.support.PrimaryKeySwapper;
 import no.nav.pensjon.testdata.repository.support.TestScenario;
+import no.nav.pensjon.testdata.repository.support.TestScenarioUtil;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.support.ChangeStampTransformer;
 import no.nav.pensjon.testdata.service.support.HandlebarTransformer;
@@ -40,7 +41,7 @@ public class TestdataService {
         validationService.validate(handlebars);
         TestScenario scenario = scenarioRepository.init(testCaseId, handlebars);
 
-        scenario.validate();
+        TestScenarioUtil.validate(scenario);
 
         scenario.getComponents()
                 .forEach(component -> processComponent(component, handlebars));

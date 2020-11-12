@@ -1,28 +1,23 @@
 package no.nav.pensjon.testdata.repository;
 
+import no.nav.pensjon.testdata.controller.support.Handlebar;
+import no.nav.pensjon.testdata.repository.support.PathUtil;
+import no.nav.pensjon.testdata.repository.support.TestScenario;
+import no.nav.pensjon.testdata.repository.support.TestScenarioUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import no.nav.pensjon.testdata.controller.support.Handlebar;
-import no.nav.pensjon.testdata.repository.support.PathUtil;
-import no.nav.pensjon.testdata.repository.support.TestScenario;
 
 @Repository
 public class FileRepository {
@@ -52,8 +47,8 @@ public class FileRepository {
     }
 
     public List<Handlebar> getTestcaseHandlebars(String scenarioId) throws IOException {
-        TestScenario scenario = scenarioRepository.getTestScenario(scenarioId);
-        return handleBars.computeIfAbsent(scenario.getScenarioId(), s -> fetchHandlebars(scenario.getAllSql()));
+        TestScenario scenario = scenarioRepository.obtainScenarioCopy(scenarioId);
+        return handleBars.computeIfAbsent(scenario.getScenarioId(), s -> fetchHandlebars(TestScenarioUtil.getAllSql(scenario)));
     }
 
     private List<Handlebar> fetchHandlebars(String sql) {

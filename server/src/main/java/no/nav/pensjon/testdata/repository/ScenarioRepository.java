@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
@@ -35,17 +36,17 @@ public class ScenarioRepository {
     }
 
     public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
-        TestScenario testScenario = getTestScenario(scenarioId);
+        TestScenario testScenario = obtainScenarioCopy(scenarioId);
         for (Component component : testScenario.getComponents()) {
             for (Person person : component.getPersoner()) {
                 person.init(handlebars, component.getComponent(), jdbcTemplateWrapper);
                 if (!person.isFinnesIDatabase()) {
                     throw new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Person i tescenario finnes ikke i " + component.getComponent(), null);
+                            HttpStatus.NOT_FOUND, "Person i testcenario finnes ikke i " + component.getComponent(), null);
                 }
             }
         }
-        PrimaryKeySwapper.initializePrimaryKeyRegistry(testScenario.getAllePersonIds());
+        PrimaryKeySwapper.initializePrimaryKeyRegistry(TestScenarioUtil.getAllePersonIds(testScenario));
         return testScenario;
     }
 
@@ -69,11 +70,19 @@ public class ScenarioRepository {
         logger.info("tilgjengelige scenarioer: " + tilgjengeligeTestScenarioer.keySet());
     }
 
-    public TestScenario getTestScenario(String scenarioName) throws IOException {
+    public TestScenario obtainScenarioCopy(String scenarioName) throws IOException {
         return tilgjengeligeTestScenarioer.values()
                 .stream()
                 .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
                 .findFirst()
+                .map(t -> {
+                    try {
+                        return objectMapper.readValue(objectMapper.writeValueAsString(t), TestScenario.class);
+                    } catch (JsonProcessingException e) {
+                        logger.error(e.getMessage(), e);
+                        return t; //da vil fnr-validering bomme
+                    }
+                })
                 .orElseThrow(IOException::new);
     }
 

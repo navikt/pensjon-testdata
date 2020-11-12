@@ -1,13 +1,9 @@
 package no.nav.pensjon.testdata.repository.support;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
+import java.util.List;
 
 public class TestScenario {
     private String scenarioId;
@@ -43,32 +39,5 @@ public class TestScenario {
 
     public String getFritekstbeskrivelse() {
         return fritekstbeskrivelse;
-    }
-
-    public Map<String, String> getAllePersonIds() {
-        return getAllePersoner().stream()
-                .collect(Collectors.toMap(Person::getGammelPersonId, Person::getNyPersonId));
-    }
-
-    public List<Person> getAllePersoner(){
-        return components.stream()
-                .flatMap(c -> c.getPersoner().stream())
-                .collect(Collectors.toList());
-    }
-
-    public String getAllSql() {
-        StringBuilder sb = new StringBuilder();
-        components
-                .stream()
-                .forEach(component -> sb.append(component.getSqlAsString(this.scenarioId)));
-        return sb.toString();
-    }
-
-    public void validate() throws ScenarioValidationException {
-        for (Component component : components) {
-            for (Person person : component.getPersoner()) {
-                person.validate();
-            }
-        }
     }
 }

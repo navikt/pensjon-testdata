@@ -10,6 +10,7 @@ import no.nav.pensjon.testdata.controller.support.*;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
+import no.nav.pensjon.testdata.repository.support.TestScenarioUtil;
 import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
@@ -86,7 +87,7 @@ public class TestdataController {
         List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
                         s.getName(),
-                        s.getAllePersoner().stream()
+                        TestScenarioUtil.getAllePersoner(s).stream()
                         .map(p -> p.getKontrollers().stream()
                                 .map(AbstractScenarioValidator::getDescription)
                                 .collect(Collectors.joining(",")))

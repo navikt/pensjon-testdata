@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Input, Select} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./support/Snackbar";
-import { useForm } from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -22,7 +22,16 @@ const OpprettTestdata = () => {
             .catch(console.log)
     }, []);
 
-    const { register, handleSubmit} = useForm();
+    const { register, handleSubmit} = useForm({
+        mode: 'onSubmit',
+        reValidateMode: 'onChange',
+        defaultValues: {},
+        resolver: undefined,
+        context: undefined,
+        criteriaMode: "firstError",
+        shouldFocusError: true,
+        shouldUnregister: true,
+    });
 
 
     const onChange = (event) => {
@@ -99,6 +108,7 @@ const OpprettTestdata = () => {
                     return await validateHandlebar(handlebar, val);
                 }
                 else{
+                    snackbarApi.openSnackbar('Et fødselsnummer må være 11-sifret', 'warning');
                     return false;
                 }
             }
