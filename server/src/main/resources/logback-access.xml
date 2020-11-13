@@ -2,6 +2,12 @@
     <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>((event.getRequestURI().contains("isAlive")) || (event.getRequestURI().contains("isReady")))</expression>
+            </evaluator>
+            <onMatch>DENY</onMatch>
+        </filter>
         <encoder>
             <pattern>%h %l %u %user %date "%r" %s %b</pattern>
         </encoder>

@@ -21,6 +21,7 @@
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
         <tjenestespesifikansjoner.version>1.2020.03.10-15.42-d63c3fb8f3b8</tjenestespesifikansjoner.version>
+        <janino.version>3.1.2</janino.version>
     </properties>
 
     <dependencies>
@@ -66,6 +67,16 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-access</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>${janino.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>commons-compiler</artifactId>
+            <version>${janino.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
