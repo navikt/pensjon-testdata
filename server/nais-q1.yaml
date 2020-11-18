@@ -31,7 +31,7 @@ spec:
     - name: "sts_endpoint_url"
       value: "https://security-token-service.nais.preprod.local"
     - name: "popp_endpoint_url"
-      value: "https://wasapp-q1.adeo.no/popp-ws/api"
+      value: "https://pensjon-popp-q1.nais.preprod.local/popp/api"
     - name: "pen_vedtaksbrev_endpoint"
       value: "https://wasapp-q1.adeo.no/pensjon-ws/Vedtaksbrev"
     - name: "pen_auto_omregning_endpoint"
