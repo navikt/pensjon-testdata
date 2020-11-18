@@ -39,7 +39,7 @@ const IverksetteVedtak = () => {
 
     const iverksetteVedtak = () => {
         resetValidation();
-        if (!/^\d+$/.test(vedtakId)) {
+        if (!/^\d+$/.test(vedtakId.trim())) {
             setVedtakIdValidationText("Må inneholde tall")
         } else {
             setIsProcessing(true);
