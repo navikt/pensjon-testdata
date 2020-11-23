@@ -130,7 +130,7 @@ const BestillBrev = () => {
                 <Autocomplete
                     id="Brev"
                     options={brevkoder}
-                    getOptionLabel={option => option.kodeverdi + " : " + option.dekode}
+                    getOptionLabel={option => option.kodeverdi + " : " + option.dekode + (option.dokumentmalId ? " (dokumentmalId " + option.dokumentmalId + ")" : "") }
 
                     style={{width: 300}}
                     onChange={(event, value) => setValgtBrev(value !== null ? value.kodeverdi:'')}
