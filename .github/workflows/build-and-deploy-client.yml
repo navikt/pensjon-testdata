@@ -32,7 +32,7 @@ jobs:
           key: node-${{ hashFiles('**client/package-lock.json') }}
           restore-keys: |
             node-${{ hashFiles('**client/package-lock.json') }}
-            mode-
+            node-
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -22,6 +22,7 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-${{ hashFiles('**/pom.xml') }}
+            maven-
       - name: Build project with maven
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
