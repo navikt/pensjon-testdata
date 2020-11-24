@@ -1,10 +1,12 @@
-name: Build and deploy server on push to master
+name: Build and deploy server
 
 on:
   push:
     paths:
       - '.github/workflows/build-and-deploy-server.yml'
       - 'server/**'
+      - 'client/**'
+    branches: [master]
 
 env:
   LATEST: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-server:latest
@@ -12,7 +14,7 @@ env:
 
 jobs:
   tag_build_and_deploy:
-    name: 'Build, deploy and tag'
+    name: 'Server - build and deploy'
     runs-on: ubuntu-latest
     steps:
       - name: 'Pull repo'
@@ -20,17 +22,18 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '13'
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**server/pom.xml') }}
+          key: maven-${{ hashFiles('**server/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            maven-${{ hashFiles('**server/pom.xml') }}
+            maven-
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./mvnw package -B
+          mvn package -B
           cd server
           docker build --tag ${IMAGE} .
           docker tag ${IMAGE} ${LATEST}
@@ -41,7 +44,6 @@ jobs:
   deploy_q2:
     name: Deploy server to NAIS - Q2 namespace
     needs: tag_build_and_deploy
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -54,7 +56,6 @@ jobs:
   deploy_t4:
     name: Deploy server to NAIS - T4 namespace
     needs: tag_build_and_deploy
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -67,7 +68,6 @@ jobs:
   deploy_q4:
     name: Deploy server to NAIS - Q4 namespace
     needs: tag_build_and_deploy
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -80,7 +80,6 @@ jobs:
   deploy_q1:
     name: Deploy server to NAIS - Q1 namespace
     needs: tag_build_and_deploy
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

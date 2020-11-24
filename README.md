@@ -1,9 +1,7 @@
 # Pensjon testdata
-![Build and deploy client on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20client%20on%20push%20to%20master/badge.svg)
-![Build and deploy server on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20server%20on%20push%20to%20master/badge.svg)
-![Build and deploy facade on push to master](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20facade%20on%20push%20to%20master/badge.svg)
-
-
+![Build and deploy client](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20client/badge.svg)
+![Build and deploy server](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20server/badge.svg)
+![Build and deploy facade](https://github.com/navikt/pensjon-testdata/workflows/Build%20and%20deploy%20facade/badge.svg)
 
 Løsningen består av følgende komponenter: 
 
