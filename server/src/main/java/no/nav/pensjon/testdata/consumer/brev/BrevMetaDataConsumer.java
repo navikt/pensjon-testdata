@@ -1,51 +1,69 @@
 package no.nav.pensjon.testdata.consumer.brev;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import no.nav.pensjon.testdata.controller.BrevMetaData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class BrevMetaDataConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(BrevMetaDataConsumer.class);
-
     @Value("${brevmetadata.endpoint.url}")
     private String brevMetaDataUrl;
-
     private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<BrevMetaData> getAllBrev() {
-        List<BrevMetaData> brevdataList = new ArrayList<>();
+    public List<Metadata> getAllBrev() {
+        ResponseEntity<Metadata[]> response = restTemplate.getForEntity(
+                UriComponentsBuilder.fromHttpUrl(brevMetaDataUrl + "/allBrev?includeXsd=false").toUriString(), Metadata[].class);
+        return Arrays.stream(Objects.requireNonNull(response.getBody()))
+                .filter(m -> !m.isRedigerbart())
+                .collect(Collectors.toList());
+    }
 
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    UriComponentsBuilder.fromHttpUrl(brevMetaDataUrl + "/allBrev?includeXsd=false").toUriString(),
-                    HttpMethod.GET,
-                    null,
-                    String.class);
+    public static class Metadata {
+        private String kodeverdi;
+        private String dekode;
+        private String dokumentmalId;
+        private boolean redigerbart;
 
-            List<Map<String, Object>> brevs = objectMapper.readValue(response.getBody(), List.class);
-
-            for (Map<String, Object> brev : brevs) {
-                final BrevMetaData brevData = BrevdataMapper.mapBrev(brev);
-                if (!brevData.getRedigerbart()) {
-                    brevdataList.add(brevData);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        public boolean isRedigerbart() {
+            return redigerbart;
         }
-        return brevdataList;
+
+        public void setRedigerbart(boolean redigerbart) {
+            this.redigerbart = redigerbart;
+        }
+
+        public String getDekode() {
+            return dekode;
+        }
+
+        public void setDekode(String dekode) {
+            this.dekode = dekode;
+        }
+
+        @JsonProperty("kodeverdi")
+        public String getKodeverdi() {
+            return kodeverdi;
+        }
+
+        @JsonProperty("brevkodeIBrevsystem")
+        public void setKodeverdi(String kodeverdi) {
+            this.kodeverdi = kodeverdi;
+        }
+
+        public String getDokumentmalId() {
+            return dokumentmalId;
+        }
+
+        public void setDokumentmalId(String dokumentmalId) {
+            this.dokumentmalId = dokumentmalId;
+        }
     }
 }

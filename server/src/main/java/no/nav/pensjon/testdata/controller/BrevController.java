@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -57,7 +56,7 @@ public class BrevController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrevMetaData>> hentBrevkoder(){
+    public ResponseEntity<List<BrevMetaDataConsumer.Metadata>> hentBrevkoder(){
         return ResponseEntity.ok(brevMetaData.getAllBrev());
     }
 
