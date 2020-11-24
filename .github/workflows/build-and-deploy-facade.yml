@@ -1,4 +1,4 @@
-name: Build and deploy facade on push to master
+name: Build and deploy facade
 
 on:
   push:
@@ -14,13 +14,14 @@ jobs:
   tag_build_and_deploy:
     name: 'Build, deploy and tag'
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: 'Pull repo'
         uses: actions/checkout@v1
       - uses: actions/setup-java@v1
         with:
           java-version: '13'
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**facade/pom.xml') }}
