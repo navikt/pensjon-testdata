@@ -25,9 +25,10 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**server/pom.xml') }}
+          key: maven-${{ hashFiles('**server/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            maven-${{ hashFiles('**server/pom.xml') }}
+            maven-
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

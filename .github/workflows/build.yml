@@ -19,9 +19,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+            maven-${{ hashFiles('**/pom.xml') }}
       - name: Build project with maven
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
