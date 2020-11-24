@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/build-and-deploy-facade.yml'
       - 'facade/**'
+    branches: [master]
 
 env:
   LATEST: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-facade:latest
@@ -12,9 +13,8 @@ env:
 
 jobs:
   tag_build_and_deploy:
-    name: 'Build, deploy and tag'
+    name: 'Facade - build and deploy'
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     steps:
       - name: 'Pull repo'
         uses: actions/checkout@v1
@@ -41,7 +41,6 @@ jobs:
   deploy:
     name: Deploy facade to NAIS
     needs: tag_build_and_deploy
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

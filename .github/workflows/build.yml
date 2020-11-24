@@ -10,7 +10,6 @@ jobs:
   build:
     name: 'Build project'
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
     steps:
       - name: 'Pull repo'
         uses: actions/checkout@v1
