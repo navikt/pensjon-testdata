@@ -5,8 +5,8 @@ on:
     branches-ignore: [master]
 
 jobs:
-  build:
-    name: 'Build project'
+  build_with_mvn:
+    name: 'Build with mvn'
     runs-on: ubuntu-latest
     steps:
       - name: 'Pull repo'
@@ -26,3 +26,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn package -B
+
+  build_client_with_npm:
+    name: 'Build client with npm'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - name: 'Pull repo'
+        uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: node-${{ hashFiles('**client/package-lock.json') }}
+          restore-keys: |
+            node-${{ hashFiles('**client/package-lock.json') }}
+            node-
+      - name: Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd client
+          npm install
+          npm run build
