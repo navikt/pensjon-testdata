@@ -31,6 +31,7 @@ const BestillBrev = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [brevkoder, setBrevkoder] = useState([]);
     const [valgtBrev, setValgtBrev] = useState('');
+    const [dokumentmalId, setDokumentmalId] = useState('');
     const [valgtBrevValidationText, setValgtBrevValidationText] = useState('');
     const [bruker, setBruker] = useState('');
     const [brukerValidationText, setBrukerValidationText] = useState('');
@@ -121,6 +122,11 @@ const BestillBrev = () => {
         return value.length !== 0
     }
 
+    const onValgtBrevChange = (event, value) => {
+        setValgtBrev(value !== null ? value.kodeverdi:'')
+        setDokumentmalId(value !== null && value.dokumentmalId !== null ? 'Dokumentmalid: ' + value.dokumentmalId: '')
+    }
+
     return (
         <Card className={classes.card}>
             <CardHeader title="Bestill brev"/>
@@ -130,10 +136,9 @@ const BestillBrev = () => {
                 <Autocomplete
                     id="Brev"
                     options={brevkoder}
-                    getOptionLabel={option => option.kodeverdi + " : " + option.dekode}
-
+                    getOptionLabel={option => option.kodeverdi + " : " + option.dekode + (option.dokumentmalId ? " (dokumentmalId " + option.dokumentmalId + ")" : "") }
                     style={{width: 300}}
-                    onChange={(event, value) => setValgtBrev(value !== null ? value.kodeverdi:'')}
+                    onChange={onValgtBrevChange}
                     renderInput={params => (
                         <TextField {...params}
                                    label="Brev"
@@ -143,7 +148,8 @@ const BestillBrev = () => {
                         />
                     )}
                 />
-                <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px', width: 300}}
+                <div>{dokumentmalId}<br/></div>
+                <TextField style={{textAlign: 'left', marginBottom: '0px', marginTop: '10px', width: 300}}
                            label="Bruker (fnr)"
                            name="bruker"
                            key="bruker"
@@ -183,7 +189,7 @@ const BestillBrev = () => {
             <CardActions>
                 <Button onClick={() => bestillBrev()}
                         variant="contained"
-                        disabled={isProcessing ? true : false}
+                        disabled={isProcessing}
                         startIcon={<MailIcon/>}>
                     Bestill brev
                 </Button>

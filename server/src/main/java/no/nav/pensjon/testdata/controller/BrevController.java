@@ -8,6 +8,7 @@ import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.brev.BrevConsumer;
 import no.nav.pensjon.testdata.consumer.brev.BrevMetaDataConsumer;
+import no.nav.pensjon.testdata.consumer.brev.BrevMetadata;
 import no.nav.pensjon.testdata.controller.support.BestillBrevRequest;
 import no.nav.tjeneste.domene.pensjon.vedtaksbrev.binding.BestillAutomatiskBrevAdresseMangler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -57,7 +57,7 @@ public class BrevController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrevMetaData>> hentBrevkoder(){
+    public ResponseEntity<List<BrevMetadata>> hentBrevkoder(){
         return ResponseEntity.ok(brevMetaData.getAllBrev());
     }
 
