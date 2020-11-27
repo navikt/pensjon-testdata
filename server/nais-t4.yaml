@@ -28,6 +28,14 @@ spec:
   env:
     - name: "SECRET_BASEDIR"
       value: "/"
+    - name: "pen_db_enabled"
+      value: "true"
+    - name: "popp_db_enabled"
+      value: "true"
+    - name: "sam_db_enabled"
+      value: "true"
+    - name: "moog_db_enabled"
+      value: "true"
     - name: "sts_endpoint_url"
       value: "https://security-token-service-t4.nais.preprod.local"
     - name: "popp_endpoint_url"
@@ -42,6 +50,8 @@ spec:
       value: "https://pensjon-preg-t4.nais.preprod.local/grunnbelop/veiet"
     - name: "db_startup_wait_seconds"
       value: "300"
+    - name: "brevmetadata_endpoint_url"
+      value: "https://pensjon-brevmetadata-pensjonsbrev.dev.adeo.no/api/brevdata"
   vault:
     enabled: true
     paths:
