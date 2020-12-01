@@ -1,6 +1,5 @@
 package no.nav.pensjon.testdata.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
@@ -71,7 +70,8 @@ public class ScenarioRepository {
     }
 
     public TestScenario obtainScenarioCopy(String scenarioName) throws IOException {
-        return tilgjengeligeTestScenarioer.values()
+        return Optional.ofNullable(tilgjengeligeTestScenarioer.get(scenarioName)).orElseThrow(IOException::new);
+/*        return tilgjengeligeTestScenarioer.values()
                 .stream()
                 .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
                 .findFirst()
@@ -83,7 +83,7 @@ public class ScenarioRepository {
                         return t; //da vil fnr-validering bomme
                     }
                 })
-                .orElseThrow(IOException::new);
+                .orElseThrow(IOException::new);*/
     }
 
     public void execute(Component component, String sql) {

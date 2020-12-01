@@ -86,6 +86,7 @@ public class TestdataController {
     public ResponseEntity getTestcases() {
         List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
+                        s.getScenarioId(),
                         s.getName(),
                         TestScenarioUtil.getAllePersoner(s).stream()
                         .map(p -> p.getKontrollers().stream()

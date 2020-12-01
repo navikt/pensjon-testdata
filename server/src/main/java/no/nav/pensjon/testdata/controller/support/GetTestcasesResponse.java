@@ -19,14 +19,24 @@ public class GetTestcasesResponse {
     }
 
     public static class Testcase {
+        private String id;
         private String fritekstbeskrivelse;
         private String navn;
         private List<String> begrensninger;
 
-        public Testcase(String navn, List<String> begrensninger, String fritekstbeskrivelse) {
+        public Testcase(String id, String navn, List<String> begrensninger, String fritekstbeskrivelse) {
+            this.id = id;
             this.fritekstbeskrivelse = fritekstbeskrivelse;
             this.navn = navn;
             this.begrensninger = begrensninger;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
         }
 
         public String getNavn() {
