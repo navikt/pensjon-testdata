@@ -105,15 +105,16 @@ const OpprettTestdata = () => {
     };
 
     const columns = [
-        { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'super-app-theme--header' },
-        { field: 'begrensninger', headerName: 'Forutsettninger for testdata', flex: 1, headerClassName: 'super-app-theme--header' }
+        { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'header'},
+        { field: 'begrensninger', headerName: 'Forutsettninger for testdata', flex: 1, headerClassName: 'header'}
         //{ field: 'fritekstbeskrivelse', headerName: 'Beskrivelse av scenario', flex: 1 }
     ];
 
     const useStyles = makeStyles({
         root: {
-            '& .super-app-theme--header': {
-                fontWeight: 'bold'
+            '& .header': {
+                fontSize: 20,
+                backgroundColor: 'lightGrey',
             },
         },
     });
@@ -121,7 +122,7 @@ const OpprettTestdata = () => {
     const classes = useStyles();
 
     return (
-        <form onSubmit={handleSubmit(lagre)}>
+        <form onSubmit={handleSubmit(lagre)} style={{width: '100%'}}>
             <Grid container spacing={3} justify="center" alignItems="flex-start" direction="row">
                 <Grid item style={{width: '50%'}}>
                     <div className={classes.root}>
