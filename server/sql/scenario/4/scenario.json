@@ -2,6 +2,7 @@
   "scenarioId": "4",
   "name": "AP2016 gradert tidlig uttak - løpende 08-1955",
   "fritekstbeskrivelse": null,
+  "saksType":  "Alderspensjon",
   "components" : [
     {
       "component": "PEN",

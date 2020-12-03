@@ -106,8 +106,8 @@ const OpprettTestdata = () => {
 
     const columns = [
         { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'header'},
-        { field: 'begrensninger', headerName: 'Forutsettninger for testdata', flex: 1, headerClassName: 'header'}
-        //{ field: 'fritekstbeskrivelse', headerName: 'Beskrivelse av scenario', flex: 1 }
+        { field: 'begrensninger', headerName: 'Forutsettninger for testdata', flex: 1, headerClassName: 'header'},
+        { field: 'saksType', headerName: 'Sakstype', flex: 1, headerClassName: 'header'}
     ];
 
     const useStyles = makeStyles({

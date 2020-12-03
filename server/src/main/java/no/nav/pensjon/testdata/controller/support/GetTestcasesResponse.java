@@ -23,12 +23,14 @@ public class GetTestcasesResponse {
         private String fritekstbeskrivelse;
         private String navn;
         private List<String> begrensninger;
+        private String saksType;
 
-        public Testcase(String id, String navn, List<String> begrensninger, String fritekstbeskrivelse) {
+        public Testcase(String id, String navn, List<String> begrensninger, String fritekstbeskrivelse, String saksType) {
             this.id = id;
-            this.fritekstbeskrivelse = fritekstbeskrivelse;
             this.navn = navn;
             this.begrensninger = begrensninger;
+            this.fritekstbeskrivelse = fritekstbeskrivelse;
+            this.saksType = saksType;
         }
 
         public String getId() {
@@ -61,6 +63,14 @@ public class GetTestcasesResponse {
 
         public void setFritekstbeskrivelse(String fritekstbeskrivelse) {
             this.fritekstbeskrivelse = fritekstbeskrivelse;
+        }
+
+        public String getSaksType() {
+            return saksType;
+        }
+
+        public void setSaksType(String saksType) {
+            this.saksType = saksType;
         }
     }
 }

@@ -71,19 +71,6 @@ public class ScenarioRepository {
 
     public TestScenario obtainScenarioCopy(String scenarioName) throws IOException {
         return Optional.ofNullable(tilgjengeligeTestScenarioer.get(scenarioName)).orElseThrow(IOException::new);
-/*        return tilgjengeligeTestScenarioer.values()
-                .stream()
-                .filter(t -> t.getName().equalsIgnoreCase(scenarioName))
-                .findFirst()
-                .map(t -> {
-                    try {
-                        return objectMapper.readValue(objectMapper.writeValueAsString(t), TestScenario.class);
-                    } catch (JsonProcessingException e) {
-                        logger.error(e.getMessage(), e);
-                        return t; //da vil fnr-validering bomme
-                    }
-                })
-                .orElseThrow(IOException::new);*/
     }
 
     public void execute(Component component, String sql) {

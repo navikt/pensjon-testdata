@@ -2,6 +2,7 @@
   "scenarioId": "1",
   "name": "AP2016 løpende 07-1956",
   "fritekstbeskrivelse": null,
+  "saksType":  "Alderspensjon",
   "components" : [
     {
       "component": "PEN",

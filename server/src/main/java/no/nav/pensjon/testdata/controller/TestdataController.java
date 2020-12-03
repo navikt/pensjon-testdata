@@ -86,15 +86,17 @@ public class TestdataController {
     public ResponseEntity getTestcases() {
         List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
-                        s.getScenarioId(),
-                        s.getName(),
-                        TestScenarioUtil.getAllePersoner(s).stream()
-                        .map(p -> p.getKontrollers().stream()
-                                .map(AbstractScenarioValidator::getDescription)
-                                .collect(Collectors.joining(",")))
-                        .filter(description  -> !description.isEmpty())
-                        .collect(Collectors.toList()),
-                        s.getFritekstbeskrivelse())
+                            s.getScenarioId(),
+                            s.getName(),
+                            TestScenarioUtil.getAllePersoner(s).stream()
+                                .map(p -> p.getKontrollers().stream()
+                                    .map(AbstractScenarioValidator::getDescription)
+                                    .collect(Collectors.joining(",")))
+                                .filter(description  -> !description.isEmpty())
+                                .collect(Collectors.toList()),
+                            s.getFritekstbeskrivelse(),
+                            s.getSaksType()
+                        )
                 )
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new GetTestcasesResponse(testcases));

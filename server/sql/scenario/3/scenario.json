@@ -2,6 +2,7 @@
   "scenarioId": "3",
   "name": "Gjenlevende løpende",
   "fritekstbeskrivelse": null,
+  "saksType":  "Gjenlevendeytelse",
   "components" : [
     {
       "component": "PEN",
