@@ -12,7 +12,6 @@
         "key": "fnr",
         "kontroller": [
           {
-            "type": "fodselMaaned",
             "maaned": 8,
             "aar": 1953
           }

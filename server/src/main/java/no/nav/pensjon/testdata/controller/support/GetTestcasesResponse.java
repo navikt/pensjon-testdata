@@ -19,25 +19,25 @@ public class GetTestcasesResponse {
     }
 
     public static class Testcase {
-        private String id;
+        private int id;
         private String fritekstbeskrivelse;
         private String navn;
-        private List<String> begrensninger;
         private String saksType;
+        private String maaVaereFoedtIAarMaaned;
 
-        public Testcase(String id, String navn, List<String> begrensninger, String fritekstbeskrivelse, String saksType) {
+        public Testcase(int id, String navn, String fritekstbeskrivelse, String saksType, String maaVaereFoedtIAarMaaned) {
             this.id = id;
             this.navn = navn;
-            this.begrensninger = begrensninger;
             this.fritekstbeskrivelse = fritekstbeskrivelse;
             this.saksType = saksType;
+            this.maaVaereFoedtIAarMaaned = maaVaereFoedtIAarMaaned;
         }
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(int id) {
             this.id = id;
         }
 
@@ -47,14 +47,6 @@ public class GetTestcasesResponse {
 
         public void setNavn(String navn) {
             this.navn = navn;
-        }
-
-        public List<String> getBegrensninger() {
-            return begrensninger;
-        }
-
-        public void setBegrensninger(List<String> begrensninger) {
-            this.begrensninger = begrensninger;
         }
 
         public String getFritekstbeskrivelse() {
@@ -71,6 +63,14 @@ public class GetTestcasesResponse {
 
         public void setSaksType(String saksType) {
             this.saksType = saksType;
+        }
+
+        public String getMaaVaereFoedtIAarMaaned() {
+            return maaVaereFoedtIAarMaaned;
+        }
+
+        public void setMaaVaereFoedtIAarMaaned(String maaVaereFoedtIAarMaaned) {
+            this.maaVaereFoedtIAarMaaned = maaVaereFoedtIAarMaaned;
         }
     }
 }

@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
@@ -26,7 +27,7 @@ public class ScenarioRepository {
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
     private static final Logger logger = LoggerFactory.getLogger(ScenarioRepository.class);
-    private Map<String, TestScenario> tilgjengeligeTestScenarioer;
+    private Map<Integer, TestScenario> tilgjengeligeTestScenarioer;
     private final ObjectMapper objectMapper;
 
     {
@@ -34,7 +35,7 @@ public class ScenarioRepository {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
-    public TestScenario init(String scenarioId, Map<String, String> handlebars) throws IOException {
+    public TestScenario init(int scenarioId, Map<String, String> handlebars) throws IOException {
         TestScenario testScenario = obtainScenarioCopy(scenarioId);
         for (Component component : testScenario.getComponents()) {
             for (Person person : component.getPersoner()) {
@@ -69,8 +70,17 @@ public class ScenarioRepository {
         logger.info("tilgjengelige scenarioer: " + tilgjengeligeTestScenarioer.keySet());
     }
 
-    public TestScenario obtainScenarioCopy(String scenarioName) throws IOException {
-        return Optional.ofNullable(tilgjengeligeTestScenarioer.get(scenarioName)).orElseThrow(IOException::new);
+    public TestScenario obtainScenarioCopy(int id) throws IOException { //lager deep-kopi, fordi konsumenter muterer scenario
+        return Optional.ofNullable(tilgjengeligeTestScenarioer.get(id))
+                .map(t -> {
+                    try {
+                        return objectMapper.readValue(objectMapper.writeValueAsString(t), TestScenario.class);
+                    } catch (JsonProcessingException e) {
+                        logger.error(e.getMessage(), e);
+                        return t; //da vil fnr-validering bomme
+                    }
+                })
+                .orElseThrow(IOException::new);
     }
 
     public void execute(Component component, String sql) {

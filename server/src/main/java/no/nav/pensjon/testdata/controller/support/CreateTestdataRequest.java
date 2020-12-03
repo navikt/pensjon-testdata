@@ -1,27 +1,20 @@
 package no.nav.pensjon.testdata.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 
 public class CreateTestdataRequest {
-
-    private String testCaseId;
+    @JsonProperty
+    private int testCaseId;
+    @JsonProperty
     private Map<String,String> handlebars;
 
-    public String getTestCaseId() {
+    public int getTestCaseId() {
         return testCaseId;
-    }
-
-    public void setTestCaseId(String testCaseId) {
-        this.testCaseId = testCaseId;
     }
 
     public Map<String, String> getHandlebars() {
         return handlebars;
     }
-
-    public void setHandlebars(Map<String, String> handlebars) {
-        this.handlebars = handlebars;
-    }
-
-
 }

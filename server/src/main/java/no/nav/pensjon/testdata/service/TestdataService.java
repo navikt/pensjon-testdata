@@ -36,7 +36,7 @@ public class TestdataService {
     private ValidationService validationService;
 
     @Transactional
-    public void createTestcase(String testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
+    public void createTestcase(int testCaseId, Map<String, String> handlebars) throws IOException, ScenarioValidationException {
         oracleRepository.alterSession();
         validationService.validate(handlebars);
         TestScenario scenario = scenarioRepository.init(testCaseId, handlebars);

@@ -106,7 +106,7 @@ const OpprettTestdata = () => {
 
     const columns = [
         { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'header'},
-        { field: 'begrensninger', headerName: 'Forutsettninger for testdata', flex: 1, headerClassName: 'header'},
+        { field: 'maaVaereFoedtIAarMaaned', headerName: 'Bruker må være født i år-måned', flex: 1, headerClassName: 'header', type: 'date'},
         { field: 'saksType', headerName: 'Sakstype', flex: 1, headerClassName: 'header'}
     ];
 
@@ -124,10 +124,10 @@ const OpprettTestdata = () => {
     return (
         <form onSubmit={handleSubmit(lagre)} style={{width: '100%'}}>
             <Grid container spacing={3} justify="center" alignItems="flex-start" direction="row">
-                <Grid item style={{width: '50%'}}>
+                <Grid item style={{width: '40%'}}>
                     <div className={classes.root}>
                     <DataGrid
-                            rows={testcases} columns={columns} pageSize={5}
+                            rows={testcases} columns={columns} pageSize={10}
                             onSelectionChange={(newSelection) => {
                                 onChange(newSelection);
                             }}
