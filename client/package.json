@@ -32,6 +32,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-hook-form": "^5.5.1",
+    "react-interactive-dynamic-form-generator": "^1.0.4",
     "react-scripts": "^3.3.0"
   },
   "scripts": {

@@ -1,6 +1,5 @@
 package no.nav.pensjon.testdata.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -14,6 +13,7 @@ import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
 import no.nav.pensjon.testdata.controller.support.InntektPOPP;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
+import no.nav.pensjon.testdata.controller.support.LagreinntekterFraSkjemaRequest;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
 import no.nav.pensjon.testdata.service.POPPDataExtractorService;
 import org.slf4j.Logger;
@@ -91,7 +91,7 @@ public class OpptjeningController {
 
             LagreInntektPoppRequest poppRequest = new LagreInntektPoppRequest(inntekt);
 
-            lagreInntekt(poppRequest);
+            opptjeningConsumerBean.lagreInntekt(poppRequest);
         }
 
         lagreInntektDataCounter.increment();
@@ -101,7 +101,7 @@ public class OpptjeningController {
 
     private Inntekt fastsettInntekt(@RequestBody LagreInntektRequest request, int aar) throws IOException {
         if (!request.isRedusertMedGrunnbelop()) {
-            return new Inntekt(request.getFnr(), aar, request.getBelop(), "INN_LON");
+            return newInntekt(request.getFnr(), aar, request.getBelop());
         } else {
             Map<Integer, Long> grunnbelop = grunnbelopConsumerBean.hentVeietGrunnbelop();
 
@@ -114,13 +114,22 @@ public class OpptjeningController {
                     + nyInntekt
                     + " Formel= avrund(" + grunnbelop.get(aar) + "/" + GRUNNBELOP_2019 + ") * " + request.getBelop() + ")");
 
-            return new Inntekt(request.getFnr(), aar, Long.valueOf(nyInntekt), "INN_LON");
+            return newInntekt(request.getFnr(), aar, (long) nyInntekt);
         }
     }
 
-    private void lagreInntekt(LagreInntektPoppRequest poppRequest) throws JsonProcessingException {
-        String body = objectMapper.writeValueAsString(poppRequest);
-        opptjeningConsumerBean.lagreInntekt(body);
+    private Inntekt newInntekt(String fnr, int aar, Long belop) {
+        return new Inntekt(fnr, aar, belop, "INN_LON");
+    }
+
+    @PostMapping("/inntektskjema")
+    public ResponseEntity<String> lagreInntekterFraSkjema(@RequestBody LagreinntekterFraSkjemaRequest request){
+        request.getInntekter().parallelStream()
+                .map(inntekt -> newInntekt(request.getFnr(), inntekt.getAar(), (long) inntekt.getInntekt()))
+                .map(LagreInntektPoppRequest::new)
+                .forEachOrdered(opptjeningConsumerBean::lagreInntekt);
+
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping("/inntekt")

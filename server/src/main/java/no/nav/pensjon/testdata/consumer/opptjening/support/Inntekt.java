@@ -1,5 +1,7 @@
 package no.nav.pensjon.testdata.consumer.opptjening.support;
 
+import java.util.StringJoiner;
+
 public class Inntekt {
     private String fnr;
 
@@ -77,5 +79,18 @@ public class Inntekt {
 
     public void setChangeStamp(ChangeStamp changeStamp) {
         this.changeStamp = changeStamp;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Inntekt.class.getSimpleName() + "[", "]")
+                .add("fnr='" + fnr + "'")
+                .add("kilde='" + kilde + "'")
+                .add("kommune='" + kommune + "'")
+                .add("inntektAr=" + inntektAr)
+                .add("belop=" + belop)
+                .add("changeStamp=" + changeStamp)
+                .add("inntektType='" + inntektType + "'")
+                .toString();
     }
 }
