@@ -6,9 +6,9 @@ public class InntektAar {
     @JsonProperty
     private int aar;
     @JsonProperty
-    private int inntekt;
+    private long inntekt;
 
-    public InntektAar(int aar, int inntekt) {
+    public InntektAar(int aar, long inntekt) {
         this.aar = aar;
         this.inntekt = inntekt;
     }
@@ -17,7 +17,7 @@ public class InntektAar {
         return aar;
     }
 
-    public int getInntekt() {
+    public long getInntekt() {
         return inntekt;
     }
 }

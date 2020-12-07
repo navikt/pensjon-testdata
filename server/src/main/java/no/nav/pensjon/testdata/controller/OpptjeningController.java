@@ -11,6 +11,7 @@ import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
+import no.nav.pensjon.testdata.controller.support.InntektAar;
 import no.nav.pensjon.testdata.controller.support.InntektPOPP;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
 import no.nav.pensjon.testdata.controller.support.LagreinntekterFraSkjemaRequest;
@@ -123,13 +124,12 @@ public class OpptjeningController {
     }
 
     @PostMapping("/inntektskjema")
-    public ResponseEntity<String> lagreInntekterFraSkjema(@RequestBody LagreinntekterFraSkjemaRequest request){
+    public ResponseEntity<List<InntektAar>> lagreInntekterFraSkjema(@RequestBody LagreinntekterFraSkjemaRequest request){
         request.getInntekter().parallelStream()
-                .map(inntekt -> newInntekt(request.getFnr(), inntekt.getAar(), (long) inntekt.getInntekt()))
+                .map(inntekt -> newInntekt(request.getFnr(), inntekt.getAar(), inntekt.getInntekt()))
                 .map(LagreInntektPoppRequest::new)
                 .forEachOrdered(opptjeningConsumerBean::lagreInntekt);
-
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok(request.getInntekter());
     }
 
     @GetMapping("/inntekt")

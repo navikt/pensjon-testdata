@@ -82,16 +82,13 @@ const OpprettInntektManuelt = () => {
 
     const hentInntektSkjema = async () => {
         setIsProcessing(true);
-
-        console.log(fomAar + ' - ' + tomAar);
-
         var range = Array(tomAar - fomAar + 1)
             .fill(fomAar)
             .map((x, y) => Number(x) + y)
             .map(x => {
                 return {aar: x, inntekt: 0}
             })
-        console.log("created range data: " + JSON.stringify(range));
+
         setHandlebars(range);
         setIsProcessing(false);
         setSkjemahentet(true);
@@ -99,8 +96,6 @@ const OpprettInntektManuelt = () => {
 
     const lagre = async (inntekter) => {
         setIsProcessing(true);
-        console.log("inntekter: " + Object.keys(inntekter));
-        console.log("handlebars: " + Object.keys(handlebars));
         const response = await fetch('/api/inntektskjema', {
             method: 'POST',
             headers: {
@@ -114,14 +109,15 @@ const OpprettInntektManuelt = () => {
         });
 
         if (response.status === 200) {
-            snackbarApi.openSnackbar('Inntekter fom: ' + fomAar + ' tom: ' + tomAar + ' lagret', 'success');
+            let json = await response.json();
+            snackbarApi.openSnackbar('Alle inntekter ble lagret! ' + JSON.stringify(json), 'success');
+            setSkjemahentet(false);
         } else {
-            let json = response.json();
-            snackbarApi.openSnackbar('Lagring av inntekt feilet: ' + json, 'error');
+            let json = await response.json();
+            snackbarApi.openSnackbar('Lagring av inntekt feilet: ' + json.message, 'error');
             console.log(json);
         }
         setIsProcessing(false);
-        setSkjemahentet(false);
     };
 
     const isNotValid = (value) => {
@@ -182,7 +178,7 @@ const OpprettInntektManuelt = () => {
             <CardActions disableSpacing>
                 <Button onClick={() => validerOgHentSkjema()}
                         variant="contained"
-                        disabled={isProcessing}
+                        disabled={isProcessing || skjemahentet}
                         startIcon={<CreditCardIcon/>}>
                     Hent skjema</Button>
             </CardActions>
