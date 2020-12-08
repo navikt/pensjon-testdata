@@ -38,7 +38,7 @@ const OpprettInntektManuelt = () => {
     const [fomAarValidationText, setFomAarValidationText] = useState('');
     const [tomAarValidationText, setTomAarValidationText] = useState('');
 
-    const [handlebars, setHandlebars] = useState([]);
+    const [yearInputs, setYearInputs] = useState([]);
 
 
     const snackbarApi = React.useContext(SnackbarContext);
@@ -60,41 +60,43 @@ const OpprettInntektManuelt = () => {
         setTomAarValidationText("");
     }
 
-    const validerOgHentSkjema = () => {
-        console.log("Process hent-inntektskjema")
+    const validerOgHentSkjema = async () => {
         resetValidation();
-        // if (!/^\d{11}$/.test(fnr.trim())) //{ isNotValid(fnrValidationText) ||
-        //     setFnrValidationText("Må inneholde fnr på 11 siffer")
-        // }
+        let valid = true;
         if (!/^\d{4}$/.test(fomAar)) {
             setFomAarValidationText("Må være årstall")
+            valid = false
         }
         if (!/^\d{4}$/.test(tomAar)) {
             setTomAarValidationText("Må være årstall")
+            valid = false
         }
-        if (isNotValid(fomAarValidationText) || isNotValid(tomAarValidationText)) {
-            snackbarApi.openSnackbar('Feil i validering, inntekt ble ikke lagret', 'error');
-        } else {
-            console.log("Henter inntektskjema hæ")
+
+        if (valid) {
             hentInntektSkjema();
         }
     };
 
     const hentInntektSkjema = async () => {
         setIsProcessing(true);
-        var range = Array(tomAar - fomAar + 1)
+        var yearRange = Array(tomAar - fomAar + 1)
             .fill(fomAar)
             .map((x, y) => Number(x) + y)
             .map(x => {
                 return {aar: x, inntekt: 0}
             })
 
-        setHandlebars(range);
+        setYearInputs(yearRange);
         setIsProcessing(false);
         setSkjemahentet(true);
     }
 
     const lagre = async (inntekter) => {
+        resetValidation();
+        if (!/^\d{11}$/.test(fnr.trim())){
+            setFnrValidationText("Må inneholde fnr på 11 siffer")
+            return;
+        }
         setIsProcessing(true);
         const response = await fetch('/api/inntektskjema', {
             method: 'POST',
@@ -131,17 +133,18 @@ const OpprettInntektManuelt = () => {
                 <p>Oppretter varierte inntekter for brukere ved å benytte grensesnitt mot POPP</p>
                 {skjemahentet ?
                     <form onSubmit={handleSubmit(lagre)} style={{width: '100%'}}>
-                        <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px'}}
+                        <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px',}}
                                    label="Fødselsnummer"
                                    name="fnr"
                                    key="fnr"
+                                   type="number"
                                    variant="outlined"
                                    helperText={fnrValidationText}
                                    onChange={e => setFnr(e.target.value)}
                                    error={isNotValid(fnrValidationText)}
                         />
                         <div>
-                            {handlebars.map((field) => (
+                            {yearInputs.map((field) => (
                                 <Input style={{textAlign: 'left',}} type="number" bredde="XL" label={String(field.aar)}
                                        name={String(field.aar)}
                                        key={field.aar}
@@ -159,6 +162,7 @@ const OpprettInntektManuelt = () => {
                                    name="fomAar"
                                    key="fomAar"
                                    variant="outlined"
+                                   type="number"
                                    helperText={fomAarValidationText}
                                    onChange={e => setFomAar(e.target.value)}
                                    error={isNotValid(fomAarValidationText)}
@@ -167,6 +171,7 @@ const OpprettInntektManuelt = () => {
                                    label="Tom år"
                                    name="tomAar"
                                    key="tomAar"
+                                   type="number"
                                    variant="outlined"
                                    helperText={tomAarValidationText}
                                    onChange={e => setTomAar(e.target.value)}
