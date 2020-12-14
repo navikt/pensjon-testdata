@@ -105,9 +105,9 @@ const OpprettTestdata = () => {
     };
 
     const columns = [
-        { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'header'},
-        { field: 'maaVaereFoedtIAarMaaned', headerName: 'Bruker må være født i år-måned', flex: 1, headerClassName: 'header', type: 'date'},
-        { field: 'saksType', headerName: 'Sakstype', flex: 1, headerClassName: 'header'}
+        { field: 'navn', headerName: 'Testscenario', headerClassName: 'header', width: '350px'},
+        { field: 'maaVaereFoedtIAarMaaned', headerName: 'Bruker må være født i år-måned', flex: 1, headerClassName: 'header', type: 'date', width: '350px'},
+        { field: 'saksType', headerName: 'Sakstype', flex: 1, headerClassName: 'header', width: '250px'}
     ];
 
     const useStyles = makeStyles({
