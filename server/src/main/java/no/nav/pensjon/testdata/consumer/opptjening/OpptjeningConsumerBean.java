@@ -1,5 +1,6 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
+import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
 import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class OpptjeningConsumerBean {
     @Value("${popp.endpoint.url}")
     private String poppEndpoint;
 
-    public Boolean lagreInntekt(String body) {
+    public Boolean lagreInntekt(LagreInntektPoppRequest body) {
         HttpEntity restRequest;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);

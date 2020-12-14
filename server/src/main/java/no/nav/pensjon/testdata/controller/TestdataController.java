@@ -10,8 +10,6 @@ import no.nav.pensjon.testdata.controller.support.*;
 import no.nav.pensjon.testdata.repository.FileRepository;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.ScenarioRepository;
-import no.nav.pensjon.testdata.repository.support.TestScenarioUtil;
-import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
 import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
 import no.nav.pensjon.testdata.service.TestdataService;
 import org.slf4j.Logger;
@@ -22,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -62,7 +61,7 @@ public class TestdataController {
 
         Counter opprettTestdataTotal = Counter
                 .builder("pensjon.testdata.opprett.scenario.total")
-                .tags("scenario", request.getTestCaseId())
+                .tags("scenario", request.getTestCaseId() + "")
                 .description("Opprettet testdata-scenario")
                 .register(meterRegistry);
 
@@ -86,21 +85,19 @@ public class TestdataController {
     public ResponseEntity getTestcases() {
         List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
-                        s.getName(),
-                        TestScenarioUtil.getAllePersoner(s).stream()
-                        .map(p -> p.getKontrollers().stream()
-                                .map(AbstractScenarioValidator::getDescription)
-                                .collect(Collectors.joining(",")))
-                        .filter(description  -> !description.isEmpty())
-                        .collect(Collectors.toList()),
-                        s.getFritekstbeskrivelse())
+                            s.getScenarioId(),
+                            s.getName(),
+                            s.getFritekstbeskrivelse(),
+                            s.getSaksType(),
+                            s.maaVaereFoedtIAarMaaned()
+                        )
                 )
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new GetTestcasesResponse(testcases));
     }
 
     @GetMapping("/handlebars/{testcase}")
-    public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable String testcase) {
+    public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable @NotEmpty int testcase) {
         try {
             return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
         } catch (IOException e) {

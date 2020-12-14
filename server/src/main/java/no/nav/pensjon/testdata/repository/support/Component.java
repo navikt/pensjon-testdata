@@ -46,7 +46,7 @@ public class Component {
         return this.sql;
     }
 
-    public String getSqlAsString(String scenarioId) {
+    public String getSqlAsString(int scenarioId) {
         StringBuilder sb = new StringBuilder();
         for (String file : this.sqlPaths) {
             Path path = PathUtil.readPath("scenario/" + scenarioId + "/" + file);
@@ -59,7 +59,7 @@ public class Component {
         return sb.toString();
     }
 
-    public void init(String scenarioId)  {
+    public void init(int scenarioId)  {
         for (String file : this.sqlPaths) {
             Path path = PathUtil.readPath("scenario/" + scenarioId + "/" + file);
             if (path.toFile().exists()) {

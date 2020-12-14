@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Select} from "nav-frontend-skjema";
+import {Input} from "nav-frontend-skjema";
 import {Knapp} from "nav-frontend-knapper";
 import {SnackbarContext} from "./support/Snackbar";
 import {useForm} from 'react-hook-form';
+import {DataGrid} from '@material-ui/data-grid';
+import Grid from "@material-ui/core/Grid";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const OpprettTestdata = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [testcases, setTestcases] = useState([]);
     const [selected, setSelected] = useState('');
     const [handlebars, setHandlebars] = useState([]);
-    const [limitations, setLimitations] = useState([]);
-    const [description, setDescription] = useState('');
     const snackbarApi = React.useContext(SnackbarContext);
 
     useEffect(() => {
@@ -35,28 +36,15 @@ const OpprettTestdata = () => {
 
 
     const onChange = (event) => {
-        setSelected(event.target.value);
-        if (event.target.value.length > 0) {
-            setDescription(
-                testcases.filter(testcase => event.target.value === testcase.navn)
-                    .map(testcase => testcase.fritekstbeskrivelse)[0]);
-
-            setLimitations(
-                testcases.filter(testcase => event.target.value === testcase.navn)
-                    .filter(testcase => testcase.begrensninger.length > 0)
-                    .map(testcase => testcase.begrensninger));
-
-            fetch('/api/testdata/handlebars/' + event.target.value)
-                .then(res => res.json())
-                .then((data) => {
-                    setHandlebars(data)
-                })
-                .catch(console.log)
-        } else {
-            setHandlebars([]);
-            setLimitations([]);
-            setDescription('');
-        }
+        let scenarioId = event.rowIds[0];
+        setSelected(scenarioId);
+        console.log('chosen ' + scenarioId);
+        fetch('/api/testdata/handlebars/' + scenarioId)
+            .then(res => res.json())
+            .then((data) => {
+                setHandlebars(data)
+            })
+            .catch(console.log)
     };
 
     const lagre = async (event) => {
@@ -116,36 +104,54 @@ const OpprettTestdata = () => {
         return true;
     };
 
-    return (
-        <form onSubmit={handleSubmit(lagre)} style={{ textAlign: 'left', width: '40%', maxWidth: '20rem', margin: '0 auto'}}>
-            <Select bredde="xl" label='Velg scenario:' onChange={e => onChange(e)}>
-                <option value=''>Velg</option>
-                {testcases.map((testcase) => (
-                    <option value={testcase.navn} key={testcase.navn}>{testcase.navn}</option>
-                ))}
-            </Select>
-                {description ?
-                    <div><b>Beskrivelse av scenario:</b><br/><ul style={{listStyleType: 'none',}}><li>{description}</li></ul></div> :
-                    <div/>
-                }
-                {limitations.length > 0 ?
-                    <div><b>Forutsettninger for testdata:</b><br/><ul>{limitations.map((field, i) =>(<li key={i}>{field}</li>))}</ul></div> :
-                    <div/>
-                }
-            <div>
-                {handlebars.map((field) => (
-                    <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
-                           key={field.handlebar}
-                           inputRef={register({required: true,
-                               validate: async value => await handlebarValidate(value, field.handlebar, field.validators)})}
-                    />
-                ))}
-            </div>
+    const columns = [
+        { field: 'navn', headerName: 'Testscenario', flex: 1, headerClassName: 'header'},
+        { field: 'maaVaereFoedtIAarMaaned', headerName: 'Bruker må være født i år-måned', flex: 1, headerClassName: 'header', type: 'date'},
+        { field: 'saksType', headerName: 'Sakstype', flex: 1, headerClassName: 'header'}
+    ];
 
-            {isProcessing ?
-                <Knapp className="btn" spinner> </Knapp> :
-                <Knapp className="btn">Lagre</Knapp>}
-        </form>
+    const useStyles = makeStyles({
+        root: {
+            '& .header': {
+                fontSize: 20,
+                backgroundColor: 'lightGrey',
+            },
+        },
+    });
+
+    const classes = useStyles();
+
+    return (
+        <form onSubmit={handleSubmit(lagre)} style={{width: '100%'}}>
+            <Grid container spacing={3} justify="center" alignItems="flex-start" direction="row">
+                <Grid item style={{width: '40%'}}>
+                    <div className={classes.root}>
+                    <DataGrid
+                            rows={testcases} columns={columns} pageSize={10}
+                            onSelectionChange={(newSelection) => {
+                                onChange(newSelection);
+                            }}
+                            hideFooterSelectedRowCount
+                            autoHeight
+                        />
+                    </div>
+                </Grid>
+                <Grid item style={{width: '20%'}}>
+                    <div>
+                        {handlebars.map((field) => (
+                            <Input style={{textAlign: 'left',}} type={field.inputtype} bredde="XL" label={field.handlebar} name={field.handlebar}
+                                   key={field.handlebar}
+                                   inputRef={register({required: true,
+                                       validate: async value => await handlebarValidate(value, field.handlebar, field.validators)})}
+                            />
+                        ))}
+                        {isProcessing ?
+                            <Knapp className="btn" spinner> </Knapp> :
+                            selected ? <Knapp className="btn">Lagre</Knapp> : ''}
+                    </div>
+                </Grid>
+            </Grid>
+            </form>
     );
 };
 

@@ -2,6 +2,7 @@
   "scenarioId": "1",
   "name": "AP2016 løpende 07-1956",
   "fritekstbeskrivelse": null,
+  "saksType":  "Alderspensjon",
   "components" : [
     {
       "component": "PEN",
@@ -11,7 +12,6 @@
         "key": "fnr",
         "kontroller": [
           {
-            "type": "fodselMaaned",
             "maaned": 7,
             "aar": 1956
           }

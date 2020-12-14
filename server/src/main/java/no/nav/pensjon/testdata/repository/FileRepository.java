@@ -25,7 +25,7 @@ public class FileRepository {
     @Autowired
     private ScenarioRepository scenarioRepository;
 
-    private final Map<String, List<Handlebar>> handleBars = new ConcurrentHashMap<>();
+    private final Map<Integer, List<Handlebar>> handleBars = new ConcurrentHashMap<>();
 
     public List<String> readSqlFile(String sqlFile) throws  IOException {
         Path path = PathUtil.readPath( sqlFile + ".sql");
@@ -46,7 +46,7 @@ public class FileRepository {
         }
     }
 
-    public List<Handlebar> getTestcaseHandlebars(String scenarioId) throws IOException {
+    public List<Handlebar> getTestcaseHandlebars(int scenarioId) throws IOException {
         TestScenario scenario = scenarioRepository.obtainScenarioCopy(scenarioId);
         return handleBars.computeIfAbsent(scenario.getScenarioId(), s -> fetchHandlebars(TestScenarioUtil.getAllSql(scenario)));
     }

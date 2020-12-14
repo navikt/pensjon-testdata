@@ -1,18 +1,19 @@
 package no.nav.pensjon.testdata.repository.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.repository.support.validators.FodselsMaanedValidator;
+import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
-import no.nav.pensjon.testdata.repository.support.validators.AbstractScenarioValidator;
-import no.nav.pensjon.testdata.repository.support.validators.ScenarioValidationException;
+import java.util.Optional;
 
 @JsonIgnoreProperties({"nyPersonId","finnesIDatabase","fodselsDato"})
 public class Person {
@@ -23,7 +24,7 @@ public class Person {
     private LocalDate fodselsDato;
 
     @JsonProperty("kontroller")
-    private List<AbstractScenarioValidator> kontroller = new ArrayList<>(0);
+    private List<FodselsMaanedValidator> kontroller = new ArrayList<>(0);
 
     public String getGammelPersonId() {
         return gammelPersonId;
@@ -70,13 +71,18 @@ public class Person {
     }
 
     public void validate() throws ScenarioValidationException {
-            for (AbstractScenarioValidator validator : kontroller) {
+            for (FodselsMaanedValidator validator : kontroller) {
                 validator.validate(this);
             }
     }
 
-    public List<AbstractScenarioValidator> getKontrollers() {
+    public List<FodselsMaanedValidator> getKontrollers() {
         return kontroller;
+    }
+
+    @JsonIgnore
+    public Optional<String> getMaaVaereFoedtI(){
+        return kontroller.stream().map(FodselsMaanedValidator::getAarMaaned).findFirst();
     }
 
     public LocalDate getFodselsDato() {
