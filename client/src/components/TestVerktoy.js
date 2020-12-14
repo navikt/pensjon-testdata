@@ -28,6 +28,9 @@ const TestVerktoy = () => {
                 <Grid item >
                     <OpprettInntekt/>
                 </Grid>
+                <Grid item>
+                    <OpprettInntektManuelt/>
+                </Grid>
                 <Grid item >
                     <BestillBrev/>
                 </Grid>
@@ -36,9 +39,6 @@ const TestVerktoy = () => {
                 </Grid>
                 <Grid item >
                     <FlyttSak/>
-                </Grid>
-                <Grid item>
-                    <OpprettInntektManuelt/>
                 </Grid>
             </Grid>
         </div>

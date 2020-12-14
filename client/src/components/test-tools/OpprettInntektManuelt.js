@@ -130,7 +130,7 @@ const OpprettInntektManuelt = () => {
         <Card className={classes.card} variant="outlined">
             <CardHeader title="Lagre ulike inntekter"/>
             <CardContent>
-                <p>Oppretter varierte inntekter for brukere ved å benytte grensesnitt mot POPP</p>
+                <p>Oppretter fiktive <b>varierende</b> inntekter for brukere ved å benytte grensesnitt mot POPP</p>
                 {skjemahentet ?
                     <form onSubmit={handleSubmit(lagre)} style={{width: '100%'}}>
                         <TextField style={{textAlign: 'left', marginBottom: '10px', marginTop: '10px',}}
