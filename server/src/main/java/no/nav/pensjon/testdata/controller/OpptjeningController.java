@@ -11,6 +11,7 @@ import no.nav.pensjon.testdata.consumer.grunnbelop.GrunnbelopConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.consumer.opptjening.support.Inntekt;
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
+import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import no.nav.pensjon.testdata.controller.support.InntektAar;
 import no.nav.pensjon.testdata.controller.support.InntektPOPP;
 import no.nav.pensjon.testdata.controller.support.LagreInntektRequest;
@@ -20,7 +21,9 @@ import no.nav.pensjon.testdata.service.POPPDataExtractorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @Api(tags = {"Opptjening"})
@@ -51,6 +55,9 @@ public class OpptjeningController {
 
     @Autowired
     private JdbcTemplateWrapper jdbcTemplateWrapper;
+
+    @Autowired
+    HentUserTokenBean hentUserTokenBean;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -86,18 +93,32 @@ public class OpptjeningController {
     }
 
     @PostMapping("/inntekt")
-    public ResponseEntity lagreInntekt(@RequestBody LagreInntektRequest request) throws IOException {
+    public ResponseEntity lagreInntekt(
+            @RequestHeader(value = "Nav-Call-Id", required = false) String callId,
+            @RequestHeader(value = "Nav-Consumer-Id", required = false) String consumerId,
+            @RequestBody LagreInntektRequest request) throws IOException {
+        HttpHeaders httpHeaders = createHttpHeaders(callId, consumerId);
+
         for (int aar = request.getFomAar(); aar <= request.getTomAar(); aar++) {
             Inntekt inntekt = fastsettInntekt(request, aar);
 
             LagreInntektPoppRequest poppRequest = new LagreInntektPoppRequest(inntekt);
 
-            opptjeningConsumerBean.lagreInntekt(poppRequest);
+            opptjeningConsumerBean.lagreInntekt(poppRequest, httpHeaders);
         }
 
         lagreInntektDataCounter.increment();
 
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private HttpHeaders createHttpHeaders(String callId, String consumerId) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Authorization", "Bearer " + hentUserTokenBean.fetch().getAccessToken());
+        httpHeaders.add("Nav-Call-Id", callId);
+        httpHeaders.add("Nav-Consumer-Id", consumerId);
+        return httpHeaders;
     }
 
     private Inntekt fastsettInntekt(@RequestBody LagreInntektRequest request, int aar) throws IOException {
@@ -125,10 +146,14 @@ public class OpptjeningController {
 
     @PostMapping("/inntektskjema")
     public ResponseEntity<List<InntektAar>> lagreInntekterFraSkjema(@RequestBody LagreinntekterFraSkjemaRequest request){
+        HttpHeaders httpHeaders = createHttpHeaders("pensjon-testdata" + UUID.randomUUID(), "pensjon-testdata");
+
         request.getInntekter().parallelStream()
                 .map(inntekt -> newInntekt(request.getFnr(), inntekt.getAar(), inntekt.getInntekt()))
                 .map(LagreInntektPoppRequest::new)
-                .forEachOrdered(opptjeningConsumerBean::lagreInntekt);
+                .forEachOrdered(body -> {
+                    opptjeningConsumerBean.lagreInntekt(body, httpHeaders);
+                });
         return ResponseEntity.ok(request.getInntekter());
     }
 

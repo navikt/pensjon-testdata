@@ -17,21 +17,13 @@ public class OpptjeningConsumerBean {
 
     Logger logger = LoggerFactory.getLogger(OpptjeningConsumerBean.class);
 
-    @Autowired
-    HentUserTokenBean hentUserTokenBean;
-
     private RestTemplate restTemplate = new RestTemplate();
 
     @Value("${popp.endpoint.url}")
     private String poppEndpoint;
 
-    public Boolean lagreInntekt(LagreInntektPoppRequest body) {
+    public Boolean lagreInntekt(LagreInntektPoppRequest body, HttpHeaders httpHeaders) {
         HttpEntity restRequest;
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization", "Bearer " + hentUserTokenBean.fetch().getAccessToken());
-        httpHeaders.add("Nav-Call-Id", "pensjon-testdata");
-        httpHeaders.add("Nav-Consumer-Id", "pensjon-testdata");
         ResponseEntity<String> response;
 
         restRequest = new HttpEntity<>(body, httpHeaders);
@@ -57,14 +49,8 @@ public class OpptjeningConsumerBean {
         return response.getStatusCodeValue() == 200;
     }
 
-    public Boolean lagrePerson(String callId, String consumerId, String token, String fnr) {
+    public Boolean lagrePerson(HttpHeaders httpHeaders) {
         HttpEntity restRequest;
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization",  token != null ? token : "Bearer " + hentUserTokenBean.fetch().getAccessToken());
-        httpHeaders.add("Nav-Call-Id", callId);
-        httpHeaders.add("Nav-Consumer-Id", consumerId);
-        httpHeaders.add("fnr", fnr);
         ResponseEntity<String> response;
         restRequest = new HttpEntity<>("", httpHeaders);
         try {

@@ -8,6 +8,7 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
+import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
 import no.nav.pensjon.testdata.repository.OracleRepository;
 import no.nav.pensjon.testdata.repository.support.ComponentCode;
@@ -15,7 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,9 @@ public class PersonController {
     @Autowired
     private MeterRegistry meterRegistry;
 
+    @Autowired
+    HentUserTokenBean hentUserTokenBean;
+
     private Counter dollyLagrePersonCounter;
     private Counter dollyLagrePersonFailedCounter;
 
@@ -84,7 +90,8 @@ public class PersonController {
         try {
             createPenPerson(body);
             createSamPerson(body);
-            opptjeningConsumerBean.lagrePerson(callId, consumerId, token, body.getFnr());
+            HttpHeaders httpHeaders = createHttpHeaders(callId, consumerId, token, body.getFnr());
+            opptjeningConsumerBean.lagrePerson(httpHeaders);
             dollyLagrePersonCounter.increment();
         } catch (Exception e) {
             dollyLagrePersonFailedCounter.increment();
@@ -92,6 +99,18 @@ public class PersonController {
             throw e;
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    private HttpHeaders createHttpHeaders(String callId, String consumerId, String token, String fnr) {
+        String useToken = token != null ? token : "Bearer " + hentUserTokenBean.fetch().getAccessToken();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Authorization", useToken);
+        httpHeaders.add("Nav-Call-Id", callId);
+        httpHeaders.add("Nav-Consumer-Id", consumerId);
+        httpHeaders.add("fnr", fnr);
+        return httpHeaders;
     }
 
     private void createSamPerson(OpprettPersonRequest request) {
