@@ -10,7 +10,7 @@
             <onMatch>DENY</onMatch>
         </filter>
         <encoder class="ch.qos.logback.access.PatternLayoutEncoder">
-            <pattern>%h %l %u %user %date "%r" %s %b %h Nav-Call-Id: %header{Nav-Call-Id} Nav-Consumer-Id: %header{Nav-Consumer-Id} Correlation-id:  %header{Correlation-id} transaction-id:  %header{transaction-id}</pattern>
+            <pattern>%h %l %u %user %date "%r" %s %h %q Nav-Call-Id: %header{Nav-Call-Id} Nav-Consumer-Id: %header{Nav-Consumer-Id} CorrelationId:  %header{CorrelationId} transactionId:  %header{transactionId}</pattern>
         </encoder>
     </appender>
 
