@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import no.nav.pensjon.testdata.consumer.grunnbelop.support.VeietSatsResultat;
 
 @Service
 public class GrunnbelopConsumerBean {
+    private final Logger logger = LoggerFactory.getLogger(GrunnbelopConsumerBean.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
     @Value("${preg.rest.veiet.grunnbelop.endpoint.url}")
@@ -40,6 +43,7 @@ public class GrunnbelopConsumerBean {
             return parseToMap(Objects.requireNonNull(response.getBody()));
         }
         catch(RestClientException e){
+            logger.error("Leser grunnbeløp fra fil!", e);
             //les fra fil
             String beloep = IOUtils.toString(this.getClass().getResourceAsStream("/grunnbeloep.json"));
             ObjectMapper mapper = new ObjectMapper();
