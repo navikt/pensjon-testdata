@@ -35,7 +35,7 @@ public class ScenarioRepository {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
-    public TestScenario init(int scenarioId, Map<String, String> handlebars) throws IOException {
+    public TestScenario init(int scenarioId, Map<String, String> handlebars){
         TestScenario testScenario = obtainScenarioCopy(scenarioId);
         for (Component component : testScenario.getComponents()) {
             for (Person person : component.getPersoner()) {
@@ -70,7 +70,7 @@ public class ScenarioRepository {
         logger.info("tilgjengelige scenarioer: " + tilgjengeligeTestScenarioer.keySet());
     }
 
-    public TestScenario obtainScenarioCopy(int id) throws IOException { //lager deep-kopi, fordi konsumenter muterer scenario
+    public TestScenario obtainScenarioCopy(int id) { //lager deep-kopi, fordi konsumenter muterer scenario
         return Optional.ofNullable(tilgjengeligeTestScenarioer.get(id))
                 .map(t -> {
                     try {
@@ -80,7 +80,7 @@ public class ScenarioRepository {
                         return t; //da vil fnr-validering bomme
                     }
                 })
-                .orElseThrow(IOException::new);
+                .orElseThrow(() -> new RuntimeException("Could not find scenario with id " + id));
     }
 
     public void execute(Component component, String sql) {

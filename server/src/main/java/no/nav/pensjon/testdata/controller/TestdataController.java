@@ -72,18 +72,23 @@ public class TestdataController {
 
             opprettTestdataTotal.increment();
 
-        } catch (IOException e) {
-            logger.error("Could not find requested testcase: " + request.getTestCaseId(), e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (ScenarioValidationException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
+        }
+        catch (RuntimeException e) {
+            logger.error("Could not find requested testcase: " + request.getTestCaseId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity getTestcases() {
-        List<GetTestcasesResponse.Testcase> testcases = scenarioRepository.getAllTestScenarios().stream()
+        return ResponseEntity.ok(new GetTestcasesResponse(fetchTestcasesFromRepo()));
+    }
+
+    private List<GetTestcasesResponse.Testcase> fetchTestcasesFromRepo() {
+        return scenarioRepository.getAllTestScenarios().stream()
                 .map(s -> new GetTestcasesResponse.Testcase(
                             s.getScenarioId(),
                             s.getName(),
@@ -93,14 +98,21 @@ public class TestdataController {
                         )
                 )
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new GetTestcasesResponse(testcases));
+    }
+
+    @GetMapping("comprehensive")
+    public List<ComprehensiveTestcase> getTestCasesWithHandleBars(){
+        return fetchTestcasesFromRepo().stream()
+                .map(t -> new ComprehensiveTestcase(t, fileRepository.getTestcaseHandlebars(t.getId())))
+                .collect(Collectors.toList());
+
     }
 
     @GetMapping("/handlebars/{testcase}")
     public ResponseEntity<List<Handlebar>> getTestcaseHandlebars(@PathVariable @NotEmpty int testcase) {
         try {
             return ResponseEntity.ok(fileRepository.getTestcaseHandlebars(testcase));
-        } catch (IOException e) {
+        } catch (RuntimeException e) {
             logger.error("Could not find requested testcase: " + testcase, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
