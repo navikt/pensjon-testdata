@@ -41,15 +41,17 @@ const FlyttSak = () => {
 
     const getEnheter = async () => {
         const response = await fetch('/api/enheter', {method: 'GET'});
-        const alleEnheter = await response.json();
 
-        const unikealleEnheter = alleEnheter
-            .filter((thing, index, self) =>
-            index === self.findIndex((t) => t.place === thing.place && t.enhetNr === thing.enhetNr))
-            .filter((element) => {
-                return element.enhetNr !== undefined;
-            });
-        setAlleEnheter(unikealleEnheter);
+        if (response.ok){
+            const alleEnheter = await response.json();
+            const unikealleEnheter = alleEnheter
+                .filter((thing, index, self) =>
+                index === self.findIndex((t) => t.place === thing.place && t.enhetNr === thing.enhetNr))
+                .filter((element) => {
+                    return element.enhetNr !== undefined;
+                });
+            setAlleEnheter(unikealleEnheter);
+        }
     }
 
     const flyttEnhet = (event) => {
