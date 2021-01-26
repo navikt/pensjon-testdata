@@ -46,7 +46,7 @@ public class FileRepository {
         }
     }
 
-    public List<Handlebar> getTestcaseHandlebars(int scenarioId) throws IOException {
+    public List<Handlebar> getTestcaseHandlebars(int scenarioId){
         TestScenario scenario = scenarioRepository.obtainScenarioCopy(scenarioId);
         return handleBars.computeIfAbsent(scenario.getScenarioId(), s -> fetchHandlebars(TestScenarioUtil.getAllSql(scenario)));
     }

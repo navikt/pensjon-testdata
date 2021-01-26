@@ -17,9 +17,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>13</java.version>
-        <maven.compiler.source>13</maven.compiler.source>
-        <maven.compiler.target>13</maven.compiler.target>
+        <java.version>15</java.version>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <tjenestespesifikansjoner.version>1.2020.03.10-15.42-d63c3fb8f3b8</tjenestespesifikansjoner.version>
         <janino.version>3.1.2</janino.version>
     </properties>
@@ -120,11 +120,11 @@
             <systemPath>${project.basedir}/lib/pensjon-behandleAutomatiskOmregning-tjenestespesifikasjon-1.0.3-jaxws.jar</systemPath>
         </dependency>
 
-<!--        <dependency>
-            <groupId>no.nav.tjenestespesifikasjoner</groupId>
-            <artifactId>pensjon-behandleAutomatiskOmregning-v1-tjenestespesifikasjon</artifactId>
-            <version>${tjenestespesifikansjoner.version}</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>no.nav.tjenestespesifikasjoner</groupId>
+                    <artifactId>pensjon-behandleAutomatiskOmregning-v1-tjenestespesifikasjon</artifactId>
+                    <version>${tjenestespesifikansjoner.version}</version>
+                </dependency>-->
     </dependencies>
 
     <repositories>
