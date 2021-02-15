@@ -1,10 +1,10 @@
 package no.nav.pensjon.testdata.consumer.opptjening;
 
 import no.nav.pensjon.testdata.consumer.opptjening.support.LagreInntektPoppRequest;
-import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
+import no.nav.pensjon.testdata.consumer.opptjening.support.POPPInternalFailureException;
+import no.nav.pensjon.testdata.service.RetryLayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class OpptjeningConsumerBean {
+public class OpptjeningConsumerBean implements RetryLayer {
 
     Logger logger = LoggerFactory.getLogger(OpptjeningConsumerBean.class);
 
@@ -36,13 +36,17 @@ public class OpptjeningConsumerBean {
         } catch (RestClientResponseException e) {
             String message = "Request to POPP/inntekt failed with msg: " + e.getMessage();
             logger.error(message, e);
-            if (e.getRawStatusCode() == 401) {
+            int rawStatusCode = e.getRawStatusCode();
+            if (rawStatusCode == 401) {
                 throw new RuntimeException("User is not authorized to use this service!", e);
-            } else if (e.getRawStatusCode() == 512) {
+            } else if (rawStatusCode == 512) {
                 if (e.getMessage().contains("PersonDoesNotExistExceptionDto")) {
                     throw new RuntimeException(
                             "Person ikke funnet i POPP ", e);
                 }
+            }
+            else if (rawStatusCode == 500){
+                throw new POPPInternalFailureException(message, e);
             }
             throw new RuntimeException(message, e);
         }
