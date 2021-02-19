@@ -60,7 +60,9 @@ public class TestdataConsumerBean {
             } else if (e.getRawStatusCode() == 512) {
                 response.setMessage("Person ikke funnet i POPP ");
             }
-            response.setMessage(getFunctionalErrorMessage(e));
+            else{
+                response.setMessage(getFunctionalErrorMessage(e));
+            }
         }
         return response;
     }
