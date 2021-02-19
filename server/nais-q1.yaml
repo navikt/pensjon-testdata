@@ -35,7 +35,7 @@ spec:
     - name: "sam_db_enabled"
       value: "true"
     - name: "moog_db_enabled"
-      value: "true"
+      value: "false"
     - name: "sts_endpoint_url"
       value: "https://security-token-service.nais.preprod.local"
     - name: "popp_endpoint_url"
