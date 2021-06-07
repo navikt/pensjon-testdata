@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -83,15 +84,28 @@ public class PersonController {
             @RequestBody OpprettPersonRequest body) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        logger.info("Oppretter person:  fnr:" + body.getFnr().substring(0,4) + "*******" + " fodselsdato: " + df.format(body.getFodselsDato()));
+        String fnr = body.getFnr().substring(0, 4);
+        logger.info("Oppretter person:  fnr:" + fnr + "*******" + " fodselsdato: " + df.format(body.getFodselsDato()));
 
         oracleRepository.alterSession();
 
         try {
-            createPenPerson(body);
-            createSamPerson(body);
+            try {
+                createPenPerson(body);
+            } catch (DuplicateKeyException s) {
+                logger.warn("PEN: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
+            }
+            try {
+                createSamPerson(body);
+            } catch (DuplicateKeyException s) {
+                logger.warn("SAM: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
+            }
             HttpHeaders httpHeaders = createHttpHeaders(callId, consumerId, token, body.getFnr());
-            opptjeningConsumerBean.lagrePerson(httpHeaders);
+            try {
+                opptjeningConsumerBean.lagrePerson(httpHeaders);
+            } catch (DuplicateKeyException s) {
+                logger.warn("POPP: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
+            }
             dollyLagrePersonCounter.increment();
         } catch (Exception e) {
             dollyLagrePersonFailedCounter.increment();
@@ -151,7 +165,7 @@ public class PersonController {
                     "VERSJON) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
-            java.sql.Date fodselsDato =  getSqlDate(request.getFodselsDato());
+            java.sql.Date fodselsDato = getSqlDate(request.getFodselsDato());
             java.sql.Date dodsDato = request.getDodsDato() != null ? getSqlDate(request.getDodsDato()) : null;
             java.sql.Date utvandretDato = request.getUtvandringsDato() != null ? getSqlDate(request.getUtvandringsDato()) : null;
             int landKode = fetchLandKode(request.getBostedsland());
@@ -196,7 +210,7 @@ public class PersonController {
                 .map(b -> jdbcTemplateWrapper.queryForList(ComponentCode.PEN, "SELECT K_LAND_3_TEGN_ID FROM T_K_LAND_3_TEGN where land_3_tegn = '" + bostedsland + "'"))
                 .filter(list -> !list.isEmpty())
                 .map(v -> v.get(0).get("K_LAND_3_TEGN_ID"))
-                .map(v -> (BigDecimal)v)
+                .map(v -> (BigDecimal) v)
                 .map(BigDecimal::intValue)
                 .orElse(161);
     }
