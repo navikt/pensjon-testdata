@@ -31,9 +31,6 @@ public class BrevController {
     private BrevConsumer brevConsumer;
 
     @Autowired
-    private JdbcTemplateWrapper jdbcTemplateWrapper;
-
-    @Autowired
     private MeterRegistry meterRegistry;
 
     @Autowired
