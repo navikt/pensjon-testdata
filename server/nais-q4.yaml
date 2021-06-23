@@ -29,7 +29,7 @@ spec:
     - name: "SECRET_BASEDIR"
       value: "/"
     - name: "pen_db_enabled"
-      value: "false"
+      value: "true"
     - name: "popp_db_enabled"
       value: "false"
     - name: "sam_db_enabled"
