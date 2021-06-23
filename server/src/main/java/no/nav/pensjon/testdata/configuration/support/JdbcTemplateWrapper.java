@@ -32,7 +32,7 @@ public class JdbcTemplateWrapper {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).queryForObject(sql, params, (resultSet, i) -> resultSet.getString(1));
         } else {
-            throw new RuntimeException("Not possible when " + component + " is not available");
+            throw new NotConnectedToDatabaseException("Not possible when " + component + " is not available");
         }
     }
 
@@ -41,7 +41,7 @@ public class JdbcTemplateWrapper {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).queryForList(sql);
         } else {
-            throw new RuntimeException("Not possible when " + component + " is not available");
+            throw new NotConnectedToDatabaseException("Not possible when " + component + " is not available");
         }
     }
 
@@ -49,7 +49,7 @@ public class JdbcTemplateWrapper {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).query(sql, rowMapper);
         } else {
-            throw new RuntimeException("Not possible when " + component + " is not available");
+            throw new NotConnectedToDatabaseException("Not possible when " + component + " is not available");
         }
     }
 
@@ -57,7 +57,7 @@ public class JdbcTemplateWrapper {
         if (jdbcTemplateMap.get(component) != null) {
             return jdbcTemplateMap.get(component).execute(sql, callback);
         } else {
-            throw new RuntimeException("Not possible when " + component + " is not available");
+            throw new NotConnectedToDatabaseException("Not possible when " + component + " is not available");
         }
     }
 

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
+import no.nav.pensjon.testdata.configuration.support.NotConnectedToDatabaseException;
 import no.nav.pensjon.testdata.consumer.opptjening.OpptjeningConsumerBean;
 import no.nav.pensjon.testdata.consumer.usertoken.HentUserTokenBean;
 import no.nav.pensjon.testdata.controller.support.OpprettPersonRequest;
@@ -95,16 +96,25 @@ public class PersonController {
             } catch (DuplicateKeyException s) {
                 logger.warn("PEN: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
             }
+            catch (NotConnectedToDatabaseException e){
+                logger.warn("Pensjon-testdata is not connected to PEN");
+            }
             try {
                 createSamPerson(body);
             } catch (DuplicateKeyException s) {
                 logger.warn("SAM: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
+            }
+            catch (NotConnectedToDatabaseException e){
+                logger.warn("Pensjon-testdata is not connected to SAM");
             }
             HttpHeaders httpHeaders = createHttpHeaders(callId, consumerId, token, body.getFnr());
             try {
                 opptjeningConsumerBean.lagrePerson(httpHeaders);
             } catch (DuplicateKeyException s) {
                 logger.warn("POPP: tried to insert a duplicate person with fnr: " + fnr + ", " + s.getMessage(), s);
+            }
+            catch (NotConnectedToDatabaseException e){
+                logger.warn("Pensjon-testdata is not connected to POPP");
             }
             dollyLagrePersonCounter.increment();
         } catch (Exception e) {
