@@ -33,7 +33,7 @@ spec:
     - name: "popp_db_enabled"
       value: "true"
     - name: "sam_db_enabled"
-      value: "false"
+      value: "true"
     - name: "moog_db_enabled"
       value: "false"
     - name: "sts_endpoint_url"
