@@ -31,7 +31,7 @@ spec:
     - name: "pen_db_enabled"
       value: "true"
     - name: "popp_db_enabled"
-      value: "false"
+      value: "true"
     - name: "sam_db_enabled"
       value: "false"
     - name: "moog_db_enabled"
