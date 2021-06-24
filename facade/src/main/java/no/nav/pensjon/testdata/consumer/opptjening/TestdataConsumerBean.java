@@ -139,7 +139,13 @@ public class TestdataConsumerBean {
                 new HttpEntity<>(httpHeaders),
                 Inntekt[].class);
 
-        return Arrays.asList(Optional.ofNullable(restResponse).map(ResponseEntity::getBody).orElse(new Inntekt[0]));
+        return Arrays.asList(Optional.of(restResponse).map(ResponseEntity::getBody).orElse(new Inntekt[0]));
+    }
+
+    public String getStatus(String endpoint){
+        return restTemplate.exchange(UriComponentsBuilder.fromHttpUrl(endpoint + "/testdata/status").toUriString(),
+                HttpMethod.GET, null, String.class)
+                .getBody();
     }
 
     static class CustomError {
