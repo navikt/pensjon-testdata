@@ -8,8 +8,8 @@ on:
     branches: [master]
 
 env:
-  LATEST: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-facade:latest
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/pensjon-testdata-facade:${{ github.sha }}
+  LATEST: ghcr.io/${{ github.repository }}/pensjon-testdata-facade:latest
+  IMAGE: ghcr.io/${{ github.repository }}/pensjon-testdata-facade:${{ github.sha }}
 
 jobs:
   build_and_publish_image:
@@ -29,14 +29,12 @@ jobs:
             maven-${{ hashFiles('**facade/pom.xml') }}
             maven-
       - name: Build and publish Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd facade
           mvn package -B
           docker build --tag ${IMAGE} .
           docker tag ${IMAGE} ${LATEST}
-          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ${IMAGE}
           docker push ${LATEST}
   deploy:
