@@ -9,7 +9,7 @@ on:
 
 env:
   LATEST: ghcr.io/${{ github.repository }}/pensjon-testdata-client:latest
-  IMAGE: ghcr.io/${{ github.repository }}/pensjon-testdata-client:${{ github.sha }}
+  IMAGE: ghcr.io/${{ github.repository }}/pensjon-testdata-client
 
 jobs:
   build_and_publish_image:
@@ -37,10 +37,12 @@ jobs:
           cd client
           npm install
           npm run build
-          docker build --tag ${IMAGE} .
-          docker tag ${IMAGE} ${LATEST}
+          TIME=$(TZ="Europe/Oslo" date +%Y.%m.%d-%H.%M)
+          COMMIT=$(git rev-parse --short=12 HEAD)
+          export VERSION="$IMAGE:$TIME-$COMMIT"
+          docker build -t ${VERSION} -t ${LATEST} .
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ${IMAGE}
+          docker push ${VERSION}
           docker push ${LATEST}
   deploy_q2:
     name: Deploy client to NAIS - Q2 namespace
