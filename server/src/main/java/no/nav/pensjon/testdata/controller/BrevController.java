@@ -5,7 +5,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-import no.nav.pensjon.testdata.configuration.support.JdbcTemplateWrapper;
 import no.nav.pensjon.testdata.consumer.brev.BrevConsumer;
 import no.nav.pensjon.testdata.consumer.brev.BrevMetaDataConsumer;
 import no.nav.pensjon.testdata.consumer.brev.BrevMetadata;
