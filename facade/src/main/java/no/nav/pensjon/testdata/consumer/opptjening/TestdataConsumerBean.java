@@ -9,6 +9,7 @@ import no.nav.pensjon.testdata.controller.support.OpprettPersonRemoteRequest;
 import no.nav.pensjon.testdata.controller.support.response.HttpStatus;
 import no.nav.pensjon.testdata.controller.support.response.Inntekt;
 import no.nav.pensjon.testdata.controller.support.response.Response;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
@@ -16,9 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TestdataConsumerBean {
@@ -142,9 +141,9 @@ public class TestdataConsumerBean {
         return Arrays.asList(Optional.of(restResponse).map(ResponseEntity::getBody).orElse(new Inntekt[0]));
     }
 
-    public String getStatus(String endpoint){
+    public Map<String, Boolean> getStatus(String endpoint){
         return restTemplate.exchange(UriComponentsBuilder.fromHttpUrl(endpoint + "/testdata/status").toUriString(),
-                HttpMethod.GET, null, String.class)
+                HttpMethod.GET, null, new ParameterizedTypeReference<Map<String, Boolean>>() {})
                 .getBody();
     }
 

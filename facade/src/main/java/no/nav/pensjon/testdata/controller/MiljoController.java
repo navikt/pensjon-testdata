@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @Api(tags = {"Miljo"})
@@ -50,17 +48,17 @@ public class MiljoController {
 
     @GetMapping("/status")
     @ApiOperation(value = "DB-status per miljø")
-    public List<String> dbStatus() {
+    public Map<String, Map<String, Boolean>> dbStatus() {
         Collection<Environment> environments = EnvironmentResolver
                 .getAvaiableEnvironments().values();
-        List<String> status = new ArrayList<>();
+        Map<String, Map<String, Boolean>> status = new HashMap<>();
         for (Environment env : environments){
             try {
-                status.add(env.getEnv() + ": " + testdataConsumerBean.getStatus(env.getUrl()));
+                status.put(env.getEnv(), testdataConsumerBean.getStatus(env.getUrl()));
             }
             catch (ResourceAccessException e){
                 LOG.error("Could not connect to env " + env.getUrl(), e);
-                status.add(env.getEnv() + ": " + e.toString());
+                status.put(env.getEnv(), Map.of(e.toString() + ", connected to env:", false));
             }
         }
         return status;
