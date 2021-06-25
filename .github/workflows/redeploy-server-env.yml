@@ -1,13 +1,19 @@
-name: Redeploy server@q1
+name: Redeploy server@env
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      miljo:
+        description: 'Miljø'
+        required: true
+        default: 'q2'
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/pensjon-testdata-server:latest
 
 jobs:
-  deploy_q1:
-    name: Deploy server to NAIS - Q1 namespace
+  deploy_env:
+    name: Deploy server to NAIS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -15,4 +21,4 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
-          RESOURCE: server/nais-q1.yaml
+          RESOURCE: server/nais-${{ github.event.inputs.miljo }}.yaml
