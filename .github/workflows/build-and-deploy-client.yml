@@ -42,8 +42,8 @@ jobs:
           export VERSION="$IMAGE:$TIME-$COMMIT"
           docker build -t ${VERSION} -t ${LATEST} .
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ${VERSION}
           docker push ${LATEST}
+          docker push ${VERSION}
   deploy_q2:
     name: Deploy client to NAIS - Q2 namespace
     needs: build_and_publish_image

@@ -37,8 +37,8 @@ jobs:
           export VERSION="$IMAGE:$TIME-$COMMIT"
           docker build -t ${VERSION} -t ${LATEST} .
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ${VERSION}
           docker push ${LATEST}
+          docker push ${VERSION}
   deploy:
     name: Deploy facade to NAIS
     needs: build_and_publish_image
